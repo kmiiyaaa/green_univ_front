@@ -4,6 +4,7 @@ import { UserProvider } from './context/UserProvider';
 import Home from './pages/Home';
 import Footer from './components/layout/mainLayout/Footer';
 import Header from './components/layout/mainLayout/Header';
+import TuiList from './pages/tuition/TuiList';
 
 function App() {
 	return (
@@ -14,6 +15,7 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/h" element={<Header />} />
 					<Route path="/f" element={<Footer />} />
+					<Route path="/tuilist" element={<TuiList/>} />
 				</Routes>
 			</UserProvider>
 		</>
