@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { UserContext } from './UserContext';
 
 // Provider 컴포넌트
 export function UserProvider({ children }) {
