@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/httpClient";
 
@@ -6,6 +6,7 @@ export default function TuiList() {
   // 납부된 등록금 내역을 조회하는 컴포넌트
   const [tuiList, setTuiList] = useState([]);
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   const loadTuition = async () => {
     // 등록금 불러오기 (tuitionController 58번)
@@ -22,6 +23,10 @@ export default function TuiList() {
       console.error("tuiList 불러오기 실패" + e);
     }
   };
+
+  useEffect(() => {
+    loadTuition();
+  }, [user]); // user 정보 로딩 후 실행
 
   return (
     <div>
@@ -49,10 +54,10 @@ export default function TuiList() {
               {t.payAmount + "년"} {/* 납입금 */}
             </div>
           ))}
-        </>) : (
-            "등록금 납부 내역이 없습니다!"
-        )
-      }
+        </>
+      ) : (
+        "등록금 납부 내역이 없습니다!"
+      )}
     </div>
   );
 }
