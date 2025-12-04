@@ -70,9 +70,6 @@ function Home() {
 												비밀번호 찾기
 											</button>
 											<span className="portal-link-divider">·</span>
-											<button type="button" className="portal-link-button">
-												OTP 인증메뉴얼
-											</button>
 										</div>
 									</form>
 								</div>
@@ -81,7 +78,7 @@ function Home() {
 
 						{/* 왼쪽 푸터 */}
 						<footer className="portal-left-footer">
-							<p>서울시 OO구 OO로 120 그린대학교</p>
+							<p>서울시 마포구 신촌로 176 그린대학교</p>
 							<p>Copyright © GREEN UNIVERSITY. All Rights Reserved.</p>
 						</footer>
 					</div>
