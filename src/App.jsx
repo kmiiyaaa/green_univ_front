@@ -7,7 +7,7 @@ import Header from './components/layout/mainLayout/Header';
 import TuiList from './pages/tuition/TuiList';
 import Payment from './pages/tuition/Payment';
 import CreatePayment from './pages/tuition/CreatePayment';
-import StudentInfo from './pages/user/info/StudentInfo';
+import UserInfo from './pages/user/info/UserInfo';
 
 function App() {
 	return (
@@ -21,7 +21,7 @@ function App() {
 					<Route path="/tuilist" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 					<Route path="/tuilist/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 					<Route path="/tuilist/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
-					<Route path="/info/student" element={<StudentInfo />} /> {/* 학생 내 정보 조회*/}
+					<Route path="/info/student" element={<UserInfo />} /> {/* 학생 내 정보 조회*/}
 				</Routes>
 			</UserProvider>
 		</>
