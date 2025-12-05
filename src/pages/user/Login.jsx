@@ -6,7 +6,7 @@ import { UserContext } from '../../context/UserContext';
 
 export default function Login() {
 	const navigate = useNavigate();
-	const { setUser, setUserRole } = useContext(UserContext);
+	const { setUser, setUserRole, user } = useContext(UserContext);
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -30,7 +30,8 @@ export default function Login() {
 			if (accessToken) localStorage.setItem('token', accessToken);
 			if (setUser) setUser(id); // 유저 아이디 (기본키 저장)
 			if (userRole) setUserRole(userRole);
-			navigate('/userinfo', { replace: true });
+
+			// navigate('/userinfo', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
@@ -39,6 +40,7 @@ export default function Login() {
 			setLoading(false);
 		}
 	};
+
 
 	// Jwtdecode 라이브러리
 	// 백에서 JWT build 하면서 넣은 값들 뽑아 쓰는 방법

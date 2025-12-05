@@ -16,16 +16,18 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 
 	const updateUserInfo = async () => {
 		try {
-			await api.patch(`/user/update?password=${value.password}`, {
+			await api.patch(`/personal/update?password=${value.password}`, {
 				address: value.address,
 				tel: value.tel,
 				email: value.email,
 			});
 			alert('수정이 완료되었습니다!');
-		} catch (e) {
-			console.error('내 정보 수정 실패' + e);
+		} catch (err) {
+			const msg = err.response?.data?.message || '수정 실패';
+			alert(msg);
+			console.error(msg);
 		} finally {
-			setIsEdit(false);
+			// setIsEdit(false);
 		}
 	};
 
@@ -33,7 +35,7 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 		<div>
 			<h2>개인 정보 수정</h2>
 
-			<form onClick={updateUserInfo}>
+			<form onSubmit={() => updateUserInfo()}>
 				<div>
 					<label>주소</label>
 					<input type="text" name="address" value={value.address} onChange={handleChange} required />
@@ -55,6 +57,7 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 				</div>
 
 				<button type="submit">수정하기</button>
+				<button onClick={() => setIsEdit(false)}>취소</button>
 			</form>
 		</div>
 	);
