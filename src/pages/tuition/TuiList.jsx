@@ -10,17 +10,6 @@ export default function TuiList() {
 	const navigate = useNavigate();
 	const { user, userRole } = useContext(UserContext);
 
-	const loadTuition = async () => {
-		// 등록금 불러오기 (tuitionController 58번)
-
-		try {
-			const res = await api.get('/tuition/list');
-			setTuiList(res.data);
-		} catch (e) {
-			console.error('tuiList 불러오기 실패' + e);
-		}
-	};
-
 	useEffect(() => {
 		if (user === null) return;
 		if (userRole !== 'student') {
@@ -28,8 +17,19 @@ export default function TuiList() {
 			return;
 		}
 
+		const loadTuition = async () => {
+			// 등록금 불러오기 (tuitionController 58번)
+
+			try {
+				const res = await api.get('/tuition/list');
+				setTuiList(res.data);
+			} catch (e) {
+				console.error('tuiList 불러오기 실패' + e);
+			}
+		};
+
 		loadTuition();
-	}, [user, userRole]);
+	}, [user, userRole, navigate]);
 
 	return (
 		<div>
