@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import api from '../../../api/httpClient';
-import UserFormLayout from '../../../components/admin/user/UserFormLayout';
-import CommonUserFields from '../../../components/admin/user/CommonUserFields';
+import CommonUserFields from '../../user/create/CommonUserFields';
 import InputForm from '../../../components/form/InputForm';
 
 export default function CreateStudent() {
@@ -48,7 +47,10 @@ export default function CreateStudent() {
 	};
 
 	return (
-		<UserFormLayout active="student" title="학생 등록">
+		<>
+			<div>
+				<h1>학생 등록</h1>
+			</div>
 			<form>
 				<table className="table--container">
 					<tbody>
@@ -62,6 +64,6 @@ export default function CreateStudent() {
 				</table>
 				<button onSubmit={handleSubmit}>등록</button>
 			</form>
-		</UserFormLayout>
+		</>
 	);
 }
