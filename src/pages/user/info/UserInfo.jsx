@@ -4,10 +4,15 @@ import { UserContext } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/httpClient';
 import StudentInfoTable from '../../../components/infoTable/StudentInfoTable';
+import ProfessorInfoTable from '../../../components/infoTable/ProfessorInfoTable';
+import StaffInfoTable from '../../../components/infoTable/StaffInfotable';
+import UpdateUserInfo from '../../../components/infoTable/UpdateUserInfo';
 
 export default function UserInfo() {
 	const { user, userRole } = useContext(UserContext);
 	const [userInfo, setUserInfo] = useState({});
+	const [stustatList, setStustatList] = useState([]);
+	const [isEdit, setIsEdit] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -19,12 +24,15 @@ export default function UserInfo() {
 		}
 
 		const loadInfo = async () => {
+			setUserInfo({});
+			setStustatList({});
 			try {
 				// 권한에 따라 다른 api 호출
 				if (userRole === 'student') {
 					// 학생
 					const res = await api.get('/api/personal/student');
-					setUserInfo(res.data);
+					setUserInfo(res.data.student);
+					setStustatList(res.data.stustatList); // 학적 변동 내역
 				} else if (userRole === 'staff') {
 					// 직원
 					const res = await api.get('/api/personal/staff');
@@ -36,20 +44,26 @@ export default function UserInfo() {
 				}
 			} catch (e) {
 				console.error('내 정보 조회 실패' + e);
+				setUserInfo({});
+				setStustatList({});
 			}
 		};
 		loadInfo();
 	}, [user, userRole, navigate]);
 
-	// 권한 별 볼 수 있는 정보가 달라서, 필요한 테이블 별로 분리했습니다.
+	// 권한 별 볼 수 있는 정보가 달라서, 컴포넌트로 분리했습니다.
 	return (
 		<div>
-			{userRole === 'student' && <StudentInfoTable userInfo={userInfo} />} {/* 학생 */}
-			{userRole === 'professor' && <StudentInfoTable userInfo={userInfo} />} {/* 교수 */}
-			{userRole === 'staff' && <StudentInfoTable userInfo={userInfo} />} {/* 직원 */}
-			{/* 공통 인적사항 테이블 컴포넌트 */}
-			<InfoTable userInfo={userInfo} />
-			<button>수정하기</button>
+			{!isEdit && (
+				<div>
+					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />} {/* 학생 */}
+					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />} {/* 교수 */}
+					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />} {/* 직원 */}
+					<button onClick={() => setIsEdit(true)}>수정하기</button>
+				</div>
+			)}
+
+			{isEdit && <UpdateUserInfo userInfo={userInfo} setIsEdit={setIsEdit} />}
 		</div>
 	);
 }

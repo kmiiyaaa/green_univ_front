@@ -1,4 +1,6 @@
-export default function professorInfoTable({ userInfo }) {
+import InfoTable from "./infoTable";
+
+export default function ProfessorInfoTable({ userInfo }) {
 	return (
 		<div>
 			<table>
@@ -14,6 +16,8 @@ export default function professorInfoTable({ userInfo }) {
 					</tr>
 				</tbody>
 			</table>
+
+			<InfoTable userInfo={userInfo} />
 		</div>
 	);
 }
