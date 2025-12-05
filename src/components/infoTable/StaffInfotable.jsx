@@ -1,4 +1,7 @@
+import UserInfoTable from './UserInfoTable';
+
 export default function StaffInfoTable({ userInfo }) {
+	console.log('userinfo : ' + userInfo);
 	return (
 		<div>
 			<table>
@@ -12,7 +15,7 @@ export default function StaffInfoTable({ userInfo }) {
 				</tbody>
 			</table>
 
-			<InfoTable userInfo={userInfo} />
+			<UserInfoTable userInfo={userInfo} />
 		</div>
 	);
 }

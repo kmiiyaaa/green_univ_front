@@ -1,4 +1,5 @@
-import InfoTable from './infoTable';
+import UserInfoTable from "./UserInfoTable";
+
 
 export default function StudentInfoTable({ userInfo, stustatList }) {
 	return (
@@ -31,7 +32,7 @@ export default function StudentInfoTable({ userInfo, stustatList }) {
 				</tbody>
 			</table>
 
-			<InfoTable userInfo={userInfo} />
+			<UserInfoTable userInfo={userInfo} />
 
 			{stustatList.length > 0 && (
 				<div>

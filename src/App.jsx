@@ -15,8 +15,10 @@ import AllsubList from './pages/subject/AllSubList';
 import Subject from './pages/admin/Subject';
 import AllsubList2 from './pages/subject/AllSubList2';
 import AdminPage from './pages/admin/AdminPage';
-import Room2 from './pages/admin/Room2';
-import Subject2 from './pages/admin/Subject2';
+import College from './pages/admin/College';
+import Department from './pages/admin/Department';
+import CollTuit from './pages/admin/CollTuit';
+import Room from './pages/admin/Room';
 import CreateStudent from './pages/user/create/CreateStudent';
 import CreateStaff from './pages/user/create/CreateStaff';
 import CreateProfessor from './pages/user/create/CreateProfessor';
@@ -54,13 +56,18 @@ function App() {
 						<Route path="/tuilist" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 						<Route path="/tuilist/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 						<Route path="/tuilist/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
-						<Route path="/info/student" element={<UserInfo />} /> {/* 학생 내 정보 조회*/}
+						<Route path="/userInfo" element={<UserInfo />} /> {/*내 정보 조회*/}
 						<Route path="/createProfessor" element={<CreateProfessor />} />
 						<Route path="/createStaff" element={<CreateStaff />} />
 						<Route path="/createStudent" element={<CreateStudent />} />
 						{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 						<Route path="/subjectlist" element={<AllsubList2 />} />
 						<Route path="/adminform" element={<AdminPage />} />
+						<Route path="/room" element={<Room />} /> {/* 강의실 등록 */}
+						<Route path="/subject" element={<Subject />} /> {/* 강의 등록 */}
+						<Route path="/college" element={<College />} /> {/* 단과대 등록 */}
+						<Route path="/department" element={<Department />} /> {/* 학과 등록 */}
+						<Route path="/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
 						<Route path="/room" element={<Room2 />} />
 					</Route>
 				</Routes>
