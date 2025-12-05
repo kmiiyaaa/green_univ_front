@@ -21,13 +21,16 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 				tel: value.tel,
 				email: value.email,
 			});
+			
 			alert('수정이 완료되었습니다!');
+			setIsEdit(false);
 		} catch (err) {
-			const msg = err.response?.data?.message || '수정 실패';
-			alert(msg);
-			console.error(msg);
-		} finally {
-			// setIsEdit(false);
+			const serverMsg = err.response?.data?.message || '';
+			if (serverMsg.includes('비밀번호')) {
+				alert('비밀번호가 올바르지 않습니다.');
+			} else {
+				alert(serverMsg || '오류가 발생했습니다.');
+			}
 		}
 	};
 

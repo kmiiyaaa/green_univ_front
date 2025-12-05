@@ -41,19 +41,6 @@ export default function Login() {
 		}
 	};
 
-
-	// Jwtdecode 라이브러리
-	// 백에서 JWT build 하면서 넣은 값들 뽑아 쓰는 방법
-
-	// if (localStorage.getItem('token')) {
-	// 	const token = localStorage.getItem('token');
-	// 	const decoded = jwtDecode(token);
-
-	// 	console.log(decoded); // 전체 payload 출력
-	// 	console.log(decoded.sub); // userId
-	// 	console.log(decoded.role); // userRole
-	// }
-
 	return (
 		<div className="portal-login-card">
 			<h2 className="portal-login-title">포털 로그인</h2>
