@@ -20,7 +20,7 @@ export default function UserInfo() {
 	console.log(userRole);
 
 	useEffect(() => {
-		if (!localStorage.getItem('token')) {
+		if (user) {
 			// 권한 확인
 			alert('권한이 없는 페이지입니다. 로그인 해 주세요');
 			navigate('/', { replace: true });
