@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import api from '../../../api/httpClient';
-import UserFormLayout from '../../../components/admin/user/UserFormLayout';
-import CommonUserFields from '../../../components/admin/user/CommonUserFields';
+import CommonUserFields from '../../user/create/CommonUserFields';
 
 export default function StaffCreatePage() {
 	const [formData, setFormData] = useState({
@@ -42,17 +41,18 @@ export default function StaffCreatePage() {
 	};
 
 	return (
-		<UserFormLayout active="staff" title="직원 등록">
-			<form onSubmit={handleSubmit}>
+		<>
+			<div>
+				<h1>직원 등록</h1>
+			</div>
+			<form>
 				<table className="table--container">
 					<tbody>
 						<CommonUserFields formData={formData} onChange={handleChange} />
 					</tbody>
 				</table>
-				<div className="button--container">
-					<input type="submit" value="입력" />
-				</div>
+				<button onSubmit={handleSubmit}>등록</button>
 			</form>
-		</UserFormLayout>
+		</>
 	);
 }

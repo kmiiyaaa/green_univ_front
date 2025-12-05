@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import api from '../../../api/httpClient';
-import UserFormLayout from '../../../components/admin/user/UserFormLayout';
-import CommonUserFields from '../../../components/admin/user/CommonUserFields';
+import CommonUserFields from '../../user/create/CommonUserFields';
 
 export default function ProfessorCreatePage() {
 	const [formData, setFormData] = useState({
@@ -44,8 +43,11 @@ export default function ProfessorCreatePage() {
 	};
 
 	return (
-		<UserFormLayout active="professor" title="교수 등록">
-			<form onSubmit={handleSubmit}>
+		<>
+			<div>
+				<h1> 교수 등록</h1>
+			</div>
+			<form>
 				<table className="table--container">
 					<tbody>
 						{/* 공통 필드 */}
@@ -69,10 +71,8 @@ export default function ProfessorCreatePage() {
 						</tr>
 					</tbody>
 				</table>
-				<div className="button--container">
-					<input type="submit" value="입력" />
-				</div>
+				<button onSubmit={handleSubmit}>등록</button>
 			</form>
-		</UserFormLayout>
+		</>
 	);
 }
