@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { UserContext } from '../../../context/UserContext';
 import greenLogo from '../../../assets/green-university-logo.png';
+import '../../../assets/css/Header.css';
 
 // 역할별 헤더 메뉴 설정
 const HEADER_CONFIG = {
@@ -28,17 +29,15 @@ const HEADER_CONFIG = {
 	],
 };
 
-// 현재 URL 기준으로 어떤 상단 메뉴인지 찾기
 function getCurrentTopMenuKey(topMenus, pathname) {
 	const candidates = topMenus.filter((m) => m.path !== '/').sort((a, b) => b.path.length - a.path.length);
-
 	const found = candidates.find((m) => pathname.startsWith(m.path));
 	return found ? found.key : 'HOME';
 }
 
 export default function Header() {
 	const location = useLocation();
-	const { user, userRole } = useContext(UserContext); // userRole: 'student' | 'staff' | 'professor'
+	const { user, userRole } = useContext(UserContext);
 
 	const role = userRole || 'student';
 	const menus = HEADER_CONFIG[role] || HEADER_CONFIG.student;
@@ -46,52 +45,56 @@ export default function Header() {
 
 	return (
 		<>
-			{/* ===== 위쪽 로그인 정보 바 ===== */}
+			{/* ===== 1) 맨윗줄 진한 사용자 바 ===== */}
 			<div className="top-userbar">
 				<div className="top-userbar-inner">
-					{user && (
-						<ul className="top-userbar-list">
-							<li className="material--li">
-								<span className="material-symbols-outlined">account_circle</span>
-							</li>
-							<li>
+					{user ? (
+						<div className="top-userbar-right">
+							<span className="top-userbar-text">
 								{user.name}님 ({user.id})
-							</li>
-							<li className="divider">|</li>
-							<li className="material--li">
-								<span className="material-symbols-outlined">logout</span>
-							</li>
-							<li>
-								<a href="/logout" className="logout-link">
-									로그아웃
-								</a>
-							</li>
-						</ul>
+							</span>
+							<span className="top-userbar-divider">|</span>
+							<a href="/logout" className="top-userbar-link">
+								로그아웃
+							</a>
+						</div>
+					) : (
+						<div className="top-userbar-right">
+							<p>로그인 후 이용 가능</p>
+						</div>
 					)}
 				</div>
 			</div>
 
-			{/* ===== 아래 흰색 헤더 영역 ===== */}
-			<header className="header-wrapper">
-				<div className="header-inner">
-					{/* 로고 */}
-					<NavLink to="/" className="logo-area">
-						<img src={greenLogo} className="logo-image" />
+			{/* ===== 2) 아래 흰색 헤더 (현재 3영역 유지) ===== */}
+			<header className="gu-header">
+				<div className="gu-header-inner">
+					{/* LEFT */}
+					<NavLink to="/" className="gu-brand">
+						<img src={greenLogo} alt="Green University" className="gu-brand-logo" />
+						<div className="gu-brand-text">
+							<span className="gu-brand-en">GREEN UNIVERSITY</span>
+							<span className="gu-brand-ko">그린대학교 포털</span>
+						</div>
 					</NavLink>
-					{/* 상단 메뉴 */}
-					<nav className="top-nav">
+
+					{/* CENTER */}
+					<nav className="gu-nav">
 						{menus.map((menu) => (
 							<NavLink
 								key={menu.key}
 								to={menu.path}
 								className={({ isActive }) =>
-									['top-nav-item', currentTopKey === menu.key || isActive ? 'active' : ''].join(' ')
+									['gu-nav-item', currentTopKey === menu.key || isActive ? 'active' : ''].join(' ')
 								}
 							>
 								{menu.label}
 							</NavLink>
 						))}
 					</nav>
+
+					{/* RIGHT (아래쪽엔 간단 표시만 두고 싶으면 비워도 됨) */}
+					<div className="gu-user-mini">{user && <span className="gu-user-mini-text">{user.name}님</span>}</div>
 				</div>
 			</header>
 		</>
