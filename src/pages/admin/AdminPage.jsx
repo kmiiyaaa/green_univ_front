@@ -1,6 +1,6 @@
 // pages/AdminPage.jsx
-import Subject2 from './Subject2';
-import Room2 from './Room2';
+import Subject2 from './Subject';
+import Room2 from './Room';
 
 function AdminPage() {
 	return (
