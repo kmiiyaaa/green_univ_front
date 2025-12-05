@@ -1,5 +1,5 @@
 /* ===== 전체 래퍼 ===== */
-.portal-shell {
+.public-shell {
 	height: 100vh;
 	background-color: #e5e7eb; /* 바깥 회색 */
 	display: flex;
@@ -10,7 +10,7 @@
 }
 
 /* 메인 카드 레이아웃 */
-.portal-layout {
+.public-layout {
 	width: 100%;
 	max-width: 1180px;
 	height: 88vh;
@@ -25,7 +25,7 @@
 }
 
 /* ================= 왼쪽 영역 ================= */
-.portal-left {
+.public-left {
 	position: relative;
 	display: flex;
 	align-items: stretch;
@@ -34,7 +34,7 @@
 }
 
 /* 살짝 그라데이션 오버레이 */
-.portal-left::before {
+.public-left::before {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -43,7 +43,7 @@
 	pointer-events: none;
 }
 
-.portal-left-inner {
+.public-left-inner {
 	position: relative;
 	z-index: 1;
 	flex: 1;
@@ -53,7 +53,7 @@
 }
 
 /* 로고 + 로그인 묶음 (세로 가운데 + 가로 가운데 느낌) */
-.portal-left-main {
+.public-left-main {
 	margin: auto 0;
 	display: flex;
 	flex-direction: column;
@@ -62,13 +62,13 @@
 }
 
 /* ===== 로고 영역 ===== */
-.portal-logo-area {
+.public-logo-area {
 	display: flex;
 	align-items: center;
 	gap: 14px;
 }
 
-.portal-logo-image-wrap {
+.public-logo-image-wrap {
 	width: 64px;
 	height: 64px;
 	border-radius: 999px;
@@ -80,20 +80,20 @@
 	overflow: hidden;
 }
 
-.portal-logo-image {
+.public-logo-image {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 }
 
-.portal-logo-text {
+.public-logo-text {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	gap: 4px;
 }
 
-.portal-logo-en {
+.public-logo-en {
 	font-size: 12px;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
@@ -101,20 +101,20 @@
 	opacity: 0.85;
 }
 
-.portal-logo-ko {
+.public-logo-ko {
 	font-size: 18px;
 	font-weight: 700;
 	color: #f9fafb;
 }
 
 /* ===== 로그인 카드 ===== */
-.portal-login-wrapper {
+.public-login-wrapper {
 	width: 100%;
 	display: flex;
 	justify-content: center;
 }
 
-.portal-login-card {
+.public-login-card {
 	width: 100%;
 	max-width: 420px;
 	min-height: 250px;
@@ -127,7 +127,7 @@
 	flex-direction: column;
 }
 
-.portal-login-title {
+.public-login-title {
 	font-size: 15px;
 	font-weight: 700;
 	color: #0f172a;
@@ -135,25 +135,25 @@
 }
 
 /* 폼 */
-.portal-login-form {
+.public-login-form {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 }
 
-.portal-input-group {
+.public-input-group {
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
 }
 
-.portal-input-label {
+.public-input-label {
 	font-size: 12px;
 	font-weight: 600;
 	color: #6b7280;
 }
 
-.portal-input {
+.public-input {
 	border-radius: 999px;
 	border: 1px solid #d1d5db;
 	padding: 9px 14px;
@@ -163,18 +163,18 @@
 	transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
 }
 
-.portal-input::placeholder {
+.public-input::placeholder {
 	color: #9ca3af;
 }
 
-.portal-input:focus {
+.public-input:focus {
 	border-color: #22c55e;
 	background-color: #ffffff;
 	box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
 }
 
 /* 체크박스 / 옵션 */
-.portal-login-options {
+.public-login-options {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -182,20 +182,20 @@
 	color: #4b5563;
 }
 
-.portal-checkbox-label {
+.public-checkbox-label {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	cursor: pointer;
 }
 
-.portal-checkbox {
+.public-checkbox {
 	width: 14px;
 	height: 14px;
 }
 
 /* 버튼 */
-.portal-login-button {
+.public-login-button {
 	margin-top: 10px;
 	width: 100%;
 	border: none;
@@ -211,19 +211,19 @@
 	transition: transform 0.06s ease, box-shadow 0.18s ease, filter 0.12s ease;
 }
 
-.portal-login-button:hover {
+.public-login-button:hover {
 	filter: brightness(1.03);
 	box-shadow: 0 14px 30px rgba(22, 163, 74, 0.55);
 	transform: translateY(-1px);
 }
 
-.portal-login-button:active {
+.public-login-button:active {
 	transform: translateY(0);
 	box-shadow: none;
 }
 
 /* 링크 */
-.portal-login-links {
+.public-login-links {
 	margin-top: 10px;
 	display: flex;
 	justify-content: center;
@@ -232,7 +232,7 @@
 	font-size: 11px;
 }
 
-.portal-link-button {
+.public-link-button {
 	border: none;
 	background: none;
 	padding: 0;
@@ -241,16 +241,16 @@
 	cursor: pointer;
 }
 
-.portal-link-button:hover {
+.public-link-button:hover {
 	text-decoration: underline;
 }
 
-.portal-link-divider {
+.public-link-divider {
 	color: #d1d5db;
 }
 
 /* 푸터 */
-.portal-left-footer {
+.public-left-footer {
 	margin-top: auto;
 	font-size: 11px;
 	line-height: 1.5;
@@ -258,12 +258,12 @@
 }
 
 /* ================= 오른쪽 영역 ================= */
-.portal-right {
+.public-right {
 	flex: 1;
 	background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.06), #ffffff 55%);
 }
 
-.portal-right-inner {
+.public-right-inner {
 	height: 100%;
 	padding: 32px 44px 32px;
 	display: flex;
@@ -272,7 +272,7 @@
 }
 
 /* 오른쪽 전체 내용 래퍼 */
-.portal-right-main {
+.public-right-main {
 	max-width: 860px;
 	display: flex;
 	flex-direction: column;
@@ -280,46 +280,46 @@
 }
 
 /* 헤더: 왼쪽 로고와 비슷한 높이로 올라오게 */
-.portal-right-header {
+.public-right-header {
 	margin-top: 18px; /* 필요하면 12~24 사이로 조절해서 정밀하게 맞추면 됨 */
 }
 
-.portal-right-title {
+.public-right-title {
 	font-size: 24px;
 	letter-spacing: 0.2em;
 	font-weight: 800;
 	color: #111827;
 }
 
-.portal-right-subtitle {
+.public-right-subtitle {
 	margin-top: 6px;
 	font-size: 13px;
 	color: #6b7280;
 }
 
 /* 패널 영역 */
-.portal-right-panels {
+.public-right-panels {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 }
 
 /* 패널 공통 스타일 */
-.portal-panel {
+.public-panel {
 	border-radius: 14px;
 	border: 1px solid #e5e7eb;
 	padding: 18px 18px 14px;
 	background-color: #f9fafb;
 }
 
-.portal-panel-header {
+.public-panel-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
 	margin-bottom: 8px;
 }
 
-.portal-panel-header h2 {
+.public-panel-header h2 {
 	font-size: 14px;
 	font-weight: 700;
 	color: #0f172a;
@@ -338,14 +338,14 @@
 }
 
 /* 공지 리스트 */
-.portal-notice-list {
+.public-notice-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	font-size: 12px;
 }
 
-.portal-notice-list li {
+.public-notice-list li {
 	display: grid;
 	grid-template-columns: 52px 1fr 76px;
 	gap: 6px;
@@ -354,35 +354,35 @@
 	border-bottom: 1px solid #e5e7eb;
 }
 
-.portal-notice-list li:last-child {
+.public-notice-list li:last-child {
 	border-bottom: none;
 }
 
-.portal-notice-category {
+.public-notice-category {
 	font-size: 11px;
 	font-weight: 600;
 	color: #15803d;
 }
 
-.portal-notice-title {
+.public-notice-title {
 	color: #111827;
 }
 
-.portal-notice-date {
+.public-notice-date {
 	font-size: 11px;
 	color: #9ca3af;
 	text-align: right;
 }
 
 /* 학사 일정 리스트 */
-.portal-schedule-list {
+.public-schedule-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	font-size: 12px;
 }
 
-.portal-schedule-list li {
+.public-schedule-list li {
 	display: grid;
 	grid-template-columns: 96px 1fr;
 	gap: 8px;
@@ -390,50 +390,50 @@
 	border-bottom: 1px solid #e5e7eb;
 }
 
-.portal-schedule-list li:last-child {
+.public-schedule-list li:last-child {
 	border-bottom: none;
 }
 
-.portal-schedule-date {
+.public-schedule-date {
 	font-size: 12px;
 	color: #15803d;
 	font-weight: 600;
 }
 
-.portal-schedule-title {
+.public-schedule-title {
 	color: #111827;
 }
 
 /* ================= 반응형 ================= */
 @media (max-width: 1024px) {
-	.portal-layout {
+	.public-layout {
 		height: auto;
 		grid-template-columns: 1fr;
 	}
 
-	.portal-left {
+	.public-left {
 		min-height: 360px;
 	}
 
-	.portal-right-inner {
+	.public-right-inner {
 		padding: 24px 24px 28px;
 	}
 }
 
 @media (max-width: 640px) {
-	.portal-shell {
+	.public-shell {
 		padding: 0 12px;
 	}
 
-	.portal-left-inner {
+	.public-left-inner {
 		padding: 24px 20px 20px;
 	}
 
-	.portal-login-card {
+	.public-login-card {
 		padding: 22px 20px 18px;
 	}
 
-	.portal-right-inner {
+	.public-right-inner {
 		padding: 20px 18px 24px;
 	}
 }

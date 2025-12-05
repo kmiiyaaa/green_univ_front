@@ -9,14 +9,14 @@
 	align-items: center;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 	font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	width: 100%; /* 전체 너비 */
 }
 
-/* ✅ 화면 꽉 차게 */
 .top-userbar-inner {
 	width: 100%;
-	max-width: none; /* 중요 */
+	max-width: none;
 	margin: 0;
-	padding: 0 28px; /* 좌우 여백만 */
+	padding: 0 28px;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
@@ -51,24 +51,22 @@
 
 /* =========================
    2) MAIN WHITE HEADER
-   (기존 느낌 유지 + 풀폭)
 ========================= */
 .gu-header {
 	background: #ffffff;
 	border-bottom: 1px solid #e5e7eb;
 	box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
 	position: sticky;
-	top: 0;
+	top: 0; /* 스크롤해도 상단 고정 */
 	z-index: 50;
+	width: 100%; /* 전체 너비 */
 }
 
-/* ✅ 여기서 폭 제한 해제 */
 .gu-header-inner {
 	width: 100%;
-	max-width: none; /* 중요 */
-	margin: 0; /* 중요 */
+	max-width: none;
+	margin: 0;
 	padding: 14px 28px;
-
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -114,17 +112,10 @@
 .gu-nav {
 	display: flex;
 	align-items: center;
-
-	/* ✅ 메뉴 영역 폭을 사진처럼 확보 */
 	width: clamp(400px, 49vw, 600px);
 	margin: 0 auto;
-
-	/* ✅ 균등 간격으로 넓게 퍼지게 */
 	justify-content: space-evenly;
-
-	/* gap은 최소화 or 제거 */
 	gap: 0;
-
 	flex: 1;
 	min-width: 0;
 }
@@ -135,7 +126,7 @@
 	border-radius: 10px;
 	font-size: 17px;
 	font-weight: 700;
-	letter-spacing: -0.05em; /* 또는 0, -0.01em */
+	letter-spacing: -0.05em;
 	color: #111827;
 	text-decoration: none;
 	transition: background-color 0.15s ease, color 0.15s ease, transform 0.06s ease;
@@ -163,7 +154,7 @@
 	background: linear-gradient(90deg, #16a34a, #22c55e);
 }
 
-/* RIGHT mini (선택) */
+/* RIGHT mini */
 .gu-user-mini {
 	flex-shrink: 0;
 	font-size: 12px;

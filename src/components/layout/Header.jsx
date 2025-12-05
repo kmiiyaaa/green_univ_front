@@ -1,37 +1,13 @@
 import React, { useContext } from 'react';
-import '../../../assets/css/Header.css';
+import '../../assets/css/Header.css';
 import { NavLink, useLocation } from 'react-router-dom';
-import { UserContext } from '../../../context/UserContext';
-import greenLogo from '../../../assets/green-university-logo.png';
-import '../../../assets/css/Header.css';
+import { UserContext } from '../../context/UserContext';
+import { HEADER_MENUS } from '../../utils/menuConfig';
+import greenLogo from '../../assets/green-university-logo.png';
 
-// 역할별 헤더 메뉴 설정
-const HEADER_CONFIG = {
-	student: [
-		{ key: 'HOME', label: '홈', path: '/' },
-		{ key: 'MY', label: 'MY', path: '/student/my' },
-		{ key: 'COURSE', label: '수업', path: '/student/course' },
-		{ key: 'ENROLL', label: '수강신청', path: '/student/enroll' },
-		{ key: 'GRADE', label: '성적', path: '/student/grade' },
-		{ key: 'INFO', label: '학사정보', path: '/student/info' },
-	],
-	staff: [
-		{ key: 'HOME', label: '홈', path: '/' },
-		{ key: 'MY', label: 'MY', path: '/staff/my' },
-		{ key: 'MANAGE', label: '학사관리', path: '/staff/manage' },
-		{ key: 'REGISTER', label: '등록', path: '/staff/register' },
-		{ key: 'INFO', label: '학사정보', path: '/staff/info' },
-	],
-	professor: [
-		{ key: 'HOME', label: '홈', path: '/' },
-		{ key: 'MY', label: 'MY', path: '/prof/my' },
-		{ key: 'SUBJECT', label: '수업', path: '/subject/list/1' },
-		{ key: 'NOTICE', label: '학사정보', path: '/notice' },
-	],
-};
-
-function getCurrentTopMenuKey(topMenus, pathname) {
-	const candidates = topMenus.filter((m) => m.path !== '/').sort((a, b) => b.path.length - a.path.length);
+// 현재 경로에 맞는 메뉴 찾기
+function getCurrentTopMenuKey(menus, pathname) {
+	const candidates = menus.filter((m) => m.path !== '/portal').sort((a, b) => b.path.length - a.path.length);
 	const found = candidates.find((m) => pathname.startsWith(m.path));
 	return found ? found.key : 'HOME';
 }
@@ -41,7 +17,7 @@ export default function Header() {
 	const { user, userRole } = useContext(UserContext);
 
 	const role = userRole || 'student';
-	const menus = HEADER_CONFIG[role] || HEADER_CONFIG.student;
+	const menus = HEADER_MENUS[role] || HEADER_MENUS.student;
 	const currentTopKey = getCurrentTopMenuKey(menus, location.pathname);
 
 	return (
@@ -67,11 +43,11 @@ export default function Header() {
 				</div>
 			</div>
 
-			{/* ===== 2) 아래 흰색 헤더 (현재 3영역 유지) ===== */}
+			{/* ===== 2) 아래 흰색 헤더 (로고 + 탭 메뉴) ===== */}
 			<header className="gu-header">
 				<div className="gu-header-inner">
-					{/* LEFT */}
-					<NavLink to="/" className="gu-brand">
+					{/* LEFT 로고 */}
+					<NavLink to="/portal" className="gu-brand">
 						<img src={greenLogo} alt="Green University" className="gu-brand-logo" />
 						<div className="gu-brand-text">
 							<span className="gu-brand-en">GREEN UNIVERSITY</span>
@@ -79,7 +55,7 @@ export default function Header() {
 						</div>
 					</NavLink>
 
-					{/* CENTER */}
+					{/* CENTER 탭 메뉴 */}
 					<nav className="gu-nav">
 						{menus.map((menu) => (
 							<NavLink
@@ -94,7 +70,7 @@ export default function Header() {
 						))}
 					</nav>
 
-					{/* RIGHT (아래쪽엔 간단 표시만 두고 싶으면 비워도 됨) */}
+					{/* RIGHT 우측 간단 표시 */}
 					<div className="gu-user-mini">{user && <span className="gu-user-mini-text">{user.name}님</span>}</div>
 				</div>
 			</header>
