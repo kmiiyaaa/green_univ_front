@@ -1,138 +1,110 @@
+import React from 'react';
+import '../assets/css/Home.css';
+import Login from './user/Login';
+
 function Home() {
 	return (
-		<body>
-			<div class="d-flex justify-content-center align-items-start">
-				<div>
-					<img src="/images/main_photo.jpg" class="main--page--img" alt="학교 이미지" />
-					<div class="d-flex justify-content-center align-items-start">
-						<div class="main--page--div">
-							<div class="d-flex">
-								<div class="main--page--notice">
-									<h3>
-										<a href="/notice">공지사항</a>
-									</h3>
-									<div class="main--page--split"></div>
-									{/* 공지사항 테이블 */}
-									<table>
-										<tr>
-											<td>
-												<a href="/notice/read?id=${notice.id}">제목</a>
-											</td>
-											<td>내용</td>
-										</tr>
-									</table>
+		<div className="portal-shell">
+			<div className="portal-layout">
+				{/* ================= 왼쪽 - 로그인 영역 ================= */}
+				<section className="portal-left">
+					<div className="portal-left-inner">
+						<div className="portal-left-main">
+							{/* 로고/타이틀 */}
+							<header className="portal-logo-area">
+								<div className="portal-logo-image-wrap">
+									<img src="/green-university-logo.png" alt="GREEN UNIVERSITY" className="portal-logo-image" />
 								</div>
-								<div class="main--page--calander">
-									<h3>
-										<a href="/schedule">학사일정</a>
-									</h3>
-									<div class="main--page--split"></div>
-									{/* 학사일정 테이블 */}
-									<table>
-										<tr>
-											<td>제목</td>
-											<td>내용</td>
-										</tr>
-									</table>
+
+								<div className="portal-logo-text">
+									<span className="portal-logo-en">GREEN UNIVERSITY</span>
+									<span className="portal-logo-ko">그린대학교 포털</span>
 								</div>
-							</div>
+							</header>
+
+							{/* 로그인 컴포넌트 */}
+							<main className="portal-login-wrapper">
+								<Login />
+							</main>
 						</div>
-						<div>
-							{/* userRole에 따라 간단한 프로필 */}
-							<div class="main--page--profile">
-								<ul class="d-flex align-items-start">
-									<li>
-										<span class="material-symbols-rounded">person</span>
-									</li>
-									<li>사용자님, 환영합니다.</li>
-								</ul>
-								<hr />
-								{/* 학생 */}
-								<table>
-									<tr>
-										<td>이메일</td>
-									</tr>
-									<tr>
-										<td>소속</td>
-									</tr>
-									<tr>
-										<td>학기</td>
-									</tr>
-									<tr>
-										<td>학적상태</td>
-									</tr>
-								</table>
-								<div class="profile--button--div">
-									<a href="/info/student">
-										<button>마이페이지</button>
-									</a>
-									<a href="/logout">
-										<button>로그아웃</button>
-									</a>
-								</div>
-								{/* 직원 */}
-								<table>
-									<tr>
-										<td>이메일</td>
-									</tr>
-									<tr>
-										<td>소속</td>
-										<td>교직원</td>
-									</tr>
-								</table>
-								<div class="profile--button--div">
-									<a href="/info/staff">
-										<button>마이페이지</button>
-									</a>
-									<a href="/logout">
-										<button>로그아웃</button>
-									</a>
-								</div>
-								{/* 교수 */}
-								<table>
-									<tr>
-										<td>이메일</td>
-									</tr>
-									<tr>
-										<td>소속</td>
-									</tr>
-								</table>
-								<div class="profile--button--div">
-									<a href="/info/professor">
-										<button>마이페이지</button>
-									</a>
-									<a href="/logout">
-										<button>로그아웃</button>
-									</a>
-								</div>
-							</div>
-							<br />
-							{/* 업무 알림 여부에 따른 메시지 */}
-							<div class="main--page--info">
-								<ul class="d-flex align-items-start">
-									<li>
-										<span class="material-symbols-rounded">notifications_active</span>
-									</li>
-									<li>업무 알림</li>
-								</ul>
-								<p>
-									<a href="/break/list/staff">처리되지 않은 휴학 신청이 존재합니다.</a>
-								</p>
-							</div>
-							<div class="main--page--info">
-								<ul class="d-flex align-items-start">
-									<li>
-										<span class="material-symbols-rounded">notifications</span>
-									</li>
-									<li>업무 알림</li>
-								</ul>
-								<p>처리해야 할 업무가 없습니다.</p>
+
+						{/* 왼쪽 푸터 */}
+						<footer className="portal-left-footer">
+							<p>서울시 마포구 신촌로 176 그린대학교</p>
+							<p>Copyright © GREEN UNIVERSITY. All Rights Reserved.</p>
+						</footer>
+					</div>
+				</section>
+
+				{/* ================= 오른쪽 - 포털 안내/공지 영역 ================= */}
+				<section className="portal-right">
+					<div className="portal-right-inner">
+						<div className="portal-right-main">
+							<header className="portal-right-header">
+								<h1 className="portal-right-title">GREEN PORTAL</h1>
+								<p className="portal-right-subtitle">진리와 자유를 향한 그린의 도전</p>
+							</header>
+
+							<div className="portal-right-panels">
+								{/* 공지사항 */}
+								<section className="portal-panel">
+									<div className="portal-panel-header">
+										<h2>공지사항</h2>
+										<button className="panel-more-btn" type="button">
+											더보기 +
+										</button>
+									</div>
+
+									<ul className="portal-notice-list">
+										<li>
+											<span className="portal-notice-category">학사</span>
+											<span className="portal-notice-title">2025-1학기 수강신청 안내</span>
+											<span className="portal-notice-date">2025-02-01</span>
+										</li>
+										<li>
+											<span className="portal-notice-category">전체</span>
+											<span className="portal-notice-title">포털 시스템 점검 안내</span>
+											<span className="portal-notice-date">2025-01-25</span>
+										</li>
+										<li>
+											<span className="portal-notice-category">장학</span>
+											<span className="portal-notice-title">2025-1학기 국가장학금 신청</span>
+											<span className="portal-notice-date">2025-01-10</span>
+										</li>
+									</ul>
+								</section>
+
+								{/* 학사 일정 */}
+								<section className="portal-panel">
+									<div className="portal-panel-header">
+										<h2>학사 일정</h2>
+										<button className="panel-more-btn" type="button">
+											더보기 +
+										</button>
+									</div>
+
+									<ul className="portal-schedule-list">
+										<li>
+											<span className="portal-schedule-date">03.02 ~ 03.08</span>
+											<span className="portal-schedule-title">2025-1학기 수강정정 기간</span>
+										</li>
+										<li>
+											<span className="portal-schedule-date">03.10</span>
+											<span className="portal-schedule-title">2025-1학기 개강</span>
+										</li>
+										<li>
+											<span className="portal-schedule-date">04.22 ~ 04.26</span>
+											<span className="portal-schedule-title">중간고사 기간</span>
+										</li>
+									</ul>
+								</section>
 							</div>
 						</div>
 					</div>
-				</div>
+				</section>
 			</div>
-		</body>
+		</div>
 	);
 }
+
 export default Home;
