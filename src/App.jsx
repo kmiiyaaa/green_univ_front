@@ -19,6 +19,9 @@ import College from './pages/admin/College';
 import Department from './pages/admin/Department';
 import CollTuit from './pages/admin/CollTuit';
 import Room from './pages/admin/Room';
+import Index from './pages/Index';
+import { useEffect, useState } from 'react';
+import api from './api/httpClient';
 
 function MainLayout() {
 	const navigate = useNavigate();
@@ -41,15 +44,54 @@ function MainLayout() {
 }
 
 function App() {
+	const navigate = useNavigate();
+
+	const [user, setUser] = useState(null);
+	const [userRole, setUserRole] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
+	const [loginId, setLoginId] = useState('');
+	const [password, setPassword] = useState('');
+
+	// 로그인
+	useEffect(() => {
+		const loginUser = async () => {
+			try {
+				setLoading(true);
+				const res = await api.post('/auth/login', {
+					id: loginId,
+					password: password,
+				});
+				console.log('res.data', res.data);
+				const { id, userRole, accessToken } = res.data;
+				console.log('app-id', id);
+				console.log('app-userRole', userRole);
+				console.log('app-accessToken', accessToken);
+				if (accessToken) localStorage.setItem('token', accessToken);
+				if (id) setUser(id); // 유저 아이디 (기본키 저장)
+				if (userRole) setUserRole(userRole);
+				// navigate('/index', { replace: true });
+			} catch (err) {
+				console.error(err);
+				setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
+				alert('로그인 실패');
+			} finally {
+				setLoading(false);
+			}
+		};
+		loginUser();
+	}, []);
+
 	return (
 		<>
-			<UserProvider >
+			<UserProvider>
 				<Routes>
 					{/* 로그인: 헤더/푸터 없음 */}
 					<Route path="/" element={<Home />} />
 
 					{/* 그 외 페이지는 헤더+푸터 */}
 					<Route element={<MainLayout />}>
+						<Route path="/index" element={<Index />} />
 						<Route path="/tuilist" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 						<Route path="/tuilist/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 						<Route path="/tuilist/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}

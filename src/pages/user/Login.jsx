@@ -6,7 +6,10 @@ import { UserContext } from '../../context/UserContext';
 
 export default function Login() {
 	const navigate = useNavigate();
-	const { setUser, setUserRole, user } = useContext(UserContext);
+	//const { setUser, setUserRole, user } = useContext(UserContext);
+	const [user, setUser] = useState(null);
+	const [userRole, setUserRole] = useState(null);
+
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -26,12 +29,15 @@ export default function Login() {
 				id: loginId,
 				password: password,
 			});
+			console.log('res.data', res.data);
 			const { id, userRole, accessToken } = res.data;
+			console.log('id', id);
+			console.log('userRole', userRole);
+			console.log('accessToken', accessToken);
 			if (accessToken) localStorage.setItem('token', accessToken);
-			if (setUser) setUser(id); // 유저 아이디 (기본키 저장)
+			if (id) setUser(id); // 유저 아이디 (기본키 저장)
 			if (userRole) setUserRole(userRole);
-
-			// navigate('/userinfo', { replace: true });
+			navigate('/index', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
@@ -41,18 +47,9 @@ export default function Login() {
 		}
 	};
 
-
-	// Jwtdecode 라이브러리
-	// 백에서 JWT build 하면서 넣은 값들 뽑아 쓰는 방법
-
-	// if (localStorage.getItem('token')) {
-	// 	const token = localStorage.getItem('token');
-	// 	const decoded = jwtDecode(token);
-
-	// 	console.log(decoded); // 전체 payload 출력
-	// 	console.log(decoded.sub); // userId
-	// 	console.log(decoded.role); // userRole
-	// }
+	console.log('밖id', user);
+	console.log('밖userRole', userRole);
+	//console.log('밖accessToken', accessToken);
 
 	return (
 		<div className="portal-login-card">
