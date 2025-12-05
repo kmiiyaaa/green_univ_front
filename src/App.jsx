@@ -68,7 +68,6 @@ function App() {
 						<Route path="/college" element={<College />} /> {/* 단과대 등록 */}
 						<Route path="/department" element={<Department />} /> {/* 학과 등록 */}
 						<Route path="/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
-						<Route path="/room" element={<Room2 />} />
 					</Route>
 				</Routes>
 			</UserProvider>
