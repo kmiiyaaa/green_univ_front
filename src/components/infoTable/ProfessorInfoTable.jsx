@@ -1,4 +1,5 @@
-import InfoTable from "./infoTable";
+import UserInfoTable from "./UserInfoTable";
+import InfoTable from "./UserInfoTable";
 
 export default function ProfessorInfoTable({ userInfo }) {
 	return (
@@ -17,7 +18,7 @@ export default function ProfessorInfoTable({ userInfo }) {
 				</tbody>
 			</table>
 
-			<InfoTable userInfo={userInfo} />
+			<UserInfoTable userInfo={userInfo} />
 		</div>
 	);
 }

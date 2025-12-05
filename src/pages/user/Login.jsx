@@ -30,7 +30,7 @@ export default function Login() {
 			if (accessToken) localStorage.setItem('token', accessToken);
 			if (setUser) setUser(id); // 유저 아이디 (기본키 저장)
 			if (userRole) setUserRole(userRole);
-			navigate('/', { replace: true });
+			navigate('/userinfo', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
