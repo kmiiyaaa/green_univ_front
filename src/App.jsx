@@ -1,24 +1,46 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet, useNavigate } from 'react-router-dom';
 import './App.css';
 import { UserProvider } from './context/UserProvider';
+
 import Home from './pages/Home';
+import TuiList from './pages/tuition/TuiList';
+
 import Footer from './components/layout/mainLayout/Footer';
 import Header from './components/layout/mainLayout/Header';
-import TuiList from './pages/tuition/TuiList';
+
+function MainLayout() {
+	const navigate = useNavigate();
+
+	const handleLogout = () => {
+		const ok = window.confirm('정말 로그아웃 하시겠습니까?');
+		if (!ok) return;
+
+		localStorage.removeItem('token');
+		navigate('/', { replace: true });
+	};
+
+	return (
+		<>
+			<Header onLogout={handleLogout} />
+			<Outlet />
+			<Footer />
+		</>
+	);
+}
 
 function App() {
 	return (
-		<>
-			<UserProvider>
-				<div className="App"></div>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/h" element={<Header />} />
-					<Route path="/f" element={<Footer />} />
-					<Route path="/tuilist" element={<TuiList/>} />
-				</Routes>
-			</UserProvider>
-		</>
+		<UserProvider>
+			<Routes>
+				{/* 로그인: 헤더/푸터 없음 */}
+				<Route path="/" element={<Home />} />
+
+				{/* 그 외 페이지는 헤더+푸터 */}
+				<Route element={<MainLayout />}>
+					<Route path="/tuilist" element={<TuiList />} />
+				</Route>
+			</Routes>
+		</UserProvider>
 	);
 }
 

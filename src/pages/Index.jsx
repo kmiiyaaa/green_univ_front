@@ -1,4 +1,4 @@
-function Home() {
+function Index() {
 	return (
 		<body>
 			<div class="d-flex justify-content-center align-items-start">
@@ -135,4 +135,4 @@ function Home() {
 		</body>
 	);
 }
-export default Home;
+export default Index;

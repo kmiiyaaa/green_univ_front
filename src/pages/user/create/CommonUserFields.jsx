@@ -1,4 +1,3 @@
-// src/components/admin/user/CommonUserFields.jsx
 export default function CommonUserFields({ formData, onChange }) {
 	return (
 		<>

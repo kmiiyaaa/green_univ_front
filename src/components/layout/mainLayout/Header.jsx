@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import greenLogo from '../assets/green_university_logo.png';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../../context/UserContext';
+import greenLogo from '../../../assets/green-university-logo.png';
 
 // 역할별 헤더 메뉴 설정
 const HEADER_CONFIG = {
@@ -31,6 +31,7 @@ const HEADER_CONFIG = {
 // 현재 URL 기준으로 어떤 상단 메뉴인지 찾기
 function getCurrentTopMenuKey(topMenus, pathname) {
 	const candidates = topMenus.filter((m) => m.path !== '/').sort((a, b) => b.path.length - a.path.length);
+
 	const found = candidates.find((m) => pathname.startsWith(m.path));
 	return found ? found.key : 'HOME';
 }
@@ -61,7 +62,6 @@ export default function Header() {
 								<span className="material-symbols-outlined">logout</span>
 							</li>
 							<li>
-								{/* 서버에서 /logout 처리 */}
 								<a href="/logout" className="logout-link">
 									로그아웃
 								</a>
@@ -76,9 +76,8 @@ export default function Header() {
 				<div className="header-inner">
 					{/* 로고 */}
 					<NavLink to="/" className="logo-area">
-						<img src={greenLogo} alt="GREEN UNIVERSITY" className="logo-image" />
+						<img src={greenLogo} className="logo-image" />
 					</NavLink>
-
 					{/* 상단 메뉴 */}
 					<nav className="top-nav">
 						{menus.map((menu) => (
