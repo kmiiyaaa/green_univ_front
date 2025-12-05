@@ -41,7 +41,7 @@ function MainLayout() {
 function App() {
 	return (
 		<>
-			<UserProvider>
+			<UserProvider >
 				<Routes>
 					{/* 로그인: 헤더/푸터 없음 */}
 					<Route path="/" element={<Home />} />
@@ -51,7 +51,7 @@ function App() {
 						<Route path="/tuilist" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 						<Route path="/tuilist/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 						<Route path="/tuilist/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
-						<Route path="/info/student" element={<UserInfo />} /> {/* 학생 내 정보 조회*/}
+						<Route path="/userInfo" element={<UserInfo />} /> {/*내 정보 조회*/}
 						{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 						<Route path="/subjectlist" element={<AllsubList2 />} />
 						<Route path="/adminform" element={<AdminPage />} />

@@ -19,7 +19,8 @@ export default function UserInfo() {
 		if (!user || !userRole) {
 			// 권한 확인
 			alert('권한이 없는 페이지입니다. 로그인 해 주세요');
-			navigate('/login', { replace: true });
+			console.log('role : ' + userRole);
+			navigate('/', { replace: true });
 			return;
 		}
 
@@ -54,15 +55,15 @@ export default function UserInfo() {
 	// 권한 별 볼 수 있는 정보가 달라서, 컴포넌트로 분리했습니다.
 	return (
 		<div>
-			{!isEdit && (
-				<div>
-					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />} {/* 학생 */}
-					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />} {/* 교수 */}
-					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />} {/* 직원 */}
-					<button onClick={() => setIsEdit(true)}>수정하기</button>
-				</div>
-			)}
-
+			내 정보 조회
+			{/* {!isEdit && ( */}
+			<div>
+				{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />} {/* 학생 */}
+				{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />} {/* 교수 */}
+				{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />} {/* 직원 */}
+				<button onClick={() => setIsEdit(true)}>수정하기</button>
+			</div>
+			{/* )} */}
 			{isEdit && <UpdateUserInfo userInfo={userInfo} setIsEdit={setIsEdit} />}
 		</div>
 	);
