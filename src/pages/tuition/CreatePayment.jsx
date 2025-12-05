@@ -19,7 +19,7 @@ export default function CreatePayment() {
 		}
 	}, [user, userRole, navigate]);
 
-	const createTuition = async () => {
+	const submitTuition = async () => {
 		try {
 			const res = await api.get('/tuition/create');
 			setInsertCount(res.data);
@@ -31,7 +31,7 @@ export default function CreatePayment() {
 
 	return (
 		<div>
-			<button onClick={() => createTuition()}>등록금 고지서 발송</button>
+			<button onClick={() => submitTuition()}>등록금 고지서 발송</button>
 		</div>
 	);
 }
