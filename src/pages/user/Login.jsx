@@ -6,7 +6,6 @@ import { UserContext } from '../../context/UserContext';
 export default function Login() {
 	const navigate = useNavigate();
 	const { setUser, setUserRole } = useContext(UserContext);
-
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -36,10 +35,11 @@ export default function Login() {
 			if (setUser) setUser(user);
 			if (setUserRole) setUserRole(role);
 
-			navigate('/index', { replace: true });
+			navigate('/', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
+			alert(error);
 		} finally {
 			setLoading(false);
 		}
