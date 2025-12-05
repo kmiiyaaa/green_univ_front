@@ -10,6 +10,7 @@ import Header from './components/layout/mainLayout/Header';
 import Payment from './pages/tuition/Payment';
 import CreatePayment from './pages/tuition/CreatePayment';
 import UserInfo from './pages/user/info/UserInfo';
+import Index from './pages/Index';
 
 import AllsubList from './pages/subject/AllSubList';
 import Subject from './pages/admin/Subject';
@@ -60,6 +61,7 @@ function App() {
 						<Route path="/createProfessor" element={<CreateProfessor />} />
 						<Route path="/createStaff" element={<CreateStaff />} />
 						<Route path="/createStudent" element={<CreateStudent />} />
+						<Route path="/index" element={<Index />} />
 						{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 						<Route path="/subjectlist" element={<AllsubList2 />} />
 						<Route path="/adminform" element={<AdminPage />} />
