@@ -45,7 +45,7 @@ export default function ProfessorCreatePage() {
 
 	return (
 		<UserFormLayout active="professor" title="교수 등록">
-			<form onSubmit={handleSubmit}>
+			<form>
 				<table className="table--container">
 					<tbody>
 						{/* 공통 필드 */}
@@ -69,9 +69,7 @@ export default function ProfessorCreatePage() {
 						</tr>
 					</tbody>
 				</table>
-				<div className="button--container">
-					<input type="submit" value="입력" />
-				</div>
+				<button onSubmit={handleSubmit}>등록</button>
 			</form>
 		</UserFormLayout>
 	);

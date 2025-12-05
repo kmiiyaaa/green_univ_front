@@ -43,15 +43,13 @@ export default function StaffCreatePage() {
 
 	return (
 		<UserFormLayout active="staff" title="직원 등록">
-			<form onSubmit={handleSubmit}>
+			<form>
 				<table className="table--container">
 					<tbody>
 						<CommonUserFields formData={formData} onChange={handleChange} />
 					</tbody>
 				</table>
-				<div className="button--container">
-					<input type="submit" value="입력" />
-				</div>
+				<button onSubmit={handleSubmit}>등록</button>
 			</form>
 		</UserFormLayout>
 	);

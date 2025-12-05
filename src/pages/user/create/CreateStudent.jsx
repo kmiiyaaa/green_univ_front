@@ -2,6 +2,7 @@ import { useState } from 'react';
 import api from '../../../api/httpClient';
 import UserFormLayout from '../../../components/admin/user/UserFormLayout';
 import CommonUserFields from '../../../components/admin/user/CommonUserFields';
+import InputForm from '../../../components/form/InputForm';
 
 export default function CreateStudent() {
 	const [formData, setFormData] = useState({
@@ -48,48 +49,18 @@ export default function CreateStudent() {
 
 	return (
 		<UserFormLayout active="student" title="학생 등록">
-			<form onSubmit={handleSubmit}>
+			<form>
 				<table className="table--container">
 					<tbody>
 						{/* 공통 필드 */}
 						<CommonUserFields formData={formData} onChange={handleChange} />
 
 						{/* 학생 전용 필드 */}
-						<tr>
-							<td>
-								<label htmlFor="deptId">과 ID</label>
-							</td>
-							<td>
-								<input
-									type="text"
-									name="deptId"
-									id="deptId"
-									className="input--box"
-									value={formData.deptId}
-									onChange={handleChange}
-								/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<label htmlFor="entranceDate">입학일</label>
-							</td>
-							<td>
-								<input
-									type="text"
-									name="entranceDate"
-									id="entranceDate"
-									className="input--box"
-									value={formData.entranceDate}
-									onChange={handleChange}
-								/>
-							</td>
-						</tr>
+						<InputForm name="deptId" value={formData.deptId} onChange={handleChange} />
+						<InputForm name="entranceDate" value={formData.entranceDate} onChange={handleChange} />
 					</tbody>
 				</table>
-				<div className="button--container">
-					<input type="submit" value="입력" />
-				</div>
+				<button onSubmit={handleSubmit}>등록</button>
 			</form>
 		</UserFormLayout>
 	);
