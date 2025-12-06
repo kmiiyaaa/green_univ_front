@@ -12,7 +12,7 @@ function getCurrentTopMenuKey(menus, pathname) {
 	return found ? found.key : 'HOME';
 }
 
-export default function Header() {
+export default function Header({ handleLogout }) {
 	const location = useLocation();
 	const { user, userRole } = useContext(UserContext);
 
@@ -28,12 +28,12 @@ export default function Header() {
 					{user ? (
 						<div className="top-userbar-right">
 							<span className="top-userbar-text">
-								{user.name}님 ({user.id})
+								{user.name}님 ({user})
 							</span>
 							<span className="top-userbar-divider">|</span>
-							<a href="/logout" className="top-userbar-link">
+							<button onClick={handleLogout} className="top-userbar-link">
 								로그아웃
-							</a>
+							</button>
 						</div>
 					) : (
 						<div className="top-userbar-right">

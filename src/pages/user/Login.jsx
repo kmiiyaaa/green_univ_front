@@ -5,19 +5,18 @@ import { UserContext } from '../../context/UserContext';
 
 export default function Login() {
 	const navigate = useNavigate();
-	const { user, setUser, userRole, setUserRole, token, setToken } = useContext(UserContext);
-	// const [user, setUser] = useState(null);
-	// const [userRole, setUserRole] = useState(null);
+	const { setUser, setUserRole, setToken } = useContext(UserContext);
 
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [error, setError] = useState(null);
 
+	// 로그인
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setError('');
-
+		setError(null);
+		setLoading(false);
 		if (!loginId || !password) {
 			setError('아이디와 비밀번호를 입력해주세요.');
 			return;
@@ -28,15 +27,16 @@ export default function Login() {
 				id: loginId,
 				password: password,
 			});
-			console.log('res.data', res.data);
+			console.log('로그인res.data', res.data); // id, userRole, accessToken
 			const { id, userRole, accessToken } = res.data;
-			console.log('id', id);
+			console.log('id', id); //
 			console.log('userRole', userRole);
-			console.log('accessToken', accessToken);
-			if (accessToken) localStorage.setItem('token', accessToken);
+			console.log('accessToken', accessToken); // 모두 변수 저장됨
+			if (accessToken) setToken(accessToken);
+			localStorage.setItem('token', accessToken);
 			if (id) setUser(id); // 유저 아이디 (기본키 저장)
 			if (userRole) setUserRole(userRole);
-			navigate('/index', { replace: true });
+			navigate('/portal', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
@@ -45,10 +45,6 @@ export default function Login() {
 			setLoading(false);
 		}
 	};
-
-	console.log('밖id', user);
-	console.log('밖userRole', userRole);
-	//console.log('밖accessToken', accessToken);
 
 	return (
 		<div className="public-login-card">

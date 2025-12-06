@@ -1,42 +1,50 @@
 import { useContext, useEffect, useState } from 'react';
-// import { UserContext } from '../../../context/UserContext';
+import { UserContext } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/httpClient';
 import StudentInfoTable from '../../../components/infoTable/StudentInfoTable';
 import ProfessorInfoTable from '../../../components/infoTable/ProfessorInfoTable';
 import StaffInfoTable from '../../../components/infoTable/StaffInfotable';
 import UpdateUserInfo from '../../../components/infoTable/UpdateUserInfo';
-import { jwtDecode } from 'jwt-decode';
-import { UserContext } from '../../../context/UserContext';
 
 export default function UserInfo() {
-	const { user, userRole } = useContext(UserContext);
+	const { userRole, token } = useContext(UserContext);
 	const [userInfo, setUserInfo] = useState({});
-	const [stustatList, setStustatList] = useState([]);
+	const [stustatList, setStustatList] = useState([]); // 학생 학적 변동 목록
 	const [isEdit, setIsEdit] = useState(false);
 	const navigate = useNavigate();
 
-	const token = localStorage?.getItem('token'); // 토큰 확인
-	//const role = token ? jwtDecode(token)?.role : null;
+	//
+	const formatStatList = (list) => {
+		if (!list || list.length === 0) return [];
+		return list.map((stat) => ({
+			id: stat.id || Math.random(), // key prop을 위한 고유값 필요 ..
+			'변동 일자': stat.fromDate,
+			'변동 구분': stat.status,
+			세부: stat.detail,
+			'승인 여부': stat.adopt,
+			'복학 예정 연도': stat.toYear,
+			'복학 예정 학기': stat.toSemester,
+			원본데이터: stat,
+		}));
+	};
 
 	useEffect(() => {
-		if (!localStorage.getItem('token')) {
-			// 권한 확인
+		if (!token) {
 			alert('권한이 없는 페이지입니다. 로그인 해 주세요');
 			navigate('/', { replace: true });
 			return;
 		}
 
 		const loadInfo = async () => {
-			setUserInfo({});
-			setStustatList({});
 			try {
 				// 권한에 따라 다른 api 호출
 				if (userRole === 'student') {
 					// 학생
 					const res = await api.get('/personal/info/student');
+					console.log('학생info: ', res.data);
 					setUserInfo(res.data.student);
-					setStustatList(res.data.stustatList); // 학적 변동 내역
+					setStustatList(formatStatList(res.data.stuStat));
 				} else if (userRole === 'staff') {
 					// 직원
 					const res = await api.get('/personal/info/staff');
@@ -47,22 +55,22 @@ export default function UserInfo() {
 					setUserInfo(res.data.professor);
 				}
 			} catch (e) {
-				console.error('내 정보 조회 실패' + e);
+				console.error('정보 조회 실패' + e);
 				setUserInfo({});
 				setStustatList([]);
 			}
 		};
 		loadInfo();
-	}, []);
+	}, [userRole, token, navigate]);
 
 	return (
 		<div>
 			내 정보 조회
 			{!isEdit && (
 				<div>
-					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />} {/* 학생 */}
-					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />} {/* 교수 */}
-					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />} {/* 직원 */}
+					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />}
+					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />}
+					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />}
 					<button onClick={() => setIsEdit(true)}>수정하기</button>
 				</div>
 			)}
