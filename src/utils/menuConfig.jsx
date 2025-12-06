@@ -2,7 +2,7 @@
 export const HEADER_MENUS = {
 	student: [
 		{ key: 'HOME', label: '홈', path: '/portal' },
-		{ key: 'MY', label: 'MY', path: '/student/my' },
+		{ key: 'MY', label: 'MY', path: '/user/info' },
 		{ key: 'COURSE', label: '수업', path: '/student/course' },
 		{ key: 'ENROLL', label: '수강신청', path: '/student/enroll' },
 		{ key: 'GRADE', label: '성적', path: '/student/grade' },
@@ -10,14 +10,14 @@ export const HEADER_MENUS = {
 	],
 	staff: [
 		{ key: 'HOME', label: '홈', path: '/portal' },
-		{ key: 'MY', label: 'MY', path: '/staff/my' },
+		{ key: 'MY', label: 'MY', path: '/user/info' },
 		{ key: 'MANAGE', label: '학사관리', path: '/staff/manage' },
 		{ key: 'REGISTER', label: '등록', path: '/staff/register' },
 		{ key: 'INFO', label: '학사정보', path: '/staff/info' },
 	],
 	professor: [
 		{ key: 'HOME', label: '홈', path: '/portal' },
-		{ key: 'MY', label: 'MY', path: '/prof/my' },
+		{ key: 'MY', label: 'MY', path: '/user/info' },
 		{ key: 'SUBJECT', label: '수업', path: '/subject/list' },
 		{ key: 'NOTICE', label: '학사정보', path: '/notice' },
 	],
