@@ -58,9 +58,9 @@ function App() {
 						<Route path="/tuilist/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 						<Route path="/tuilist/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
 						<Route path="/userInfo" element={<UserInfo />} /> {/*내 정보 조회*/}
-						<Route path="/createProfessor" element={<CreateProfessor />} />
-						<Route path="/createStaff" element={<CreateStaff />} />
-						<Route path="/createStudent" element={<CreateStudent />} />
+						<Route path="/createProfessor" element={<CreateProfessor />} /> {/* 교수 등록*/}
+						<Route path="/createStaff" element={<CreateStaff />} /> {/* 교직원 등록*/}
+						<Route path="/createStudent" element={<CreateStudent />} /> {/* 학생 등록*/}
 						<Route path="/index" element={<Index />} />
 						{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 						<Route path="/subjectlist" element={<AllsubList2 />} />
