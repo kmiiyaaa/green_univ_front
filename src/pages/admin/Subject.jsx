@@ -1,123 +1,134 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
-import '../../assets/css/Subject.css';
-import { useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import InputForm from '../../components/form/InputForm';
+import DataTable from '../../components/table/DataTable';
 
-function Subject() {
-	const { user, userRole, token } = useContext(UserContext);
-	const [subject, setSubject] = useState([]); // 강의
-	const [subjectList, setSubjectList] = useState([]); // 전체 강의
+const Subject2 = () => {
+	// 강의 전용 상태 관리
+	const [formData, setFormData] = useState({
+		name: '',
+		professorId: '',
+		roomId: '',
+		deptId: '',
+		type: '전공',
+		subYear: '',
+		semester: '',
+		subDay: '월',
+		startTime: '',
+		endTime: '',
+		grades: '',
+		capacity: '',
+	});
 
-	// 강의 입력
-	const handleSubject = async (e) => {
-		e.preventDefault();
-		console.log('강의등록');
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({ ...formData, [name]: value });
+	};
+
+	const handleSubmit = async () => {
 		try {
-			// {} 안에 post로 보낼 객체 넣어야함
-			const res = await api.post('/admin/subject', {});
-			setSubjectList(res.data);
-			console.log(res.data);
+			const res = await api.post('/admin/subject', formData);
+			console.log('강의 등록 성공:', res.data);
+			alert('강의 등록 완료!');
+			// 필요하면 여기서 입력창 초기화 or 페이지 이동
 		} catch (e) {
-			console.error(e);
+			console.error('강의 등록 실패:', e);
 		}
 	};
 
+	// 강의 목록 가져오기
+	const [subjectList, setSubjectList] = useState([]);
+
 	useEffect(() => {
-		// 강의 목록 조회
 		const loadSubject = async () => {
 			try {
-				const res = api.get('/admin/subject');
-				setSubjectList(res.data);
-				console.log(res.data);
+				const res = await api.get('/admin/subject');
+				//console.log(res.data);
+				const rawData = res.data.subjectList;
+				console.log(rawData);
+				const formattedData = rawData.map((sub) => ({
+					id: sub.id,
+					강의명: sub.name,
+					교수: sub.professor.name,
+					강의실: sub.department.id,
+					학과ID: sub.department.name,
+					구분: sub.type,
+					연도: sub.subYear,
+					학기: sub.semester,
+					시간: sub.startTime,
+					이수학점: sub.grades,
+					정원: sub.capacity,
+					신청인원: sub.numOfStudent,
+					원본데이터: sub,
+				}));
+
+				setSubjectList(formattedData);
+				console.log('가공된 데이터:', formattedData);
 			} catch (e) {
-				console.error(e);
+				console.error('강의 목록 로드 실패:', e);
 			}
 		};
 		loadSubject();
-	}, [user]);
+	}, []);
+
+	const headers = [
+		'id',
+		'강의명',
+		'교수',
+		'강의실',
+		'학과ID',
+		'구분',
+		'연도',
+		'학기',
+		'시간',
+		'이수학점',
+		'정원',
+		'신청인원',
+	];
 
 	return (
-		<>
-			<main>
-				<h1>강의</h1>
-				<div className="split--div"></div>
-				<div className="select--button">
-					<a href="/admin/subject?crud=insert" className="button">
-						등록
-					</a>
-					<a href="/admin/subject?crud=update" className="button">
-						수정
-					</a>
-					<a href="/admin/subject?crud=delete" className="button">
-						삭제
-					</a>
+		<div className="form-container">
+			<h3>강의 등록</h3>
+			<div className="subject--form">
+				<InputForm label="강의명" name="name" value={formData.name} onChange={handleChange} />
+				<InputForm label="교수ID" name="professorId" value={formData.professorId} onChange={handleChange} />
+				<InputForm label="강의실ID" name="roomId" value={formData.roomId} onChange={handleChange} />
+				<InputForm label="학과ID" name="deptId" value={formData.deptId} onChange={handleChange} />
+
+				{/* 라디오/Select는 InputForm으로 만들기 애매해서 직접 작성 (나중에 이것도 분리 가능) */}
+				<div className="input-group">
+					<label>이수 구분 </label>
+					<label>
+						<input type="radio" name="type" value="전공" checked={formData.type === '전공'} onChange={handleChange} />{' '}
+						전공
+					</label>
+					<label>
+						<input type="radio" name="type" value="교양" checked={formData.type === '교양'} onChange={handleChange} />{' '}
+						교양
+					</label>
 				</div>
 
-				<h2>강의 입력</h2>
-				<form className="form--container">
-					<ul className="d-flex">
-						<li>
-							<span className="material-symbols-outlined">school</span>
-						</li>
-						<li>
-							<span className="insert">등록하기</span>
-						</li>
-					</ul>
-					<div className="subject--form">
-						<input type="text" className="input--box" id="name" name="name" placeholder="강의명을 입력하세요" />
-						<br />
-						<input
-							type="text"
-							className="input--box"
-							id="professorId"
-							name="professorId"
-							placeholder="교수ID를 입력하세요"
-						/>
-						<br />
-						<input type="text" className="input--box" id="roomId" name="roomId" placeholder="강의실을 입력하세요" />
-						<br />
-						<input type="text" className="input--box" id="deptId" name="deptId" placeholder="학과ID를 입력하세요" />
-						<br />
-						<label>전공</label>
-						<input type="radio" id="major" name="type" value="전공" />
-						<label>교양</label>
-						<input type="radio" id="culture" name="type" value="교양" />
-						<br />
-						<input type="text" className="input--box" id="subYear" name="subYear" placeholder="연도를 입력하세요" />
-						<br />
-						<input type="text" className="input--box" id="semester" name="semester" placeholder="학기를 입력하세요" />
-						<br />
-						<select name="subDay" className="input--box">
-							<option value="월">월</option>
-							<option value="화">화</option>
-							<option value="수">수</option>
-							<option value="목">목</option>
-							<option value="금">금</option>
-						</select>
-						<input
-							type="text"
-							className="input--box"
-							id="startTime"
-							name="startTime"
-							placeholder="시작시간을 입력하세요"
-						/>
-						<br />
-						<input type="text" className="input--box" id="endTime" name="endTime" placeholder="종료시간을 입력하세요" />
-						<br />
-						<input type="text" className="input--box" id="grades" name="grades" placeholder="학점을 입력하세요" />
-						<br />
-						<input type="text" className="input--box" id="capacity" name="capacity" placeholder="정원 입력하세요" />
-						<br />
-						<button onClick={handleSubject} className="button">
-							입력
-						</button>
-					</div>
-				</form>
-			</main>
-		</>
-	);
-}
+				<InputForm label="연도" name="subYear" value={formData.subYear} onChange={handleChange} />
+				<InputForm label="학기" name="semester" value={formData.semester} onChange={handleChange} />
 
-export default Subject;
+				<button onClick={handleSubmit} className="button">
+					강의 등록
+				</button>
+			</div>
+
+			<h3>강의 목록</h3>
+			<div>
+				<DataTable
+					headers={headers}
+					data={subjectList}
+					onRowClick={(row) => {
+						// row에는 위에서 가공한 한글 키들이 들어있음
+						console.log('클릭한 강의:', row.강의);
+						// 상세페이지 이동 시 row.id나 row.원본데이터 사용 가능
+					}}
+				/>
+			</div>
+		</div>
+	);
+};
+export default Subject2;

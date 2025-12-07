@@ -2,20 +2,21 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
-// import { jwtDecode } from 'jwt-decode';
 
 export default function Login() {
 	const navigate = useNavigate();
-	const { setUser, setUserRole, user } = useContext(UserContext);
+	const { setUser, setUserRole, setToken } = useContext(UserContext);
+
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [error, setError] = useState(null);
 
+	// 로그인
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setError('');
-
+		setError(null);
+		setLoading(false);
 		if (!loginId || !password) {
 			setError('아이디와 비밀번호를 입력해주세요.');
 			return;
@@ -26,12 +27,16 @@ export default function Login() {
 				id: loginId,
 				password: password,
 			});
+			console.log('로그인res.data', res.data); // id, userRole, accessToken
 			const { id, userRole, accessToken } = res.data;
-			if (accessToken) localStorage.setItem('token', accessToken);
-			if (setUser) setUser(id); // 유저 아이디 (기본키 저장)
+			console.log('id', id); //
+			console.log('userRole', userRole);
+			console.log('accessToken', accessToken); // 모두 변수 저장됨
+			if (accessToken) setToken(accessToken);
+			localStorage.setItem('token', accessToken);
+			if (id) setUser(id); // 유저 아이디 (기본키 저장)
 			if (userRole) setUserRole(userRole);
-
-			// navigate('/userinfo', { replace: true });
+			navigate('/portal', { replace: true });
 		} catch (err) {
 			console.error(err);
 			setError('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
@@ -42,60 +47,60 @@ export default function Login() {
 	};
 
 	return (
-		<div className="portal-login-card">
-			<h2 className="portal-login-title">포털 로그인</h2>
+		<div className="public-login-card">
+			<h2 className="public-login-title">포털 로그인</h2>
 
-			<form onSubmit={handleSubmit} className="portal-login-form">
-				<div className="portal-input-group">
-					<label htmlFor="loginId" className="portal-input-label">
+			<form onSubmit={handleSubmit} className="public-login-form">
+				<div className="public-input-group">
+					<label htmlFor="loginId" className="public-input-label">
 						아이디
 					</label>
 					<input
 						id="loginId"
 						type="text"
-						className="portal-input"
+						className="public-input"
 						placeholder="아이디를 입력하세요"
 						value={loginId}
 						onChange={(e) => setLoginId(e.target.value)}
 					/>
 				</div>
 
-				<div className="portal-input-group">
-					<label htmlFor="password" className="portal-input-label">
+				<div className="public-input-group">
+					<label htmlFor="password" className="public-input-label">
 						비밀번호
 					</label>
 					<input
 						id="password"
 						type="password"
-						className="portal-input"
+						className="public-input"
 						placeholder="비밀번호를 입력하세요"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</div>
 
-				<div className="portal-login-options">
-					<label className="portal-checkbox-label">
-						<input type="checkbox" className="portal-checkbox" />
+				<div className="public-login-options">
+					<label className="public-checkbox-label">
+						<input type="checkbox" className="public-checkbox" />
 						<span>ID 저장</span>
 					</label>
 				</div>
 
 				{error && <p style={{ marginTop: 8, fontSize: 12 }}>{error}</p>}
 
-				<button type="submit" className="portal-login-button" disabled={loading}>
+				<button type="submit" className="public-login-button" disabled={loading}>
 					{loading ? 'LOGGING IN...' : 'LOGIN'}
 				</button>
 
-				<div className="portal-login-links">
-					<button type="button" className="portal-link-button">
+				<div className="public-login-links">
+					<button type="button" className="public-link-button">
 						ID 신청
 					</button>
-					<span className="portal-link-divider">·</span>
-					<button type="button" className="portal-link-button">
+					<span className="public-link-divider">·</span>
+					<button type="button" className="public-link-button">
 						비밀번호 찾기
 					</button>
-					<span className="portal-link-divider">·</span>
+					<span className="public-link-divider">·</span>
 				</div>
 			</form>
 		</div>

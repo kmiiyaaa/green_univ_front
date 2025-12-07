@@ -1,29 +1,10 @@
+import InputForm from '../../../components/form/InputForm';
+
 export default function CommonUserFields({ formData, onChange }) {
 	return (
 		<>
-			<tr>
-				<td>
-					<label htmlFor="name">이름</label>
-				</td>
-				<td>
-					<input type="text" name="name" id="name" className="input--box" value={formData.name} onChange={onChange} />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label htmlFor="birthDate">생년월일</label>
-				</td>
-				<td>
-					<input
-						type="date"
-						name="birthDate"
-						id="birthDate"
-						className="input--box"
-						value={formData.birthDate}
-						onChange={onChange}
-					/>
-				</td>
-			</tr>
+			<InputForm label="이름" name="name" value={formData.name} onChange={onChange} />
+			<InputForm label="생년월일" type="data" name="name" value={formData.name} onChange={onChange} />
 			<tr>
 				<td>
 					<label>성별</label>
@@ -50,44 +31,9 @@ export default function CommonUserFields({ formData, onChange }) {
 					/>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<label htmlFor="address">주소</label>
-				</td>
-				<td>
-					<input
-						type="text"
-						name="address"
-						id="address"
-						className="input--box"
-						value={formData.address}
-						onChange={onChange}
-					/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label htmlFor="tel">전화번호</label>
-				</td>
-				<td>
-					<input type="text" name="tel" id="tel" className="input--box" value={formData.tel} onChange={onChange} />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label htmlFor="email">이메일</label>
-				</td>
-				<td>
-					<input
-						type="text"
-						name="email"
-						id="email"
-						className="input--box"
-						value={formData.email}
-						onChange={onChange}
-					/>
-				</td>
-			</tr>
+			<InputForm label="주소" name="address" value={formData.address} onChange={onChange} />
+			<InputForm label="전화번호" name="tel" value={formData.tel} onChange={onChange} />
+			<InputForm label="이메일" name="email" value={formData.email} onChange={onChange} />
 		</>
 	);
 }
