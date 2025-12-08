@@ -6,8 +6,6 @@ import StudentInfoTable from '../../../components/infoTable/StudentInfoTable';
 import ProfessorInfoTable from '../../../components/infoTable/ProfessorInfoTable';
 import StaffInfoTable from '../../../components/infoTable/StaffInfotable';
 import UpdateUserInfo from '../../../components/infoTable/UpdateUserInfo';
-import { UserContext } from '../../../context/UserContext';
-// import { jwtDecode } from 'jwt-decode';
 
 export default function UserInfo() {
 	const { userRole, token } = useContext(UserContext);
