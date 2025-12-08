@@ -384,8 +384,8 @@
 
 .public-schedule-list li {
 	display: grid;
-	grid-template-columns: 96px 1fr;
-	gap: 8px;
+	grid-template-columns: 170px 1fr;
+	gap: 10px;
 	padding: 6px 0;
 	border-bottom: 1px solid #e5e7eb;
 }
@@ -398,6 +398,7 @@
 	font-size: 12px;
 	color: #15803d;
 	font-weight: 600;
+	white-space: nowrap;
 }
 
 .public-schedule-title {

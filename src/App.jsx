@@ -74,7 +74,8 @@ function App() {
 						<Route path="/notice/read/:id" element={<NoticeDetail />} /> {/* 공지 상세보기*/}
 						<Route path="/notice/update/:id" element={<NoticeUpdate />} /> {/* 공지 수정*/}
 						{/* 학사 일정 */}
-						<Route path="/schedule/list" element={<ScheduleList />} /> {/* 학사일정 */}
+						{/* <Route path="/schedule" element={<Schedule />} /> 학사일정 */}
+						<Route path="/schedule/list" element={<ScheduleList />} /> {/* 학사일정 리스트*/}
 						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 학사일정 상세 */}
 					</Route>
 					{/* </Route> */}
