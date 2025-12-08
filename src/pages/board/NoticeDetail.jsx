@@ -73,7 +73,7 @@ const NoticeDetail = () => {
 				</tbody>
 			</table>
 
-			<div className="select--button" style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+			<div className="select--button">
 				<button className="button" onClick={() => navigate('/notice')}>
 					목록
 				</button>

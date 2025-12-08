@@ -10,6 +10,7 @@ import Index from './pages/Index';
 
 import NoticeList from './pages/board/NoticeList';
 import NoticeUpdate from './pages/board/NoticeUpdate';
+import NoticeDetail from './pages/board/NoticeDetail';
 import NoticeWrite from './pages/board/NoticeWrite';
 import Subject from './pages/admin/Subject';
 import AllsubList2 from './pages/subject/AllSubList2';
@@ -62,6 +63,8 @@ function App() {
 						{/* 공지사항 */}
 						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
 						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}
+						<Route path="/notice/read/:id" element={<NoticeDetail />} /> {/* 공지 상세보기*/}
+						<Route path="/notice/update/:id" element={<NoticeUpdate />} /> {/* 공지 수정*/}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
