@@ -8,8 +8,7 @@ import api from '../api/httpClient';
 
 function PublicHome() {
 	const navigate = useNavigate();
-
-	const [latestNotices, setLatestNotices] = useState([]);
+	const [latestNotices, setLatestNotices] = useState([]); // 최신 공지
 
 	// 날짜 표시 유틸(백에서 createdTimeFormatted 주면 그걸 우선 사용)
 	const formatDate = (n) => {
@@ -18,7 +17,6 @@ function PublicHome() {
 
 		const raw = n.createdTime;
 		if (!raw) return '';
-
 		const d = new Date(raw);
 		if (Number.isNaN(d.getTime())) return String(raw);
 
@@ -30,7 +28,7 @@ function PublicHome() {
 
 	const loadLatestNotices = async () => {
 		try {
-			// ✅ 최신 공지를 1페이지에서 가져온 뒤 3개만 사용
+			// 최신 공지를 1페이지에서 가져온 뒤 3개만 사용
 			const res = await api.get('/notice/list/1');
 			const list = res.data.noticeList || [];
 
@@ -108,7 +106,7 @@ function PublicHome() {
 									{latestNotices.map((n) => (
 										<li key={n.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${n.id}`)}>
 											<span className="public-notice-category">
-												{(n.category || '').replace('[', '').replace(']', '') || '전체'}
+												{(n.category || '').replace('[', '').replace(']', '')}
 											</span>
 											<span className="public-notice-title">{n.title}</span>
 											<span className="public-notice-date">{formatDate(n)}</span>
