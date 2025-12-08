@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/httpClient';
+import api from '../../api/httpClient';
 
 export default function BreakAppApplication() {
 	const navigate = useNavigate();

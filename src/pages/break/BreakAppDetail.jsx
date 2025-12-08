@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import api from '../api/httpClient';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../context/UserContext';
+import api from '../../api/httpClient';
 
 export default function BreakAppDetail() {
 	const { id } = useParams(); // /break/detail/:id 에서 id 가져오기
