@@ -1,0 +1,56 @@
+/* =========================
+   PORTAL LAYOUT (로그인 후)
+========================= */
+.portal-shell {
+	height: 100vh;
+	background-color: #e5e7eb; /* 바깥 회색 */
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	padding: 0 32px;
+	font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+.portal-layout {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* 화면 전체 높이 */
+	background: #f8fafc; /* 연한 배경색 */
+}
+
+/* Header는 상단 고정 (Header.css에서 sticky 처리됨) */
+
+/* main-container: 사이드바 + 메인 컨텐츠 */
+.main-container {
+	display: flex;
+	flex: 1; /* 남은 공간 전부 차지 */
+	width: 100%;
+	overflow: hidden; /* 사이드바가 화면 밖으로 안 나가게 */
+}
+
+/* 메인 컨텐츠 영역 */
+.content {
+	flex: 1; /* 사이드바 제외한 나머지 공간 */
+	padding: 24px 32px;
+	overflow-y: auto; /* 컨텐츠 많을 때 스크롤 */
+	background: #ffffff;
+	min-height: calc(100vh - 104px); /* 전체 높이 - 헤더들 */
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer */
+.portal-footer {
+	background: #f9f9f9;
+	color: #111827;
+	padding: 16px 28px;
+	text-align: center;
+	font-size: 12px;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+	.content {
+		padding: 16px;
+	}
+}
