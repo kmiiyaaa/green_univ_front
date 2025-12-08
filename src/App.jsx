@@ -29,13 +29,13 @@ import Portal from './pages/Portal';
 import SubList from './pages/stuSub/SubList';
 import UpdatePeriod from './pages/stuSub/UpdatePeriod';
 import PreAppList from './pages/stuSub/PreAppList';
-import StudentListPage from './pages/user/info/StudentList';
-import ProfessorListPage from './pages/user/info/ProfessorList';
 import UpdatePassword from './pages/user/update/UpdatePassword';
 import ProfessorList from './pages/user/info/ProfessorList';
 import StudentList from './pages/user/info/StudentList';
-import ScheduleList from './pages/schedule/ScheduleList';
 import ScheduleDetail from './pages/schedule/ScheduleDetail';
+import ScheduleList from './pages/schedule/ScheduleList';
+import ScheduleWrite from './pages/schedule/ScheduleWrite';
+import ScheduleUpdate from './pages/schedule/ScheduleUpdate';
 
 function App() {
 	return (
@@ -83,9 +83,10 @@ function App() {
 						<Route path="/notice/read/:id" element={<NoticeDetail />} /> {/* 공지 상세보기*/}
 						<Route path="/notice/update/:id" element={<NoticeUpdate />} /> {/* 공지 수정*/}
 						{/* 학사 일정 */}
-						{/* <Route path="/schedule" element={<Schedule />} /> 학사일정 */}
-						<Route path="/schedule/list" element={<ScheduleList />} /> {/* 학사일정 리스트*/}
-						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 학사일정 상세 */}
+						<Route path="/schedule" element={<ScheduleList />} /> {/* 학사일정 - 안에서 staff/public 나눔 */}
+						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 교직원용 학사 일정 상세 */}
+						<Route path="/schedule/write" element={<ScheduleWrite />} /> {/* 교직원용 학사 일정 등록 */}
+						<Route path="/schedule/update/:id" element={<ScheduleUpdate />} /> {/* 교직원용 학사일정 수정 */}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
