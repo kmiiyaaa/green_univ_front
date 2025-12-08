@@ -29,6 +29,11 @@ export const SIDEBAR_MENUS = {
 	student: [
 		{ key: 'TUITION', label: '등록금', path: '/tuition', icon: 'payments' },
 		{ key: 'USERINFO', label: '내 정보', path: '/user/info', icon: 'person' },
+
+		{ key: 'SUBJECTTIMETABLE', label: '강의 시간표 조회', path: '/user/info', icon: 'TIMETABLE' },
+		{ key: 'PRESUBJECT', label: '예비 수강 신청', path: '/user/info', icon: 'PREAPP' },
+		{ key: 'APPSUBJECT', label: '수강 신청', path: '/user/info', icon: 'APP' },
+		{ key: 'SUGANGLIST', label: '수강 신청 내역 조회', path: '/user/info', icon: 'SUGANGLIST' },
 	],
 	staff: [
 		{ key: 'ADMIN', label: '관리자', path: '/admin', icon: 'admin_panel_settings' },

@@ -18,7 +18,7 @@ export function UserProvider({ children }) {
 					// 백엔드에서 id, username, role 이렇게 보내줬는데 id = username임 (이름 통일 시킬 것)
 					setUser(res.data.id);
 					setUserRole(res.data.role);
-				} catch (e) {
+				} catch (err) {
 					console.error('토큰 만료됨', err);
 					localStorage.removeItem('token');
 				}

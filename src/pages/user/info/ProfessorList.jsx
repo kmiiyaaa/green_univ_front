@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/common/DataTable';
-import '../../assets/css/professorList.css';
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
 // 없으면 studentList.css 재사용해도 됨
 
 export default function ProfessorListPage() {
@@ -41,7 +40,7 @@ export default function ProfessorListPage() {
 			}
 
 			const res = await api.get(buildUrl(page), { params });
-
+			console.log('res.data', res.data);
 			const pageObj = res.data.professorList;
 
 			const content = pageObj?.content ?? [];

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/common/DataTable';
-import '../../assets/css/studentList.css';
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
 
 export default function StudentListPage() {
 	// 페이징/데이터
@@ -18,7 +17,7 @@ export default function StudentListPage() {
 			const res = await api.get('/user/studentList', {
 				params: { page: targetPage },
 			});
-
+			console.log('res.data', res.data);
 			setListCount(res.data.listCount ?? 0);
 			setTotalPages(res.data.totalPages ?? 0);
 			setCurrentPage(res.data.currentPage ?? 0);
