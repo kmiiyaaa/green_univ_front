@@ -26,7 +26,7 @@ import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
-import SubList from './pages/stuSub/SubList';
+import SubTimetable from './pages/stuSub/SubTimetable';
 import UpdatePeriod from './pages/stuSub/UpdatePeriod';
 import PreAppList from './pages/stuSub/PreAppList';
 import UpdatePassword from './pages/user/update/UpdatePassword';
@@ -36,6 +36,8 @@ import ScheduleDetail from './pages/schedule/ScheduleDetail';
 import ScheduleList from './pages/schedule/ScheduleList';
 import ScheduleWrite from './pages/schedule/ScheduleWrite';
 import ScheduleUpdate from './pages/schedule/ScheduleUpdate';
+import BreakAppDetail from './pages/break/BreakAppDetail';
+import BreakAppApplication from './pages/break/BreakApplication';
 
 function App() {
 	return (
@@ -63,11 +65,12 @@ function App() {
 						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 교직원 등록 */}
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
 						<Route path="/index" element={<Index />} />
-						{/* 강의/과목 */}
+						{/* 강의 과목 수강신청 */}
 						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
-						<Route path="/period" element={<SubList />} /> {/* 학생이 확인하는 강의 목록 */}
-						<Route path="/period/pre" element={<PreAppList />} /> {/* 수강 신청 전 */}
-						<Route path="/period/update" element={<UpdatePeriod />} /> {/* 수강 신청 변경 */}
+						<Route path="/sugang/timetable" element={<SubTimetable />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
+						<Route path="/sugang/pre" element={<PreAppList />} /> {/* 예비 수강 신청 */}
+						<Route path="/sugang" element={<SubTimetable />} /> {/* 수강 신청 .. */}
+						<Route path="/sugang/update" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
 						{/* 관리자 */}
 						<Route path="/admin" element={<AdminPage />} /> {/* 관리자 통합 페이지 - 삭제 할 수도 */}
 						<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}
@@ -87,6 +90,9 @@ function App() {
 						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 교직원용 학사 일정 상세 */}
 						<Route path="/schedule/write" element={<ScheduleWrite />} /> {/* 교직원용 학사 일정 등록 */}
 						<Route path="/schedule/update/:id" element={<ScheduleUpdate />} /> {/* 교직원용 학사일정 수정 */}
+						{/* 휴학 */}
+						<Route path="/break/app" element={<BreakAppApplication />} /> {/* 휴학 신청 (학생) */}
+						<Route path="/break/list" element={<BreakAppDetail />} /> {/* 휴학 관리 */}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
