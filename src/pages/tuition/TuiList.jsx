@@ -29,13 +29,6 @@ export default function TuiList() {
 				console.error('tuiList 불러오기 실패' + e);
 			}
 		};
-			try {
-				const res = await api.get('/tuition/list');
-				setTuiList(res.data);
-			} catch (e) {
-				console.error('tuiList 불러오기 실패' + e);
-			}
-		};
 		loadTuition();
 	}, [user, userRole, navigate]);
 

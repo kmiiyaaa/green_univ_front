@@ -64,12 +64,6 @@ export default function ProfessorList() {
 		}));
 	}, [lists]);
 
-	const pagination = pagenationUtil({
-		page: currentPage,
-		totalPages,
-		blockSize: 1,
-	});
-
 	return (
 		<div>
 			<h2>교수 명단 조회</h2>
@@ -83,7 +77,7 @@ export default function ProfessorList() {
 			<DataTable headers={headers} data={tableData} />
 			<PaginationButton
 				currentPage={currentPage}
-				pagination={pagination}
+				blockSize={10}
 				totalPages={totalPages}
 				onPageChange={(p) => searchProfessors(p)}
 			/>

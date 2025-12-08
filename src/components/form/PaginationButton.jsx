@@ -1,7 +1,31 @@
-export default function PaginationButton({ currentPage, pagination, onPageChange, totalPages }) {
-	const hasPrev = pagination.hasPrev; // 이전 페이지 존재 여부
-	const hasNext = pagination.hasNext; // 다음 페이지 존재 여부
-	const pageList = pagination.pageList; // 페이지 블럭 1, 2, 3 ... / 11, 12 ...
+function pagenationUtil({ page, totalPages, blockSize }) {
+
+	const total = totalPages;
+
+	const startPage = Math.floor(page / blockSize) * blockSize + 1;
+	let endPage = startPage + blockSize - 1;
+
+	if (endPage > total) endPage = total;
+
+	// 이전 버튼, 다음 버튼
+	const hasPrev = startPage > 1;
+	const hasNext = endPage < total;
+
+	// 페이지 번호 목록 생성
+	const pageList = [];
+	for (let p = startPage; p <= endPage; p++) {
+		pageList.push(p - 1); // 프론트 번호는 1-based, 백은 0-based라서 p-1 사용
+	}
+
+	return { startPage, endPage, hasPrev, hasNext, pageList };
+}
+
+function PaginationButton({ currentPage, onPageChange, totalPages, blockSize }) {
+	const { hasPrev, hasNext, pageList } = pagenationUtil({
+		page: currentPage,
+		totalPages,
+		blockSize,
+	});
 
 	// 페이지 이동 함수
 	const goPage = (p) => {
@@ -29,3 +53,5 @@ export default function PaginationButton({ currentPage, pagination, onPageChange
 		</div>
 	);
 }
+
+export default PaginationButton;
