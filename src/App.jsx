@@ -36,6 +36,10 @@ import ScheduleDetail from './pages/schedule/ScheduleDetail';
 import ScheduleList from './pages/schedule/ScheduleList';
 import ScheduleWrite from './pages/schedule/ScheduleWrite';
 import ScheduleUpdate from './pages/schedule/ScheduleUpdate';
+import BreakApplication from './pages/break/BreakApplication';
+import BreakAppDetail from './pages/break/BreakAppDetail';
+import BreakAppListStaff from './pages/break/BreakAppListStaff';
+import BreakAppListStudent from './pages/break/BreakAppListStudent';
 
 function App() {
 	return (
@@ -87,6 +91,11 @@ function App() {
 						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 교직원용 학사 일정 상세 */}
 						<Route path="/schedule/write" element={<ScheduleWrite />} /> {/* 교직원용 학사 일정 등록 */}
 						<Route path="/schedule/update/:id" element={<ScheduleUpdate />} /> {/* 교직원용 학사일정 수정 */}
+						{/* 휴학 */}
+						<Route path="/break/application" element={<BreakApplication />} /> {/* 휴학 신청폼*/}
+						<Route path="/break/detail/:id" element={<BreakAppDetail />} /> {/* 휴학 신청서 상세*/}
+						<Route path="/break/list/staff" element={<BreakAppListStaff />} /> {/* 교직원 -휴학 신청리스트*/}
+						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}

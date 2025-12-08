@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
-import PaginationButton from '../../../components/form/PaginationButton';
+import PaginationButton from '../../../components/form/PaginationForm';
 import InputForm from '../../../components/form/InputForm';
+import PaginationForm from '../../../components/form/PaginationForm';
 
 export default function StudentList() {
 	const [currentPage, setCurrentPage] = useState(0);
@@ -102,7 +103,7 @@ export default function StudentList() {
 			<DataTable headers={headers} data={tableData} />
 
 			{/* 페이징 */}
-			<PaginationButton
+			<PaginationForm
 				currentPage={currentPage}
 				blockSize={10}
 				totalPages={totalPages}

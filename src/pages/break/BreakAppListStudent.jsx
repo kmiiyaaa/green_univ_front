@@ -1,19 +1,38 @@
-import { useContext, useEffect, useState } from 'react';
-import api from '../api/httpClient';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
-import { replace, useNavigate } from 'react-router-dom';
+import DataTable from '../../components/table/DataTable';
 
 export default function BreakAppListStudent() {
-	const [breakAppList, setBreakAppList] = useContext([]);
 	const navigate = useNavigate();
 	const { user, userRole } = useContext(UserContext);
+
+	const [breakAppList, setBreakAppList] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	const headers = ['신청일자', '구분', '시작학기', '종료학기', '상태'];
 
 	const loadBreakAppList = async () => {
 		try {
 			const res = await api.get('/break/list');
-			setBreakAppList(res.data.breakAppList || []);
+			const raw = res.data.breakAppList || [];
+
+			const formatted = raw.map((b) => ({
+				id: b.id,
+				신청일자: b.appDate ?? '',
+				구분: `${b.type ?? ''}휴학`,
+				시작학기: `${b.fromYear ?? ''}년도 ${b.fromSemester ?? ''}학기`,
+				종료학기: `${b.toYear ?? ''}년도 ${b.toSemester ?? ''}학기`,
+				상태: b.status ?? '',
+				원본데이터: b,
+			}));
+
+			setBreakAppList(formatted);
 		} catch (e) {
 			console.error(e);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -21,56 +40,31 @@ export default function BreakAppListStudent() {
 		if (!user || userRole !== 'student') {
 			alert('권한이 없는 페이지 입니다.');
 			navigate(-1, { replace: true });
+			return;
 		}
 		loadBreakAppList();
-	}, [navigate]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user, userRole, navigate]);
+
+	if (loading) return <p>불러오는중 ...</p>;
 
 	return (
-		<div>
-			<h1>휴학 내역 조회</h1>
-			<div>
-				{breakAppList.length > 0 ? (
-					<table border="1" class="list--table">
-						<thead>
-							<tr>
-								<th>신청일자</th>
-								<th>구분</th>
-								<th>시작학기</th>
-								<th>종료학기</th>
-								<th>신청서 확인</th>
-								<th>상태</th>
-							</tr>
-						</thead>
+		<div className="form-container">
+			<h3>휴학 내역 조회</h3>
+			<div className="split--div"></div>
 
-						<tbody>
-							{breakAppList.map((breakApp) => (
-								<tr key={breakApp.id}>
-									<td>{breakApp.appDate}</td>
-									<td>{breakApp.type}휴학</td>
-									<td>
-										{breakApp.fromYear}년도&nbsp;{breakApp.fromSemester}학기
-									</td>
-									<td>
-										{breakApp.toYear}년도&nbsp;{breakApp.toSemester}학기
-									</td>
-									<td>
-										<button type="button" onClick={() => navigate(`/break/detail/${breakApp.id}`)}>
-											Click
-										</button>
-									</td>
-									<td>
-										{breakApp.status === '처리중' && <span>처리중</span>}
-										{breakApp.status === '승인' && <span>승인</span>}
-										{breakApp.status === '반려' && <span>반려</span>}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				) : (
-					<p>휴학 신청 내역이 없습니다.</p>
-				)}
-			</div>
+			{breakAppList.length > 0 ? (
+				<DataTable
+					headers={headers}
+					data={breakAppList}
+					onRowClick={(row) => {
+						const id = row?.id || row?.원본데이터?.id;
+						if (id) navigate(`/break/detail/${id}`);
+					}}
+				/>
+			) : (
+				<p>휴학 신청 내역이 없습니다.</p>
+			)}
 		</div>
 	);
 }
