@@ -1,5 +1,4 @@
 function pagenationUtil({ page, totalPages, blockSize }) {
-
 	const total = totalPages;
 
 	const startPage = Math.floor(page / blockSize) * blockSize + 1;
