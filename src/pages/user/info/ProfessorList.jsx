@@ -9,7 +9,7 @@ export default function ProfessorList() {
 	const [lists, setLists] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
 
-	// 검색용 formData
+	// 검색 필터
 	const [formData, setFormData] = useState({
 		professorId: '',
 		deptName: '',
@@ -22,19 +22,20 @@ export default function ProfessorList() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	// 리스트 페이징  + 검색 기능
+	// 리스트 + 검색 통합 함수
 	const searchProfessors = async (page = currentPage) => {
 		try {
 			const params = {};
-			if (formData.professorId?.toString().trim() !== '') {
+
+			if (formData.professorId.trim() !== '') {
 				params.professorId = Number(formData.professorId);
 			}
-			if (formData.deptName?.toString().trim() !== '') {
+			if (formData.deptName.trim() !== '') {
 				params.deptName = formData.deptName;
 			}
+
 			const res = await api.get(`/user/professorList/${page}`, { params });
 			console.log(res.data);
-
 			setLists(res.data.professorList);
 			setCurrentPage(res.data.page);
 			setTotalPages(res.data.totalPages);
@@ -44,41 +45,50 @@ export default function ProfessorList() {
 		}
 	};
 
-	// 페이지 바뀌면
+	// 페이지가 바뀌면 리스트 다시 로딩
 	useEffect(() => {
 		searchProfessors(currentPage);
 	}, [currentPage]);
 
-	// useEffect(() => {
-	// 	searchProfessors(0);
-	// }, []);
+	// 검색 버튼 눌렀을 때
+	const handleSearchSubmit = (e) => {
+		e.preventDefault(); // 새로고침 방지
+		setCurrentPage(0); // 검색 시 첫 페이지로 이동
+		searchProfessors(0); // 즉시 검색
+	};
 
 	const tableData = useMemo(() => {
-		return lists?.map((p) => ({
-			사번: p.id ?? p.professorId ?? '',
+		return lists.map((p) => ({
+			사번: p.id ?? '',
 			이름: p.name ?? '',
-			학과: p.departmentName ?? p.deptName ?? p.department?.name ?? '',
+			학과: p.department.name ?? '',
 			이메일: p.email ?? '',
-			전화번호: p.tel ?? p.phone ?? '',
+			전화번호: p.tel ?? '',
 		}));
 	}, [lists]);
 
 	return (
 		<div>
 			<h2>교수 명단 조회</h2>
-			<form onSubmit={() => searchProfessors()}>
+
+			{/* 검색 폼 */}
+			<form onSubmit={handleSearchSubmit}>
 				<InputForm label="사번" name="professorId" placeholder="검색어를 입력하세요" onChange={handleChange} />
 				<InputForm label="학과 이름" name="deptName" placeholder="검색어를 입력하세요" onChange={handleChange} />
-				<button>검색</button>
+				<button type="submit">검색</button>
 			</form>
-			<hr></hr>
 
+			<hr />
+
+			{/* 테이블 */}
 			<DataTable headers={headers} data={tableData} />
+
+			{/* 페이징 */}
 			<PaginationButton
 				currentPage={currentPage}
 				blockSize={10}
 				totalPages={totalPages}
-				onPageChange={(p) => searchProfessors(p)}
+				onPageChange={(p) => setCurrentPage(p)}
 			/>
 		</div>
 	);
