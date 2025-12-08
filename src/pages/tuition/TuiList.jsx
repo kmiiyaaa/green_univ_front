@@ -24,7 +24,7 @@ export default function TuiList() {
 			// 등록금 불러오기 (tuitionController 58번)
 			try {
 				const res = await api.get('/tuition/list');
-				setTuiList(res.data);
+				setTuiList(res.data.tuitionList);
 			} catch (e) {
 				console.error('tuiList 불러오기 실패' + e);
 			}
