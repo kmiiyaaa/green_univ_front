@@ -26,6 +26,11 @@ import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
+import SubList from './pages/stuSub/SubList';
+import UpdatePeriod from './pages/stuSub/UpdatePeriod';
+import PreAppList from './pages/stuSub/PreAppList';
+import StudentListPage from './pages/user/info/StudentList';
+import ProfessorListPage from './pages/user/info/ProfessorList';
 import UpdatePassword from './pages/user/update/UpdatePassword';
 import ProfessorList from './pages/user/info/ProfessorList';
 import StudentList from './pages/user/info/StudentList';
@@ -53,12 +58,16 @@ function App() {
 						{/* 사용자 */}
 						<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 						<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
+						{/* 교수 직원 학생 등록 */}
 						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}
-						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */} {/* 교직원 등록*/}
-						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */} {/* 학생 등록*/}
+						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 교직원 등록 */}
+						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
 						<Route path="/index" element={<Index />} />
 						{/* 강의/과목 */}
 						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
+						<Route path="/period" element={<SubList />} /> {/* 학생이 확인하는 강의 목록 */}
+						<Route path="/period/pre" element={<PreAppList />} /> {/* 수강 신청 전 */}
+						<Route path="/period/update" element={<UpdatePeriod />} /> {/* 수강 신청 변경 */}
 						{/* 관리자 */}
 						<Route path="/admin" element={<AdminPage />} /> {/* 관리자 통합 페이지 - 삭제 할 수도 */}
 						<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}
@@ -66,8 +75,8 @@ function App() {
 						<Route path="/admin/college" element={<College />} /> {/* 단과대 등록 */}
 						<Route path="/admin/department" element={<Department />} /> {/* 학과 등록 */}
 						<Route path="/admin/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
-						<Route path="/professor/list" element={<ProfessorList />} /> {/*교수 리스트 */}
-						<Route path="/student/list" element={<StudentList />} /> {/*교수 리스트 */}
+						<Route path="/professor/list" element={<ProfessorList />} /> {/* 교수 리스트 */}
+						<Route path="/student/list" element={<StudentList />} /> {/* 학생 리스트 */}
 						{/* 공지사항 */}
 						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
 						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}

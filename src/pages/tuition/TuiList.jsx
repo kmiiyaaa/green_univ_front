@@ -21,10 +21,10 @@ export default function TuiList() {
 		}
 
 		const loadTuition = async () => {
-			// 등록금 불러오기
+			// 등록금 불러오기 (tuitionController 58번)
 			try {
 				const res = await api.get('/tuition/list');
-				setTuiList(res.data.tuitionList);
+				setTuiList(res.data);
 			} catch (e) {
 				console.error('tuiList 불러오기 실패' + e);
 			}

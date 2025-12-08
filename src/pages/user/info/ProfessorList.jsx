@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import PaginationButton from '../../../components/form/PaginationButton';
-import { pagenationUtil } from '../../../utils/PaginationUtil';
 import InputForm from '../../../components/form/InputForm';
 
 export default function ProfessorList() {
@@ -64,12 +63,6 @@ export default function ProfessorList() {
 		}));
 	}, [lists]);
 
-	const pagination = pagenationUtil({
-		page: currentPage,
-		totalPages,
-		blockSize: 1,
-	});
-
 	return (
 		<div>
 			<h2>교수 명단 조회</h2>
@@ -83,7 +76,7 @@ export default function ProfessorList() {
 			<DataTable headers={headers} data={tableData} />
 			<PaginationButton
 				currentPage={currentPage}
-				pagination={pagination}
+				blockSize={10}
 				totalPages={totalPages}
 				onPageChange={(p) => searchProfessors(p)}
 			/>
