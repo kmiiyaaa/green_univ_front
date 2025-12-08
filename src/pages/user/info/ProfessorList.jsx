@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import PaginationButton from '../../../components/form/PaginationButton';
 import { pagenationUtil } from '../../../utils/PaginationUtil';
+import InputForm from '../../../components/form/InputForm';
 
 export default function ProfessorList() {
 	const [currentPage, setCurrentPage] = useState(0);
@@ -12,7 +13,7 @@ export default function ProfessorList() {
 	// 검색용 formData
 	const [formData, setFormData] = useState({
 		professorId: '',
-		deptId: '',
+		deptName: '',
 	});
 
 	const headers = ['사번', '이름', '학과', '이메일', '전화번호'];
@@ -26,16 +27,15 @@ export default function ProfessorList() {
 	const searchProfessors = async (page = currentPage) => {
 		try {
 			const params = {};
-
 			if (formData.professorId?.toString().trim() !== '') {
 				params.professorId = Number(formData.professorId);
 			}
-			if (formData.deptId?.toString().trim() !== '') {
-				params.deptId = Number(formData.deptId);
+			if (formData.deptName?.toString().trim() !== '') {
+				params.deptName = formData.deptName;
 			}
-
 			const res = await api.get(`/user/professorList/${page}`, { params });
 			console.log(res.data);
+
 			setLists(res.data.professorList);
 			setCurrentPage(res.data.page);
 			setTotalPages(res.data.totalPages);
@@ -45,9 +45,14 @@ export default function ProfessorList() {
 		}
 	};
 
+	// 페이지 바뀌면
 	useEffect(() => {
-		searchProfessors();
+		searchProfessors(currentPage);
 	}, [currentPage]);
+
+	// useEffect(() => {
+	// 	searchProfessors(0);
+	// }, []);
 
 	const tableData = useMemo(() => {
 		return lists?.map((p) => ({
@@ -68,7 +73,13 @@ export default function ProfessorList() {
 	return (
 		<div>
 			<h2>교수 명단 조회</h2>
+			<form onSubmit={() => searchProfessors()}>
+				<InputForm label="사번" name="professorId" placeholder="검색어를 입력하세요" onChange={handleChange} />
+				<InputForm label="학과 이름" name="deptName" placeholder="검색어를 입력하세요" onChange={handleChange} />
+				<button>검색</button>
+			</form>
 			<hr></hr>
+
 			<DataTable headers={headers} data={tableData} />
 			<PaginationButton
 				currentPage={currentPage}

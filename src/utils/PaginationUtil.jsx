@@ -1,8 +1,10 @@
 export function pagenationUtil({ page, totalPages, blockSize }) {
-	const currentPage = page + 1; // 1 부터 시작하도록 보정함
+	// 필수로 내려줄 props
+	// page (currentPage) 
+
 	const total = totalPages;
 
-	const startPage = Math.floor((currentPage - 1) / blockSize) * blockSize + 1;
+	const startPage = Math.floor(page / blockSize) * blockSize + 1;
 	let endPage = startPage + blockSize - 1;
 
 	if (endPage > total) endPage = total;
