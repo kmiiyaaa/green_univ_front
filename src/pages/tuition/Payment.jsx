@@ -35,6 +35,7 @@ export default function Payment() {
 				console.error('tuition/payment 불러오기 실패' + e);
 			}
 		};
+		// console.log(tuition);
 		loadPayment();
 	}, [user, userRole, navigate]);
 
@@ -58,7 +59,6 @@ export default function Payment() {
 			{test ? (
 				<>
 					<div>
-						<h2>등록금 고지서</h2>
 						<div>
 							{tuition.tuiYear}년도 {tuition.semester}학기
 						</div>
@@ -81,13 +81,13 @@ export default function Payment() {
 
 								<tr>
 									<th>장학유형</th>
-									<td colSpan="3">{tuition?.schType}</td>
+									<td colSpan="3">{tuition?.schType?.type}</td>
 								</tr>
 
 								{/* 금액 format 필요 */}
 								<tr>
 									<th>등록금</th>
-									<td colSpan="3">{tuition?.schType}</td>
+									<td colSpan="3">{tuition?.schAmount}</td>
 								</tr>
 
 								<tr>
@@ -113,7 +113,7 @@ export default function Payment() {
 							</tbody>
 						</table>
 
-						<button onClick={() => handlePayment()}>납부하기</button>
+						{tuition.status === 0 && <button onClick={() => handlePayment()}>납부하기</button>}
 					</div>
 				</>
 			) : (

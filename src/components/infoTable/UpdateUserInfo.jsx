@@ -55,7 +55,7 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 				</div>
 
 				<div>
-					<InputForm label="비밀번호 확인" name="password" onChange={handleChange} required />
+					<InputForm label="비밀번호 확인" type="password" name="password" onChange={handleChange} required />
 				</div>
 
 				<button type="submit">수정하기</button>

@@ -41,8 +41,8 @@ function App() {
 						<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
 						<Route path="/tuition/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
 						{/* 사용자 */}
-						<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 -- 수정 중... */}
-						<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경  -- 수정 중... */}
+						<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
+						<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 /}
 						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}
 						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */}
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}

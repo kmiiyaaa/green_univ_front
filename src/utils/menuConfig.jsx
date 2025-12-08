@@ -27,13 +27,16 @@ export const HEADER_MENUS = {
 // 필요하면 여기에 사이드바 메뉴도 추가 가능
 export const SIDEBAR_MENUS = {
 	student: [
-		{ key: 'TUITION', label: '등록금', path: '/tuition', icon: 'payments' },
+		{ key: 'TUITION', label: '등록금', path: '/tuition', icon: 'tuition' },
+		{ key: 'TUITIONPAYMENT', label: '등록금 고지서 확인', path: '/tuition/payment', icon: 'Payment' },
 		{ key: 'USERINFO', label: '내 정보', path: '/user/info', icon: 'person' },
+		{ key: 'UPDATEPASSWORD', label: '비밀번호 변경', path: '/user/update/password', icon: 'Password' },
 	],
 	staff: [
 		{ key: 'ADMIN', label: '관리자', path: '/admin', icon: 'admin_panel_settings' },
 		{ key: 'USERS', label: '사용자 관리', path: '/user/create/student', icon: 'group' },
 		{ key: 'UPDATEPASSWORD', label: '비밀번호 변경', path: '/user/update/password', icon: 'Password' },
+		{ key: 'CREATETUITION', label: '등록금 고지서 발송', path: '/tuition/bill', icon: 'CreateTuition' },
 	],
 	professor: [
 		{ key: 'SUBJECTS', label: '강의 관리', path: '/subject/list', icon: 'menu_book' },
