@@ -58,8 +58,8 @@ export default function CreateStudent() {
 						<CommonUserFields formData={formData} onChange={handleChange} />
 
 						{/* 학생 전용 필드 */}
-						<InputForm name="deptId" value={formData.deptId} onChange={handleChange} />
-						<InputForm name="entranceDate" value={formData.entranceDate} onChange={handleChange} />
+						<InputForm label="과 ID" name="deptId" value={formData.deptId} onChange={handleChange} />
+						<InputForm label="입학일" name="entranceDate" value={formData.entranceDate} onChange={handleChange} />
 					</tbody>
 				</table>
 				<button onSubmit={handleSubmit}>등록</button>

@@ -60,6 +60,7 @@ export default function ProfessorCreatePage() {
 							</td>
 							<td>
 								<input
+									label="과 ID"
 									type="text"
 									name="deptId"
 									id="deptId"
