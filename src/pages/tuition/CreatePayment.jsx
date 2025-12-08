@@ -13,7 +13,7 @@ export default function CreatePayment() {
 	useEffect(() => {
 		// 권한 확인 (관리자)
 		if (user === null) return;
-		if (userRole !== 'admin') {
+		if (userRole !== 'staff') {
 			navigate(-1, { replace: true });
 			return;
 		}

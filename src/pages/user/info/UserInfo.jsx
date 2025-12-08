@@ -12,9 +12,9 @@ export default function UserInfo() {
 	const [userInfo, setUserInfo] = useState({});
 	const [stustatList, setStustatList] = useState([]); // 학생 학적 변동 목록
 	const [isEdit, setIsEdit] = useState(false);
+
 	const navigate = useNavigate();
 
-	//
 	const formatStatList = (list) => {
 		if (!list || list.length === 0) return [];
 		return list.map((stat) => ({
@@ -30,6 +30,9 @@ export default function UserInfo() {
 	};
 
 	useEffect(() => {
+		console.log('토큰' + token);
+		console.log(userRole);
+
 		if (!token) {
 			alert('권한이 없는 페이지입니다. 로그인 해 주세요');
 			navigate('/', { replace: true });
@@ -61,13 +64,13 @@ export default function UserInfo() {
 			}
 		};
 		loadInfo();
-	}, [userRole, token, navigate]);
+	}, [userRole, token, navigate, isEdit]);
 
 	return (
 		<div>
-			내 정보 조회
 			{!isEdit && (
 				<div>
+					<h2>내 정보 조회</h2>
 					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />}
 					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />}
 					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />}

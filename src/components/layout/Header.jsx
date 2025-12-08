@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import '../../assets/css/Header.css';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { HEADER_MENUS } from '../../utils/menuConfig';
 import greenLogo from '../../assets/green-university-logo.png';
@@ -19,6 +19,7 @@ export default function Header({ handleLogout }) {
 	const role = userRole || 'student';
 	const menus = HEADER_MENUS[role] || HEADER_MENUS.student;
 	const currentTopKey = getCurrentTopMenuKey(menus, location.pathname);
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -38,6 +39,7 @@ export default function Header({ handleLogout }) {
 					) : (
 						<div className="top-userbar-right">
 							<p>로그인 후 이용 가능</p>
+							<button onClick={() => navigate('/')}>로그인</button>
 						</div>
 					)}
 				</div>

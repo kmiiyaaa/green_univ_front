@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import api from '../../api/httpClient';
+import InputForm from '../form/InputForm';
+import { UserContext } from '../../context/UserContext';
 
 export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 	const [value, setValue] = useState({
@@ -21,13 +23,12 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 				tel: value.tel,
 				email: value.email,
 			});
+
 			alert('수정이 완료되었습니다!');
+			setIsEdit(false);
 		} catch (err) {
-			const msg = err.response?.data?.message || '수정 실패';
-			alert(msg);
-			console.error(msg);
-		} finally {
-			// setIsEdit(false);
+			const serverMsg = err.response?.data?.message;
+			alert(serverMsg || '오류가 발생했습니다.');
 		}
 	};
 
@@ -35,25 +36,26 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 		<div>
 			<h2>개인 정보 수정</h2>
 
-			<form onSubmit={() => updateUserInfo()}>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault(); // 리로드 방지
+					updateUserInfo();
+				}}
+			>
 				<div>
-					<label>주소</label>
-					<input type="text" name="address" value={value.address} onChange={handleChange} required />
+					<InputForm label="주소" name="address" value={value.address} onChange={handleChange} required />
 				</div>
 
 				<div>
-					<label>전화번호</label>
-					<input type="text" name="tel" value={value.tel} onChange={handleChange} required />
+					<InputForm label="전화번호" type="text" name="tel" value={value.tel} onChange={handleChange} required />
 				</div>
 
 				<div>
-					<label>이메일</label>
-					<input type="email" name="email" value={value.email} onChange={handleChange} required />
+					<InputForm label="이메일" type="email" name="email" value={value.email} onChange={handleChange} required />
 				</div>
 
 				<div>
-					<label>비밀번호 확인</label>
-					<input type="password" name="password" onChange={handleChange} />
+					<InputForm label="비밀번호 확인" type="password" name="password" onChange={handleChange} required />
 				</div>
 
 				<button type="submit">수정하기</button>

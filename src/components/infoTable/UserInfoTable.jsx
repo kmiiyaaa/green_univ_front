@@ -6,23 +6,23 @@ export default function UserInfoTable({ userInfo }) {
 				<tbody>
 					<tr>
 						<th>성명</th>
-						<td>{userInfo.name}</td>
+						<td>{userInfo?.name}</td>
 						<th>생년월일</th>
-						<td>{userInfo.birthDate}</td>
+						<td>{userInfo?.birthDate}</td>
 					</tr>
 
 					<tr>
 						<th>성별</th>
-						<td>{userInfo.gender}</td>
+						<td>{userInfo?.gender}</td>
 						<th>주소</th>
-						<td>{userInfo.address}</td>
+						<td>{userInfo?.address}</td>
 					</tr>
 
 					<tr>
 						<th>연락처</th>
-						<td>{userInfo.tel}</td>
+						<td>{userInfo?.tel}</td>
 						<th>email</th>
-						<td>{userInfo.email}</td>
+						<td>{userInfo?.email}</td>
 					</tr>
 				</tbody>
 			</table>
