@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import InputForm from '../../components/form/InputForm';
 import TextField from '../../components/form/TextField';
+import OptionForm from '../../components/form/OptionForm';
 import '../../assets/css/NoticeForm.css';
+
+const NOTICE_CATEGORY_OPTIONS = [
+	{ value: '[일반]', label: '일반' },
+	{ value: '[학사]', label: '학사' },
+	{ value: '[장학]', label: '장학' },
+];
 
 // 공통 공지폼
 const NoticeForm = ({
@@ -16,37 +23,31 @@ const NoticeForm = ({
 	const [content, setContent] = useState('');
 	const [file, setFile] = useState(null);
 
-	// 초기값 주입 (Update에서 fetch 후 주입할 때 필요)
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setCategory(initialValues.category ?? '[일반]');
 		setTitle(initialValues.title ?? '');
 		setContent(initialValues.content ?? '');
-		// 수정폼에서는 기본적으로 파일을 안 쓰는 구조라 초기 file은 유지하지 않음?
-		// 필요하면 initialValues.file 같은 확장도 가능
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialValues?.category, initialValues?.title, initialValues?.content]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!onSubmit) return;
 
-		await onSubmit({
-			category,
-			title,
-			content,
-			file,
-		});
+		await onSubmit({ category, title, content, file });
 	};
 
 	return (
 		<form onSubmit={handleSubmit} className="write--div">
 			<div className="title--container">
 				<div className="category">
-					<select name="category" className="input--box" value={category} onChange={(e) => setCategory(e.target.value)}>
-						<option value="[일반]">[일반]</option>
-						<option value="[학사]">[학사]</option>
-						<option value="[장학]">[장학]</option>
-					</select>
+					<OptionForm
+						name="category"
+						label="카테고리"
+						value={category}
+						onChange={(e) => setCategory(e.target.value)}
+						options={NOTICE_CATEGORY_OPTIONS}
+					/>
 				</div>
 
 				<div className="title">
@@ -64,7 +65,6 @@ const NoticeForm = ({
 				<label>내용</label>
 				<TextField
 					name="content"
-					className="form-control"
 					cols="100"
 					rows="20"
 					placeholder="내용을 입력하세요"

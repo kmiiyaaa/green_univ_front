@@ -6,6 +6,12 @@ import TuiList from './pages/tuition/TuiList';
 import Payment from './pages/tuition/Payment';
 import CreatePayment from './pages/tuition/CreatePayment';
 import UserInfo from './pages/user/info/UserInfo';
+import Index from './pages/Index';
+
+import NoticeList from './pages/board/NoticeList';
+import NoticeUpdate from './pages/board/NoticeUpdate';
+import NoticeDetail from './pages/board/NoticeDetail';
+import NoticeWrite from './pages/board/NoticeWrite';
 import Subject from './pages/admin/Subject';
 import AllsubList2 from './pages/subject/AllSubList2';
 import AdminPage from './pages/admin/AdminPage';
@@ -41,9 +47,10 @@ function App() {
 						<Route path="/tuition/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
 						{/* 사용자 */}
 						<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회 */}
-						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}
-						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */}
-						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
+						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */} {/* 교수 등록*/}
+						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */} {/* 교직원 등록*/}
+						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */} {/* 학생 등록*/}
+						<Route path="/index" element={<Index />} />
 						{/* 강의/과목 */}
 						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
 						{/* 관리자 */}
@@ -53,6 +60,11 @@ function App() {
 						<Route path="/admin/college" element={<College />} /> {/* 단과대 등록 */}
 						<Route path="/admin/department" element={<Department />} /> {/* 학과 등록 */}
 						<Route path="/admin/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
+						{/* 공지사항 */}
+						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
+						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}
+						<Route path="/notice/read/:id" element={<NoticeDetail />} /> {/* 공지 상세보기*/}
+						<Route path="/notice/update/:id" element={<NoticeUpdate />} /> {/* 공지 수정*/}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
