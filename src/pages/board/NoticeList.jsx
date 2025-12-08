@@ -53,6 +53,7 @@ const NoticeList = () => {
 			const res = await api.get(url);
 
 			const raw = res.data.noticeList || [];
+
 			const formatted = raw.map((n) => ({
 				id: n.id,
 				번호: n.id,
