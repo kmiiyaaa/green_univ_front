@@ -4,6 +4,7 @@ import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import { UserContext } from '../../context/UserContext';
+import '../../assets/css/NoticeList.css';
 
 const NoticeList = () => {
 	const navigate = useNavigate();
@@ -104,30 +105,35 @@ const NoticeList = () => {
 			<div className="split--div"></div>
 
 			{/* 검색 폼 */}
-			<form
-				onSubmit={handleSearchSubmit}
-				className="form--container"
-				style={{ display: 'flex', gap: 8, alignItems: 'center' }}
-			>
-				<select className="input--box" name="type" value={type} onChange={(e) => setType(e.target.value)}>
+			<form onSubmit={handleSearchSubmit} className="notice-search-bar">
+				<select
+					className="input--box notice-search-type"
+					name="type"
+					value={type}
+					onChange={(e) => setType(e.target.value)}
+				>
 					<option value="title">제목</option>
 					<option value="keyword">제목+내용</option>
 				</select>
 
-				<InputForm
-					label=""
-					name="keyword"
-					placeholder="검색어를 입력하세요"
-					value={keyword}
-					onChange={(e) => setKeyword(e.target.value)}
-				/>
+				<div className="notice-search-input">
+					<InputForm
+						label=""
+						name="keyword"
+						placeholder="검색어를 입력하세요"
+						value={keyword}
+						onChange={(e) => setKeyword(e.target.value)}
+					/>
+				</div>
 
-				<button type="submit" className="button">
-					검색
-				</button>
-				<button type="button" className="button" onClick={handleResetSearch}>
-					초기화
-				</button>
+				<div className="notice-search-actions">
+					<button type="submit" className="button">
+						검색
+					</button>
+					<button type="button" className="button" onClick={handleResetSearch}>
+						초기화
+					</button>
+				</div>
 			</form>
 
 			{/* 목록 테이블 */}
@@ -145,30 +151,19 @@ const NoticeList = () => {
 
 			{/* 페이징 */}
 			<div className="paging--container">
-				{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-					<button
-						key={p}
-						className="button"
-						style={{
-							opacity: p === page ? 1 : 0.6,
-							fontWeight: p === page ? 700 : 400,
-						}}
-						onClick={() => setPage(p)}
-					>
-						{p}
-					</button>
-				))}
+				<div className="paging-pages">
+					{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+						<button key={p} className={`button page-btn ${p === page ? 'active' : ''}`} onClick={() => setPage(p)}>
+							{p}
+						</button>
+					))}
+				</div>
 
-				{/* staff만 등록 버튼 */}
 				{userRole === 'staff' && (
-					<button className="button" onClick={() => navigate('/notice/write')}>
+					<button className="button register-btn" onClick={() => navigate('/notice/write')}>
 						등록
 					</button>
 				)}
-				{/* 임시 등록 버튼 */}
-				<button className="button" onClick={() => navigate('/notice/write')}>
-					등록
-				</button>
 			</div>
 		</div>
 	);

@@ -188,6 +188,32 @@ select.input--box:focus {
 	box-shadow: none;
 }
 
+.title--container {
+	display: grid;
+	grid-template-columns: 110px 1fr;
+	gap: 12px;
+	align-items: center;
+}
+
+/* InputForm 기본 margin-bottom 때문에 줄 정렬이 깨질 수 있어 상단에서만 제거 */
+.title--container .input-group,
+.title--container .option-group {
+	margin-bottom: 0;
+}
+
+/* 라벨이 있어도 간격 과하지 않게 */
+.title--container .option-label,
+.title--container .input-group label {
+	margin-bottom: 0;
+}
+
+/* 카테고리 select를 InputForm 인풋 높이/무드에 가깝게 */
+.title--container select.input--box {
+	border-radius: 999px; /* InputForm과 톤 통일 */
+	padding: 10px 14px;
+	font-size: 13.5px;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
 	.write--div {
