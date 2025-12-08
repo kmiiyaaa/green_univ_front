@@ -1,4 +1,6 @@
-// components/form/InputForm.jsx
+// input form 컴포넌트
+import '../../assets/css/InputForm.css';
+
 const InputForm = ({ label, type = 'text', name, value, onChange, placeholder }) => {
 	return (
 		<div className="input-group">

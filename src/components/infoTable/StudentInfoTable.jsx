@@ -1,7 +1,10 @@
-import UserInfoTable from "./UserInfoTable";
-
+import { useEffect, useState } from 'react';
+import DataTable from '../table/DataTable';
+import UserInfoTable from './UserInfoTable';
 
 export default function StudentInfoTable({ userInfo, stustatList }) {
+	const header2 = ['변동 일자', '변동 구분', '세부', '승인 여부', '복학 예정 연도', '복학 예정 학기'];
+
 	return (
 		<div>
 			<table>
@@ -35,28 +38,16 @@ export default function StudentInfoTable({ userInfo, stustatList }) {
 			<UserInfoTable userInfo={userInfo} />
 
 			{stustatList.length > 0 && (
-				<div>
-					<hr />
+				<>
 					<h3>학적 변동 내역</h3>
-
-					<ul>
-						<li>변동 일자</li>
-						<li>변동 구분</li>
-						<li>세부</li>
-						<li>승인 여부</li>
-						<li>복학 예정 연도 / 학기</li>
-					</ul>
-
-					{stustatList.map((s) => (
-						<div key={s.id}>
-							{s.fromDate}
-							{s.status}
-							{s?.detail}
-							{s.toYear}
-							{s?.toSemester}
-						</div>
-					))}
-				</div>
+					<DataTable
+						headers={header2}
+						data={stustatList}
+						onRowClick={(row) => {
+							console.log('선택된 변동내역:', row.원본데이터);
+						}}
+					/>
+				</>
 			)}
 		</div>
 	);
