@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../context/UserContext';
 import api from '../../../api/httpClient';
+import InputForm from '../../../components/form/InputForm';
 
 export default function UpdatePassword() {
 	const { user, userRole } = useContext(UserContext);
@@ -26,12 +27,18 @@ export default function UpdatePassword() {
 
 	const updatePassword = async () => {
 		try {
-			await api.patch('/user/updatepassword', {
+			await api.patch('/personal/password', {
 				beforePassword: value.beforePassword,
 				afterPassword: value.afterPassword,
 				passwordCheck: value.passwordCheck,
 			});
 			alert('비밀번호 변경이 완료되었습니다');
+			setValue({
+				// 비밀번호 변경 후 초기화 하기
+				beforePassword: '',
+				afterPassword: '',
+				passwordCheck: '',
+			});
 		} catch (e) {
 			console.error('비밀번호 변경 실패' + e);
 		}
@@ -44,11 +51,16 @@ export default function UpdatePassword() {
 
 				<hr />
 
-				<form onClick={updatePassword}>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						updatePassword();
+					}}
+				>
 					<div>
-						<label>현재 비밀번호</label>
-						<input
-							type="text"
+						<InputForm
+							label="현재 비밀번호"
+							type="password"
 							name="beforePassword"
 							value={value.beforePassword}
 							placeholder="비밀번호는 6~20자 사이로 입력해주세요."
@@ -58,24 +70,23 @@ export default function UpdatePassword() {
 					</div>
 
 					<div>
-						<label>변경할 비밀번호</label>
-						<input
-							type="text"
+						<InputForm
+							label="변경할 비밀번호"
+							type="password"
 							name="afterPassword"
 							value={value.afterPassword}
-							placeholder="비밀번호는 6~20자 사이로 입력해주세요."
+							placeholder="새 비밀번호를 입력해주세요"
 							onChange={handleChange}
 							required
 						/>
 					</div>
 
 					<div>
-						<label>변경할 비밀번호 확인</label>
-						<input
-							type="email"
+						<InputForm
+							label="비밀번호 확인"
+							type="password"
 							name="passwordCheck"
 							value={value.passwordCheck}
-							placeholder="비밀번호는 6~20자 사이로 입력해주세요."
 							onChange={handleChange}
 							required
 						/>

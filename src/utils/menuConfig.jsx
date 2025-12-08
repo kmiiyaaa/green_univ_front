@@ -33,6 +33,7 @@ export const SIDEBAR_MENUS = {
 	staff: [
 		{ key: 'ADMIN', label: '관리자', path: '/admin', icon: 'admin_panel_settings' },
 		{ key: 'USERS', label: '사용자 관리', path: '/user/create/student', icon: 'group' },
+		{ key: 'UPDATEPASSWORD', label: '비밀번호 변경', path: '/user/update/password', icon: 'Password' },
 	],
 	professor: [
 		{ key: 'SUBJECTS', label: '강의 관리', path: '/subject/list', icon: 'menu_book' },
