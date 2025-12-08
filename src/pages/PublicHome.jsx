@@ -1,10 +1,48 @@
 // PublicHome 로그인 + 공지사항
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../assets/css/Home.css';
 // import '../assets/css/PortalLayout.css';
 import Login from './user/Login';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/httpClient';
 
 function PublicHome() {
+	const navigate = useNavigate();
+	const [latestNotices, setLatestNotices] = useState([]); // 최신 공지
+
+	// 날짜 표시 유틸(백에서 createdTimeFormatted 주면 그걸 우선 사용)
+	const formatDate = (n) => {
+		if (!n) return '';
+		if (n.createdTimeFormatted) return n.createdTimeFormatted;
+
+		const raw = n.createdTime;
+		if (!raw) return '';
+		const d = new Date(raw);
+		if (Number.isNaN(d.getTime())) return String(raw);
+
+		const yyyy = d.getFullYear();
+		const mm = String(d.getMonth() + 1).padStart(2, '0');
+		const dd = String(d.getDate()).padStart(2, '0');
+		return `${yyyy}-${mm}-${dd}`;
+	};
+
+	const loadLatestNotices = async () => {
+		try {
+			// 최신 공지를 1페이지에서 가져온 뒤 3개만 사용
+			const res = await api.get('/notice/list/1');
+			const list = res.data.noticeList || [];
+
+			setLatestNotices(list.slice(0, 3));
+		} catch (e) {
+			console.error('PublicHome 최신 공지 로드 실패:', e);
+		}
+	};
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		loadLatestNotices();
+	}, []);
+
 	return (
 		<div className="public-layout">
 			{/* ================= 왼쪽 - 로그인 영역 ================= */}
@@ -51,27 +89,29 @@ function PublicHome() {
 							<section className="public-panel">
 								<div className="public-panel-header">
 									<h2>공지사항</h2>
-									<button className="panel-more-btn" type="button">
+									<button className="panel-more-btn" type="button" onClick={() => navigate('/notice')}>
 										더보기 +
 									</button>
 								</div>
 
 								<ul className="public-notice-list">
-									<li>
-										<span className="public-notice-category">학사</span>
-										<span className="public-notice-title">2025-1학기 수강신청 안내</span>
-										<span className="public-notice-date">2025-02-01</span>
-									</li>
-									<li>
-										<span className="public-notice-category">전체</span>
-										<span className="public-notice-title">포털 시스템 점검 안내</span>
-										<span className="public-notice-date">2025-01-25</span>
-									</li>
-									<li>
-										<span className="public-notice-category">장학</span>
-										<span className="public-notice-title">2025-1학기 국가장학금 신청</span>
-										<span className="public-notice-date">2025-01-10</span>
-									</li>
+									{latestNotices.length === 0 && (
+										<li>
+											<span className="public-notice-category">-</span>
+											<span className="public-notice-title">등록된 공지사항이 없습니다.</span>
+											<span className="public-notice-date"></span>
+										</li>
+									)}
+
+									{latestNotices.map((n) => (
+										<li key={n.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${n.id}`)}>
+											<span className="public-notice-category">
+												{(n.category || '').replace('[', '').replace(']', '')}
+											</span>
+											<span className="public-notice-title">{n.title}</span>
+											<span className="public-notice-date">{formatDate(n)}</span>
+										</li>
+									))}
 								</ul>
 							</section>
 
