@@ -6,18 +6,18 @@ import NoticeForm from '../board/NoticeForm';
 
 const NoticeWrite = () => {
 	const navigate = useNavigate();
-	const { userRole } = useContext(UserContext);
+	// const { userRole } = useContext(UserContext);
 
-	if (userRole !== 'staff') {
-		return (
-			<div className="form-container">
-				권한이 없습니다.
-				<button className="button" onClick={() => navigate(-1)}>
-					뒤로
-				</button>
-			</div>
-		);
-	}
+	// if (userRole !== 'staff') {
+	// 	return (
+	// 		<div className="form-container">
+	// 			권한이 없습니다.
+	// 			<button className="button" onClick={() => navigate(-1)}>
+	// 				뒤로
+	// 			</button>
+	// 		</div>
+	// 	);
+	// }
 
 	const handleCreate = async ({ category, title, content, file }) => {
 		try {

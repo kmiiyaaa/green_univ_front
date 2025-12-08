@@ -104,13 +104,12 @@ const NoticeList = () => {
 			<div className="split--div"></div>
 
 			{/* 검색 폼 */}
-			<form onSubmit={handleSearchSubmit} className="form--container" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-				<select
-					className="input--box"
-					name="type"
-					value={type}
-					onChange={(e) => setType(e.target.value)}
-				>
+			<form
+				onSubmit={handleSearchSubmit}
+				className="form--container"
+				style={{ display: 'flex', gap: 8, alignItems: 'center' }}
+			>
+				<select className="input--box" name="type" value={type} onChange={(e) => setType(e.target.value)}>
 					<option value="title">제목</option>
 					<option value="keyword">제목+내용</option>
 				</select>
@@ -123,8 +122,12 @@ const NoticeList = () => {
 					onChange={(e) => setKeyword(e.target.value)}
 				/>
 
-				<button type="submit" className="button">검색</button>
-				<button type="button" className="button" onClick={handleResetSearch}>초기화</button>
+				<button type="submit" className="button">
+					검색
+				</button>
+				<button type="button" className="button" onClick={handleResetSearch}>
+					초기화
+				</button>
 			</form>
 
 			{/* 목록 테이블 */}
@@ -141,7 +144,7 @@ const NoticeList = () => {
 			</div>
 
 			{/* 페이징 */}
-			<div className="paging--container" style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 12 }}>
+			<div className="paging--container">
 				{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
 					<button
 						key={p}
@@ -162,6 +165,10 @@ const NoticeList = () => {
 						등록
 					</button>
 				)}
+				{/* 임시 등록 버튼 */}
+				<button className="button" onClick={() => navigate('/notice/write')}>
+					등록
+				</button>
 			</div>
 		</div>
 	);

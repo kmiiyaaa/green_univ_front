@@ -1,17 +1,9 @@
 import { useEffect, useState } from 'react';
 import InputForm from '../../components/form/InputForm';
+import TextField from '../../components/form/TextField';
+import '../../assets/css/NoticeForm.css';
 
-/**
- * 공통 공지 폼
- *
- * props
- * - initialValues: { category, title, content }
- * - onSubmit: async ({ category, title, content, file }) => void
- * - onCancel: () => void
- * - submitLabel: string
- * - enableFile: boolean (기본 true)
- */
-
+// 공통 공지폼
 const NoticeForm = ({
 	initialValues = { category: '[일반]', title: '', content: '' },
 	onSubmit,
@@ -48,7 +40,7 @@ const NoticeForm = ({
 
 	return (
 		<form onSubmit={handleSubmit} className="write--div">
-			<div className="title--container" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+			<div className="title--container">
 				<div className="category">
 					<select name="category" className="input--box" value={category} onChange={(e) => setCategory(e.target.value)}>
 						<option value="[일반]">[일반]</option>
@@ -57,7 +49,7 @@ const NoticeForm = ({
 					</select>
 				</div>
 
-				<div className="title" style={{ flex: 1 }}>
+				<div className="title">
 					<InputForm
 						label="제목"
 						name="title"
@@ -68,9 +60,9 @@ const NoticeForm = ({
 				</div>
 			</div>
 
-			<div className="content--container" style={{ marginTop: 12 }}>
-				<label style={{ display: 'block', marginBottom: 6 }}>내용</label>
-				<textarea
+			<div className="content--container">
+				<label>내용</label>
+				<TextField
 					name="content"
 					className="form-control"
 					cols="100"
@@ -78,12 +70,11 @@ const NoticeForm = ({
 					placeholder="내용을 입력하세요"
 					value={content}
 					onChange={(e) => setContent(e.target.value)}
-					style={{ width: '100%' }}
 				/>
 			</div>
 
 			{enableFile && (
-				<div className="custom-file" style={{ marginTop: 12 }}>
+				<div className="custom-file">
 					<input
 						type="file"
 						className="custom-file-input"
@@ -94,7 +85,7 @@ const NoticeForm = ({
 				</div>
 			)}
 
-			<div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+			<div>
 				<button type="button" className="button" onClick={onCancel}>
 					목록
 				</button>

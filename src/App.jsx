@@ -49,7 +49,6 @@ function App() {
 						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */} {/* 교수 등록*/}
 						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */} {/* 교직원 등록*/}
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */} {/* 학생 등록*/}
-						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
 						<Route path="/index" element={<Index />} />
 						{/* 강의/과목 */}
 						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
@@ -60,6 +59,9 @@ function App() {
 						<Route path="/admin/college" element={<College />} /> {/* 단과대 등록 */}
 						<Route path="/admin/department" element={<Department />} /> {/* 학과 등록 */}
 						<Route path="/admin/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
+						{/* 공지사항 */}
+						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
+						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
