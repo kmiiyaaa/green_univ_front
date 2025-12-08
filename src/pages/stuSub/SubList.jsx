@@ -1,46 +1,47 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
+import OptionForm from '../../components/form/OptionForm';
+import PaginationForm from '../../components/form/PaginationForm';
 
 export default function SubList() {
 	const { user, token, userRole } = useContext(UserContext);
 	const [subTimetable, SetSubTimeTable] = useState([]);
 
-	// 검색 폼
-	const [formData, setFormData] = useState({
-		type: '', // 전공 교양
-		deptId: '', // 학과
-		name: '', // 강의명
-	});
-
-	// 페이징 상태
+	// 페이징
 	const [currentPage, setCurrentPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(0);
 	const [totalCount, setTotalCount] = useState(0);
 
-	// 검색 폼 입력 핸들러
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
-	};
+	const [searchParams, setSearchParams] = useSearchParams(); // url에 입력된 값 받기 (쿼리 스트링)
+
+	// 검색 폼
+	const [searchForm, setSearchForm] = useState({
+		type: '', // 전공 or 교양
+		deptName: '', // 학과명
+		name: '', // 강의명
+	});
 
 	// 강의 목록 조회 (검색 + 페이징)
-	const loadSubjectList = async (page = 0) => {
+	const loadSubjectList = async (page = 0, filters = null) => {
 		try {
-			const params = { page: page, size: 20 };
-			if (formData.type) params.type = formData.type;
-			if (formData.deptId) params.deptId = formData.deptId;
-			if (formData.name) params.name = formData.name;
+			const params = { page, size: 20 }; // 쿼리 파라미터 구성
+			const currentFilters = filters || searchForm;
+
+			if (currentFilters.type) params.type = currentFilters.type;
+			if (currentFilters.deptName) params.deptName = currentFilters.deptName;
+			if (currentFilters.name) params.name = currentFilters.name;
+
+			console.log('🔍 API 요청 파라미터:', params); // 디버깅용
 
 			const res = await api.get('/sugang/subjectList', { params });
 			console.log('학생이 확인하는 강의 목록', res.data);
-			// currentpage:0, listCount:10, lists:데이터들, totalPages:1
-			const rawData = res.data.lists;
-			console.log('raw', res.data.lists);
-
+			// currentpage현재페이지:0, listCount:총개수, lists:데이터들, totalPages총페이지수:2
+			const rawData = res.data.lists; // 데이터만 추출
 			const formattedData = rawData.map((sub) => ({
 				id: sub.id,
 				단과대학: sub.collName,
@@ -50,11 +51,10 @@ export default function SubList() {
 				강의명: sub.name,
 				담당교수: sub.professorName,
 				학점: sub.grades,
-				// 요일시간강의실
-				요일시간: `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
+				'요일시간 (강의실)': `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: sub.id,
+				강의계획서: sub.id, // 강의 계획서 이 부분 수정해야함
 			}));
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
@@ -62,23 +62,48 @@ export default function SubList() {
 			setTotalCount(res.data.listCount);
 			console.log('가공된 데이터:', formattedData);
 		} catch (e) {
-			console.error('에러: ', e);
+			console.error('강의 목록 조회 실패: ', e);
 		}
 	};
 
+	// 🔥 URL 파라미터 변경 감지 (초기 로드 + URL 변경 시)
 	useEffect(() => {
-		loadSubjectList();
-	}, []);
+		const page = parseInt(searchParams.get('page') || '0', 10);
+		const type = searchParams.get('type') || '';
+		const deptName = searchParams.get('deptName') || '';
+		const name = searchParams.get('name') || '';
+		console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
+		// URL에서 검색 조건 복원
+		setSearchForm({ type, deptName, name });
+		// 🔥 URL에서 읽은 값을 직접 전달!
+		loadSubjectList(page, { type, deptName, name });
+	}, [searchParams]); // searchParams 변경 시에만 실행
 
-	// 🔥 검색 버튼 클릭
-	const handleSearch = () => {
-		loadSubjectList(0); // 검색 시 첫 페이지부터
+	// 검색 폼 입력 핸들러
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setSearchForm({ ...searchForm, [name]: value });
 	};
 
-	// 🔥 페이지 이동
+	// 🔥 검색 버튼 클릭 (URL 업데이트 + 0페이지부터)
+	const handleSearch = () => {
+		const params = { page: '0' };
+		if (searchForm.type) params.type = searchForm.type;
+		if (searchForm.deptName) params.deptName = searchForm.deptName;
+		if (searchForm.name) params.name = searchForm.name;
+
+		setSearchParams(params); // URL 업데이트 → useEffect 자동 실행
+	};
+
+	// 🔥 페이지 변경 (URL 업데이트)
 	const handlePageChange = (newPage) => {
 		if (newPage >= 0 && newPage < totalPages) {
-			loadSubjectList(newPage);
+			const params = { page: newPage.toString() };
+			if (searchForm.type) params.type = searchForm.type;
+			if (searchForm.deptName) params.deptName = searchForm.deptName;
+			if (searchForm.name) params.name = searchForm.name;
+
+			setSearchParams(params); // URL 업데이트 → useEffect 자동 실행
 		}
 	};
 
@@ -91,40 +116,55 @@ export default function SubList() {
 		'강의명',
 		'담당교수',
 		'학점',
-		'요일시간',
+		'요일시간 (강의실)',
 		'현재인원',
 		'정원',
 		'강의계획서',
 	];
 
+	const SUBJECT_CATEGORY_OPTIONS = [
+		{ value: '', label: '전체' },
+		{ value: '전공', label: '전공' },
+		{ value: '교양', label: '교양' },
+	];
+
 	return (
 		<>
-			<h3>강의 시간표 조회</h3>
-			{/* 🔥 검색 폼 */}
-			<div style={{ marginBottom: '20px' }}>
-				<select name="type" value={formData.type} onChange={handleChange}>
-					<option value="">강의구분 (전체)</option>
-					<option value="전공">전공</option>
-					<option value="교양">교양</option>
-				</select>
-
-				<InputForm
-					label="개설학과 ID"
-					name="deptId"
-					type="number"
-					value={formData.deptId}
+			<h2>강의 시간표 조회</h2>
+			{/* 검색 폼 */}
+			<div>
+				<OptionForm
+					label="강의 구분"
+					name="type"
+					value={searchForm.type}
 					onChange={handleChange}
-					placeholder="학과 ID 입력"
+					options={SUBJECT_CATEGORY_OPTIONS}
 				/>
 
-				<InputForm label="강의명" name="name" value={formData.name} onChange={handleChange} placeholder="강의명 검색" />
+				<InputForm
+					label="개설학과"
+					name="deptName"
+					type="text"
+					value={searchForm.deptName}
+					onChange={handleChange}
+					placeholder="학과 입력"
+				/>
+
+				<InputForm
+					label="강의명"
+					name="name"
+					value={searchForm.name}
+					onChange={handleChange}
+					placeholder="강의명 검색"
+				/>
 
 				<button onClick={handleSearch} className="button">
 					검색
 				</button>
 			</div>
 
-			{/* 🔥 페이징 정보 */}
+			{/* 페이징 정보 */}
+			<h3>강의 목록</h3>
 			<div>
 				<p>
 					전체 {totalCount}개 | {currentPage + 1} / {totalPages} 페이지
@@ -139,18 +179,12 @@ export default function SubList() {
 				}}
 			/>
 
-			{/* 🔥 페이징 버튼 */}
-			<div style={{ marginTop: '20px' }}>
-				<button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
-					이전
-				</button>
-				<span style={{ margin: '0 10px' }}>
-					{currentPage + 1} / {totalPages}
-				</span>
-				<button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>
-					다음
-				</button>
-			</div>
+			<PaginationForm
+				currentPage={currentPage}
+				totalPages={totalPages}
+				blockSize={20}
+				onPageChange={handlePageChange}
+			/>
 		</>
 	);
 }
