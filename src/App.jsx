@@ -27,6 +27,8 @@ import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
 import UpdatePassword from './pages/user/update/UpdatePassword';
+import ProfessorList from './pages/user/info/ProfessorList';
+import StudentList from './pages/user/info/StudentList';
 import ScheduleList from './pages/schedule/ScheduleList';
 import ScheduleDetail from './pages/schedule/ScheduleDetail';
 
@@ -64,6 +66,8 @@ function App() {
 						<Route path="/admin/college" element={<College />} /> {/* 단과대 등록 */}
 						<Route path="/admin/department" element={<Department />} /> {/* 학과 등록 */}
 						<Route path="/admin/colltuit" element={<CollTuit />} /> {/* 단대별 등록금 등록 */}
+						<Route path="/professor/list" element={<ProfessorList />} /> {/*교수 리스트 */}
+						<Route path="/student/list" element={<StudentList />} /> {/*교수 리스트 */}
 						{/* 공지사항 */}
 						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
 						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}

@@ -1,21 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/common/DataTable';
-import '../../assets/css/professorList.css';
-// 없으면 studentList.css 재사용해도 됨
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
+import PaginationButton from '../../../components/form/PaginationButton';
+import { pagenationUtil } from '../../../utils/PaginationUtil';
+import InputForm from '../../../components/form/InputForm';
 
-export default function ProfessorListPage() {
-	// 검색 폼(최소)
-	const [formData, setFormData] = useState({
-		professorId: '',
-		deptId: '',
-	});
-
-	// 페이징/데이터 (교수는 1-based)
-	const [currentPage, setCurrentPage] = useState(1);
+export default function ProfessorList() {
+	const [currentPage, setCurrentPage] = useState(0);
 	const [lists, setLists] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
-	const [listCount, setListCount] = useState(0);
+
+	// 검색용 formData
+	const [formData, setFormData] = useState({
+		professorId: '',
+		deptName: '',
+	});
 
 	const headers = ['사번', '이름', '학과', '이메일', '전화번호'];
 
@@ -24,57 +23,39 @@ export default function ProfessorListPage() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const buildUrl = (page) => {
-		// 1페이지는 path 없이도 동작
-		return page <= 1 ? '/user/professorList' : `/user/professorList/${page}`;
-	};
-
-	const fetchProfessors = async (page = currentPage) => {
+	// 리스트 페이징  + 검색 기능
+	const searchProfessors = async (page = currentPage) => {
 		try {
 			const params = {};
-
 			if (formData.professorId?.toString().trim() !== '') {
 				params.professorId = Number(formData.professorId);
 			}
-			if (formData.deptId?.toString().trim() !== '') {
-				params.deptId = Number(formData.deptId);
+			if (formData.deptName?.toString().trim() !== '') {
+				params.deptName = formData.deptName;
 			}
+			const res = await api.get(`/user/professorList/${page}`, { params });
+			console.log(res.data);
 
-			const res = await api.get(buildUrl(page), { params });
-
-			const pageObj = res.data.professorList;
-
-			const content = pageObj?.content ?? [];
-			setLists(content);
-
-			setTotalPages(pageObj?.totalPages ?? 0);
-			setListCount(pageObj?.totalElements ?? content.length ?? 0);
+			setLists(res.data.professorList);
+			setCurrentPage(res.data.page);
+			setTotalPages(res.data.totalPages);
 		} catch (e) {
 			console.error(e);
 			alert('교수 목록을 불러오지 못했습니다.');
 		}
 	};
 
+	// 페이지 바뀌면
 	useEffect(() => {
-		fetchProfessors(currentPage);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		searchProfessors(currentPage);
 	}, [currentPage]);
 
-	const handleSearch = (e) => {
-		e.preventDefault();
-		setCurrentPage(1);
-		fetchProfessors(1);
-	};
-
-	const handleReset = () => {
-		setFormData({ professorId: '', deptId: '' });
-		setCurrentPage(1);
-		// 초기화 후 전체 조회
-		setTimeout(() => fetchProfessors(1), 0);
-	};
+	// useEffect(() => {
+	// 	searchProfessors(0);
+	// }, []);
 
 	const tableData = useMemo(() => {
-		return lists.map((p) => ({
+		return lists?.map((p) => ({
 			사번: p.id ?? p.professorId ?? '',
 			이름: p.name ?? '',
 			학과: p.departmentName ?? p.deptName ?? p.department?.name ?? '',
@@ -83,91 +64,29 @@ export default function ProfessorListPage() {
 		}));
 	}, [lists]);
 
-	const onRowClick = (row) => {
-		const professorId = row['사번'];
-		console.log('교수 클릭:', professorId);
-		// navigate(`/user/professor/${professorId}`);
-	};
-
-	const canPrev = currentPage > 1;
-	const canNext = currentPage < totalPages;
-
-	const goPage = (p) => {
-		if (p < 1 || p > totalPages) return;
-		setCurrentPage(p);
-	};
-
-	// 페이지 버튼 5개 정도
-	const pageNumbers = useMemo(() => {
-		const maxButtons = 5;
-
-		if (totalPages <= maxButtons) {
-			return Array.from({ length: totalPages }, (_, i) => i + 1);
-		}
-
-		const half = Math.floor(maxButtons / 2);
-		let start = Math.max(1, currentPage - half);
-		let end = start + maxButtons - 1;
-
-		if (end > totalPages) {
-			end = totalPages;
-			start = end - (maxButtons - 1);
-		}
-
-		return Array.from({ length: maxButtons }, (_, i) => start + i);
-	}, [totalPages, currentPage]);
+	const pagination = pagenationUtil({
+		page: currentPage,
+		totalPages,
+		blockSize: 1,
+	});
 
 	return (
-		<div className="professor-list-page">
-			<div className="page-card">
-				<div className="page-header">
-					<h1>교수 조회</h1>
-				</div>
+		<div>
+			<h2>교수 명단 조회</h2>
+			<form onSubmit={() => searchProfessors()}>
+				<InputForm label="사번" name="professorId" placeholder="검색어를 입력하세요" onChange={handleChange} />
+				<InputForm label="학과 이름" name="deptName" placeholder="검색어를 입력하세요" onChange={handleChange} />
+				<button>검색</button>
+			</form>
+			<hr></hr>
 
-				<form className="search-bar" onSubmit={handleSearch}>
-					<label>학과 번호</label>
-					<input type="number" name="deptId" value={formData.deptId} onChange={handleChange} placeholder="예) 3" />
-
-					<label>사번</label>
-					<input
-						type="number"
-						name="professorId"
-						value={formData.professorId}
-						onChange={handleChange}
-						placeholder="예) 1001"
-					/>
-
-					<button type="submit">조회 🔍</button>
-					<button type="button" onClick={handleReset}>
-						초기화
-					</button>
-				</form>
-
-				<div className="list-meta">
-					<span>총 {listCount}명</span>
-					<span>
-						페이지 {totalPages === 0 ? 0 : currentPage} / {totalPages}
-					</span>
-				</div>
-
-				<DataTable headers={headers} data={tableData} onRowClick={onRowClick} />
-
-				<div className="pagination">
-					<button className="page-btn" disabled={!canPrev} onClick={() => goPage(currentPage - 1)}>
-						이전
-					</button>
-
-					{pageNumbers.map((p) => (
-						<button key={p} className={`page-number ${p === currentPage ? 'active' : ''}`} onClick={() => goPage(p)}>
-							{p}
-						</button>
-					))}
-
-					<button className="page-btn" disabled={!canNext} onClick={() => goPage(currentPage + 1)}>
-						다음
-					</button>
-				</div>
-			</div>
+			<DataTable headers={headers} data={tableData} />
+			<PaginationButton
+				currentPage={currentPage}
+				pagination={pagination}
+				totalPages={totalPages}
+				onPageChange={(p) => searchProfessors(p)}
+			/>
 		</div>
 	);
 }
