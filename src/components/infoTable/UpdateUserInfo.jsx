@@ -18,13 +18,12 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 
 	const updateUserInfo = async () => {
 		try {
-			const res = await api.patch(`/personal/update?password=${value.password}`, {
+			await api.patch(`/personal/update?password=${value.password}`, {
 				address: value.address,
 				tel: value.tel,
 				email: value.email,
 			});
 
-			localStorage.setItem('token', res.data.accessToken);
 			alert('수정이 완료되었습니다!');
 			setIsEdit(false);
 		} catch (err) {
