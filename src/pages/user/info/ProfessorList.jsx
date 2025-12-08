@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import PaginationButton from '../../../components/form/PaginationButton';
-import { pagenationUtil } from '../../../utils/PaginationUtil';
 import InputForm from '../../../components/form/InputForm';
 
 export default function ProfessorList() {
