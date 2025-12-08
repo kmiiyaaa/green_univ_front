@@ -17,7 +17,7 @@
 
 /* 헤더 영역: 상단 메뉴/그리드 느낌 */
 .data-table thead {
-	background: linear-gradient(90deg, #006838 0%, #1f8a4d 55%, #1a5727 100%);
+	background: linear-gradient(90deg, #006838 0%, #155c34 55%, #1a5727 100%);
 }
 
 .data-table th {

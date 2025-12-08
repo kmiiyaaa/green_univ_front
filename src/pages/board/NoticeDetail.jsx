@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
+import '../../assets/css/NoticeDetail.css';
 
 const NoticeDetail = () => {
 	const { id } = useParams();
@@ -39,7 +40,7 @@ const NoticeDetail = () => {
 	if (!notice) return <div className="form-container">로딩중...</div>;
 
 	return (
-		<div className="form-container">
+		<div className="form-container notice-detail">
 			<h3>공지 상세</h3>
 			<div className="split--div"></div>
 
@@ -53,7 +54,7 @@ const NoticeDetail = () => {
 					</tr>
 					<tr>
 						<td className="type">작성일</td>
-						<td>{notice.createdTime ? String(notice.createdTime) : ''}</td>
+						<td>{notice.createdTimeFormatted || ''}</td>
 					</tr>
 					<tr>
 						<td className="type">조회수</td>
