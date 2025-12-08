@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
@@ -24,7 +24,7 @@ const NoticeList = () => {
 	const [noticeList, setNoticeList] = useState([]);
 	const [totalPages, setTotalPages] = useState(1);
 
-	const headers = useMemo(() => ['번호', '말머리', '제목', '작성일', '조회수'], []);
+	const headers = ['번호', '말머리', '제목', '작성일', '조회수'];
 
 	const formatDateTime = (ts) => {
 		if (!ts) return '';

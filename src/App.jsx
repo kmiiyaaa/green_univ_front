@@ -27,6 +27,8 @@ import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
 import UpdatePassword from './pages/user/update/UpdatePassword';
+import ScheduleList from './pages/schedule/ScheduleList';
+import ScheduleDetail from './pages/schedule/ScheduleDetail';
 
 function App() {
 	return (
@@ -48,10 +50,8 @@ function App() {
 						<Route path="/tuition/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
 						{/* 사용자 */}
 						<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
-						<Route path="/user/update/password" element={<UpdatePassword />} />{' '}
-						{/* 비밀번호 변경 /}
-						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}{' '}
-						{/* 교수 등록*/}
+						<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
+						<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}
 						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 직원 등록 */} {/* 교직원 등록*/}
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */} {/* 학생 등록*/}
 						<Route path="/index" element={<Index />} />
@@ -69,6 +69,9 @@ function App() {
 						<Route path="/notice/write" element={<NoticeWrite />} /> {/* 공지 등록*/}
 						<Route path="/notice/read/:id" element={<NoticeDetail />} /> {/* 공지 상세보기*/}
 						<Route path="/notice/update/:id" element={<NoticeUpdate />} /> {/* 공지 수정*/}
+						{/* 학사 일정 */}
+						<Route path="/schedule/list" element={<ScheduleList />} /> {/* 학사일정 */}
+						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 학사일정 상세 */}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
