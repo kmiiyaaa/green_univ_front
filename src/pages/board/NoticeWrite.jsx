@@ -27,9 +27,7 @@ const NoticeWrite = () => {
 			formData.append('content', content);
 			if (file) formData.append('file', file);
 
-			await api.post('/notice/write', formData, {
-				headers: { 'Content-Type': 'multipart/form-data' },
-			});
+			await api.post('/notice/write', formData);
 
 			alert('공지 등록 완료!');
 			navigate('/notice');
