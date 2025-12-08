@@ -4,8 +4,9 @@ function PaginationForm({ currentPage, totalPages, blockSize = 10, onPageChange 
 	const endPage = Math.min(startPage + blockSize - 1, totalPages);
 
 	// 이전 버튼, 다음 버튼
-	const hasPrev = startPage > 1;
-	const hasNext = endPage < totalPages;
+	// firstPage, prev, next, lastPage 구현해보기
+	const hasPrev = startPage > 0;
+	const hasNext = endPage <= totalPages;
 
 	// 페이지 번호 배열 (프론트 번호는 1-based, 백은 0-based라서 p-1 사용)
 	const pageNumbers = [];
@@ -25,7 +26,7 @@ function PaginationForm({ currentPage, totalPages, blockSize = 10, onPageChange 
 	return (
 		<div>
 			<div>
-				<button disabled={!hasPrev} onClick={() => goPage(currentPage - 1)}>
+				<button disabled={currentPage === 0} onClick={() => goPage(currentPage - 1)}>
 					이전
 				</button>
 
@@ -35,7 +36,7 @@ function PaginationForm({ currentPage, totalPages, blockSize = 10, onPageChange 
 					</button>
 				))}
 
-				<button disabled={!hasNext} onClick={() => goPage(currentPage + 1)}>
+				<button disabled={currentPage === totalPages - 1} onClick={() => goPage(currentPage + 1)}>
 					다음
 				</button>
 			</div>
