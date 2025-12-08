@@ -1,7 +1,6 @@
 // PublicHome 로그인 + 공지사항
 import React, { useEffect, useState } from 'react';
 import '../assets/css/Home.css';
-// import '../assets/css/PortalLayout.css';
 import Login from './user/Login';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/httpClient';
@@ -9,6 +8,7 @@ import api from '../api/httpClient';
 function PublicHome() {
 	const navigate = useNavigate();
 	const [latestNotices, setLatestNotices] = useState([]); // 최신 공지
+	const [latestSchedules, setLatestSchedules] = useState([]); // 최신 학사 일정
 
 	// 날짜 표시 유틸(백에서 createdTimeFormatted 주면 그걸 우선 사용)
 	const formatDate = (n) => {
@@ -41,6 +41,29 @@ function PublicHome() {
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect
 		loadLatestNotices();
+	}, []);
+
+	const loadLatestSchedules = async () => {
+		try {
+			const res = await api.get('/schedule'); // 또는 '/schedule/list'
+			const list = res.data.schedules || [];
+
+			// 시작일 기준 가까운 순 정렬(선택)
+			const sorted = [...list].sort((a, b) => {
+				const aDate = a.startDay ? new Date(a.startDay).getTime() : 0;
+				const bDate = b.startDay ? new Date(b.startDay).getTime() : 0;
+				return aDate - bDate;
+			});
+
+			setLatestSchedules(sorted.slice(0, 3));
+		} catch (e) {
+			console.error('PublicHome 최신 학사일정 로드 실패:', e);
+		}
+	};
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		loadLatestSchedules();
 	}, []);
 
 	return (
@@ -119,24 +142,28 @@ function PublicHome() {
 							<section className="public-panel">
 								<div className="public-panel-header">
 									<h2>학사 일정</h2>
-									<button className="panel-more-btn" type="button">
+									<button className="panel-more-btn" type="button" onClick={() => navigate(`/schedule`)}>
 										더보기 +
 									</button>
 								</div>
 
 								<ul className="public-schedule-list">
-									<li>
-										<span className="public-schedule-date">03.02 ~ 03.08</span>
-										<span className="public-schedule-title">2025-1학기 수강정정 기간</span>
-									</li>
-									<li>
-										<span className="public-schedule-date">03.10</span>
-										<span className="public-schedule-title">2025-1학기 개강</span>
-									</li>
-									<li>
-										<span className="public-schedule-date">04.22 ~ 04.26</span>
-										<span className="public-schedule-title">중간고사 기간</span>
-									</li>
+									{latestSchedules.length === 0 && (
+										<li>
+											<span className="public-schedule-date">-</span>
+											<span className="public-schedule-title">등록된 학사 일정이 없습니다.</span>
+										</li>
+									)}
+
+									{latestSchedules.map((s) => (
+										<li key={s.id}>
+											<span className="public-schedule-date">
+												{s.startDay}
+												{s.endDay ? ` ~ ${s.endDay}` : ''}
+											</span>
+											<span className="public-schedule-title">{s.information}</span>
+										</li>
+									))}
 								</ul>
 							</section>
 						</div>

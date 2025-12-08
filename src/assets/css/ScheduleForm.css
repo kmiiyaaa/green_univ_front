@@ -1,0 +1,177 @@
+/* =========================
+   ScheduleForm.css
+   - 학사일정 Write + Detail + Update 공용
+   - 표 기반 상세/폼 레이아웃 통일
+========================= */
+
+/* fallback vars */
+:root {
+	--primary-green: #15803d;
+	--primary-green-dark: #0f6b3a;
+	--border-soft: #e5e7eb;
+	--text-main: #111827;
+	--text-sub: #6b7280;
+}
+
+/* 공통 페이지 여백 흐름 */
+.schedule-page .split--div {
+	margin-bottom: 18px;
+}
+
+/* =========================
+   Detail 테이블 스타일
+========================= */
+
+.schedule-detail .table,
+.schedule-form .table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	background: #ffffff;
+	border: 1px solid var(--border-soft);
+	border-radius: 14px;
+	overflow: hidden;
+	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+/* label(왼쪽 칸) */
+.schedule-detail .table .type,
+.schedule-form .table .type {
+	width: 160px;
+	background: #f9fafb;
+	color: var(--text-sub);
+
+	font-size: 12.5px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+
+	padding: 12px 14px;
+	border-right: 1px solid var(--border-soft);
+	border-bottom: 1px solid var(--border-soft);
+}
+
+/* value(오른쪽 칸) */
+.schedule-detail .table td:not(.type),
+.schedule-form .table td:not(.type) {
+	padding: 12px 14px;
+	font-size: 13.5px;
+	color: var(--text-main);
+	border-bottom: 1px solid var(--border-soft);
+}
+
+/* 마지막 줄 border 정리 */
+.schedule-detail .table tr:last-child td,
+.schedule-form .table tr:last-child td {
+	border-bottom: none;
+}
+
+/* =========================
+   Write/Update input 영역 정렬
+========================= */
+
+/* 날짜/텍스트 input이 기본 스타일일 때 대비 */
+.schedule-form input[type='date'],
+.schedule-form input[type='text'],
+.schedule-form textarea {
+	width: 100%;
+	padding: 10px 12px;
+	border-radius: 12px;
+
+	border: 1px solid var(--border-soft);
+	background: #f9fafb;
+
+	font-size: 13.5px;
+	color: var(--text-main);
+	outline: none;
+
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.schedule-form textarea {
+	min-height: 120px;
+	resize: vertical;
+}
+
+.schedule-form input::placeholder,
+.schedule-form textarea::placeholder {
+	color: #9ca3af;
+}
+
+.schedule-form input:focus,
+.schedule-form textarea:focus {
+	background: #ffffff;
+	border-color: var(--primary-green);
+	box-shadow: 0 0 0 1px rgba(0, 104, 56, 0.18);
+}
+
+/* =========================
+   하단 버튼 영역 공통
+   (목록/수정/삭제/등록)
+========================= */
+
+.schedule-page .select--button {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 14px;
+}
+
+/* 기존 .button 유지하면서 schedule 페이지 톤에서만 살짝 통일 */
+.schedule-page .select--button .button {
+	border-radius: 12px;
+	padding: 10px 14px;
+
+	font-size: 12.5px;
+	font-weight: 700;
+
+	transition: transform 0.06s ease, box-shadow 0.18s ease, filter 0.12s ease, background-color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+/* 기본 버튼(목록 등) */
+.schedule-page .select--button .button[type='button'],
+.schedule-page .select--button .button:not([data-variant]) {
+	background: #ffffff;
+	border: 1px solid var(--border-soft);
+	color: var(--text-main);
+}
+
+.schedule-page .select--button .button[type='button']:hover,
+.schedule-page .select--button .button:not([data-variant]):hover {
+	background: #f9fafb;
+	border-color: #d1d5db;
+}
+
+/* 강조 버튼이 필요하면 data-variant로 사용 가능 */
+.schedule-page .select--button .button[data-variant='primary'] {
+	border: none;
+	color: #ffffff;
+	background: linear-gradient(90deg, var(--primary-green), var(--primary-green-dark));
+	box-shadow: 0 10px 22px rgba(22, 163, 74, 0.22);
+}
+
+.schedule-page .select--button .button[data-variant='primary']:hover {
+	filter: brightness(1.03);
+	transform: translateY(-1px);
+	box-shadow: 0 14px 30px rgba(22, 163, 74, 0.32);
+}
+
+/* =========================
+   반응형
+========================= */
+
+@media (max-width: 768px) {
+	.schedule-detail .table .type,
+	.schedule-form .table .type {
+		width: 120px;
+	}
+
+	.schedule-page .select--button {
+		flex-wrap: wrap;
+		justify-content: stretch;
+	}
+
+	.schedule-page .select--button .button {
+		flex: 1;
+	}
+}
