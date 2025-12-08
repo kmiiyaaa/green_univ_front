@@ -3,7 +3,6 @@ import '../../../assets/css/Header.css';
 import { NavLink, useLocation } from 'react-router-dom';
 import { UserContext } from '../../../context/UserContext';
 import greenLogo from '../../../assets/green-university-logo.png';
-import '../../../assets/css/Header.css';
 
 // 역할별 헤더 메뉴 설정
 const HEADER_CONFIG = {

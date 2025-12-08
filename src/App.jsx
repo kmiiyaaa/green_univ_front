@@ -12,6 +12,10 @@ import CreatePayment from './pages/tuition/CreatePayment';
 import UserInfo from './pages/user/info/UserInfo';
 import Index from './pages/Index';
 
+import NoticeList from './pages/board/NoticeList';
+import NoticeUpdate from './pages/board/NoticeUpdate';
+import NoticeWrite from './pages/board/NoticeWrite';
+
 import AllsubList from './pages/subject/AllSubList';
 import Subject from './pages/admin/Subject';
 import AllsubList2 from './pages/subject/AllSubList2';
@@ -61,6 +65,7 @@ function App() {
 						<Route path="/createProfessor" element={<CreateProfessor />} /> {/* 교수 등록*/}
 						<Route path="/createStaff" element={<CreateStaff />} /> {/* 교직원 등록*/}
 						<Route path="/createStudent" element={<CreateStudent />} /> {/* 학생 등록*/}
+						<Route path="/notice" element={<NoticeList />} /> {/* 공지 목록*/}
 						<Route path="/index" element={<Index />} />
 						{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 						<Route path="/subjectlist" element={<AllsubList2 />} />

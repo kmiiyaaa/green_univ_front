@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
-import NoticeForm from '../../components/notice/NoticeForm';
+import NoticeForm from '../board/NoticeForm';
 
 const NoticeWrite = () => {
 	const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import InputForm from '../form/InputForm';
+import InputForm from '../../components/form/InputForm';
 
 /**
  * 공통 공지 폼
@@ -11,6 +11,7 @@ import InputForm from '../form/InputForm';
  * - submitLabel: string
  * - enableFile: boolean (기본 true)
  */
+
 const NoticeForm = ({
 	initialValues = { category: '[일반]', title: '', content: '' },
 	onSubmit,
@@ -28,9 +29,9 @@ const NoticeForm = ({
 		setCategory(initialValues.category ?? '[일반]');
 		setTitle(initialValues.title ?? '');
 		setContent(initialValues.content ?? '');
-		// 수정폼에서는 기본적으로 파일을 안 쓰는 구조라 초기 file은 유지하지 않음
+		// 수정폼에서는 기본적으로 파일을 안 쓰는 구조라 초기 file은 유지하지 않음?
 		// 필요하면 initialValues.file 같은 확장도 가능
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialValues?.category, initialValues?.title, initialValues?.content]);
 
 	const handleSubmit = async (e) => {
@@ -47,17 +48,9 @@ const NoticeForm = ({
 
 	return (
 		<form onSubmit={handleSubmit} className="write--div">
-			<div
-				className="title--container"
-				style={{ display: 'flex', gap: 8, alignItems: 'center' }}
-			>
+			<div className="title--container" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
 				<div className="category">
-					<select
-						name="category"
-						className="input--box"
-						value={category}
-						onChange={(e) => setCategory(e.target.value)}
-					>
+					<select name="category" className="input--box" value={category} onChange={(e) => setCategory(e.target.value)}>
 						<option value="[일반]">[일반]</option>
 						<option value="[학사]">[학사]</option>
 						<option value="[장학]">[장학]</option>
@@ -102,11 +95,7 @@ const NoticeForm = ({
 			)}
 
 			<div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-				<button
-					type="button"
-					className="button"
-					onClick={onCancel}
-				>
+				<button type="button" className="button" onClick={onCancel}>
 					목록
 				</button>
 				<button type="submit" className="button">

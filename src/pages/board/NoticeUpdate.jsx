@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
-import NoticeForm from '../../components/notice/NoticeForm';
+import NoticeForm from '../board/NoticeForm';
 
 const NoticeUpdate = () => {
 	const { id } = useParams();
@@ -42,9 +42,9 @@ const NoticeUpdate = () => {
 		}
 	};
 
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
 		loadNotice();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id]);
 
 	const handleUpdate = async ({ category, title, content }) => {
