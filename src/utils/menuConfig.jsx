@@ -36,12 +36,24 @@ export const SIDEBAR_MENUS = {
 		{ key: 'PRESUBJECT', label: '예비 수강 신청', path: '/user/info', icon: 'PREAPP' },
 		{ key: 'APPSUBJECT', label: '수강 신청', path: '/user/info', icon: 'APP' },
 		{ key: 'SUGANGLIST', label: '수강 신청 내역 조회', path: '/user/info', icon: 'SUGANGLIST' },
+
+		{ key: 'THISGRADE', label: '이번학기 성적', path: '/grade/current', icon: 'THISGRADE' },
+		{ key: 'SEMESTERGRADE', label: '학기별 성적', path: '/grade/semester', icon: 'SEMESTERGRADE' },
+		{ key: 'TOTALGRADE', label: '누계 성적', path: '/grade/total', icon: 'TOTALGRADE' },
+		{ key: 'BREAKLIST', label: '휴학 신청 내역', path: '/break/list', icon: 'BREAKLIST' },
+
+		{ key: 'NOTICE', label: '공지사항', path: '/notice', icon: 'NOTICE' },
+		{ key: 'SCHEDULE', label: '학사일정', path: '/schedule', icon: 'SCHEDULE' },
 	],
 	staff: [
 		{ key: 'ADMIN', label: '관리자', path: '/admin', icon: 'admin_panel_settings' },
 		{ key: 'USERS', label: '사용자 관리', path: '/user/create/student', icon: 'group' },
 		{ key: 'UPDATEPASSWORD', label: '비밀번호 변경', path: '/user/update/password', icon: 'Password' },
 		{ key: 'CREATETUITION', label: '등록금 고지서 발송', path: '/tuition/bill', icon: 'CreateTuition' },
+
+		{ key: 'BREAKAPPLICATION', label: '휴학 신청서', path: '/break/application', icon: 'BREAKAPPLICATION' },
+		{ key: 'BREAKLIST', label: '휴학 신청 내역', path: '/break/list/staff', icon: 'BREAKLIST' },
+		{ key: 'NOTICE', label: '공지사항', path: '/notice', icon: 'NOTICE' },
 	],
 	professor: [
 		{ key: 'SUBJECTS', label: '강의 관리', path: '/subject/list', icon: 'menu_book' },

@@ -9,7 +9,7 @@ const ThisGrade = () => {
 	useEffect(() => {
 		const fetchThisSemester = async () => {
 			try {
-				await api.get('/grade/thisSemester');
+				await api.get('/grade/current');
 			} catch (e) {
 				console.error(e);
 			}

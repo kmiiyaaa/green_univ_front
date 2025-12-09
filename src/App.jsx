@@ -105,7 +105,7 @@ function App() {
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 						{/* 성적 */}
-						<Route path="/grade/thisSemester" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
+						<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
 					</Route>
