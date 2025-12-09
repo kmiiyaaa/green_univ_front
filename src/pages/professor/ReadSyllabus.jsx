@@ -1,0 +1,106 @@
+import { useContext } from 'react';
+import { toHHMM } from '../../utils/DateTimeUtil';
+import { UserContext } from '../../context/UserContext';
+export default function ReadSyllabus({ syllabus, setIsEdit }) {
+	const { userRole } = useContext(UserContext);
+
+	return (
+		<div>
+			<h2>강의 계획서 조회</h2>
+			<table border="1">
+				<tbody>
+					<tr>
+						<th rowSpan="4">교과목 정보</th>
+						<th>수업 번호</th>
+						<td>{syllabus.subjectId}</td>
+						<th>교과목 명</th>
+						<td>{syllabus.name}</td>
+					</tr>
+
+					<tr>
+						<th>수업 연도</th>
+						<td>{syllabus.subYear}</td>
+						<th>수업 학기</th>
+						<td>{syllabus.semester}</td>
+					</tr>
+
+					<tr>
+						<th>학점</th>
+						<td>{syllabus.grades}</td>
+						<th>이수 구분</th>
+						<td>{syllabus.type}</td>
+					</tr>
+
+					<tr>
+						<th>강의 시간</th>
+						<td colSpan="3">
+							{syllabus.subDay}
+							{toHHMM(syllabus.startTime)}-{toHHMM(syllabus.endTime)}
+						</td>
+					</tr>
+
+					<tr>
+						<th>강의실</th>
+						<td colSpan="4">{syllabus.roomId}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br />
+
+			<table border="1">
+				<tbody>
+					<tr>
+						<th rowSpan="2">교강사 정보</th>
+						<th>소속</th>
+						<td>{syllabus.deptName}</td>
+						<th>성명</th>
+						<td>{syllabus.professorName}</td>
+					</tr>
+					<tr>
+						<th>연락처</th>
+						<td>{syllabus.tel}</td>
+						<th>email</th>
+						<td>{syllabus.email}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br />
+
+			<table border="1">
+				<tbody>
+					<tr>
+						<th>강의 개요</th>
+					</tr>
+					<tr>
+						<td>{syllabus?.overview}</td>
+					</tr>
+
+					<tr>
+						<th>강의 목표</th>
+					</tr>
+					<tr>
+						<td>{syllabus?.objective}</td>
+					</tr>
+
+					<tr>
+						<th>교재 정보</th>
+					</tr>
+					<tr>
+						<td>{syllabus?.textbook}</td>
+					</tr>
+
+					<tr>
+						<th>주간 계획</th>
+					</tr>
+					<tr>
+						<td>{syllabus?.program}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			{userRole === 'professor' && <button onClick={() => setIsEdit(true)}>수정</button>}
+		</div>
+	);
+}

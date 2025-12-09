@@ -40,6 +40,8 @@ import BreakApplication from './pages/break/BreakApplication';
 import BreakAppDetail from './pages/break/BreakAppDetail';
 import BreakAppListStaff from './pages/break/BreakAppListStaff';
 import BreakAppListStudent from './pages/break/BreakAppListStudent';
+import ProfessorSubjectList from './pages/professor/ProfessorSubjectList';
+import ReadSyllabusPopup from './pages/professor/ReadSyllabusPopup';
 import ThisGrade from './pages/grade/ThisGrade';
 import Semester from './pages/grade/Semester';
 import TotalGrade from './pages/grade/TotalGrade';
@@ -100,12 +102,15 @@ function App() {
 						<Route path="/break/detail" element={<BreakAppDetail />} /> {/* 휴학 신청 상세*/}
 						<Route path="/break/list/staff" element={<BreakAppListStaff />} /> {/* 교직원 -휴학 신청리스트*/}
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
+						{/* 교수 */}
+						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 						{/* 성적 */}
 						<Route path="/grade/thisSemester" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
 					</Route>
-					{/* </Route> */}
+					{/* 강의계획서 조회 팝업 */}
+					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />{' '}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
