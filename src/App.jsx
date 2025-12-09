@@ -13,8 +13,7 @@ import NoticeUpdate from './pages/board/NoticeUpdate';
 import NoticeDetail from './pages/board/NoticeDetail';
 import NoticeWrite from './pages/board/NoticeWrite';
 import Subject from './pages/admin/Subject';
-import AllsubList2 from './pages/subject/AllSubList2';
-import AdminPage from './pages/admin/AdminPage';
+import AllsubList from './pages/AllSubList';
 import College from './pages/admin/College';
 import Department from './pages/admin/Department';
 import CollTuit from './pages/admin/CollTuit';
@@ -73,14 +72,12 @@ function App() {
 						<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 교직원 등록 */}
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
 						<Route path="/index" element={<Index />} />
-						{/* 강의 과목 수강신청 */}
-						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
+						{/* 수강신청 */}
 						<Route path="/sugang/timetable" element={<SubTimetable />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
 						<Route path="/sugang/pre" element={<PreSubApp />} /> {/* 예비 수강 신청 */}
 						<Route path="/sugang" element={<SubApp />} /> {/* 수강 신청 .. */}
 						<Route path="/sugang/period" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
 						{/* 관리자 */}
-						<Route path="/admin" element={<AdminPage />} /> {/* 관리자 통합 페이지 - 삭제 할 수도 */}
 						<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}
 						<Route path="/admin/subject" element={<Subject />} /> {/* 강의 등록 */}
 						<Route path="/admin/college" element={<College />} /> {/* 단과대 등록 */}
@@ -105,7 +102,8 @@ function App() {
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
-						{/* 성적 */}
+						{/* 수업 성적 */}
+						<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
 						<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}

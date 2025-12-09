@@ -56,7 +56,6 @@
 	<Route path="/createStudent" element={<CreateStudent />} />
 	{/* 아래는 공통 컴포넌트인 inputForm, DataTable 사용한 거 테스트 */}
 	<Route path="/subjectlist" element={<AllsubList2 />} />
-	<Route path="/adminform" element={<AdminPage />} />
 	<Route path="/room" element={<Room />} /> {/* 강의실 등록 */}
 	<Route path="/subject" element={<Subject />} /> {/* 강의 등록 */}
 	<Route path="/college" element={<College />} /> {/* 단과대 등록 */}
