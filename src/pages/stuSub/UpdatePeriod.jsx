@@ -8,47 +8,74 @@ import DataTable from '../../components/table/DataTable';
 // 예비 수강신청 기간 : 0, 수강신청 기간 : 1, 수강신청 기간 종료 : 2
 export default function UpdatePeriod() {
 	const { user, token, userRole } = useContext(UserContext);
-	// 현재 상태를 보여주는 ..
-	const [sugangState, setSugangState] = useState('');
+	const [sugangState, setSugangState] = useState(null);
 
-	// 수강 신청 기간 확인
+	// 현재 상태 불러오기
+	const loadSugangState = async () => {
+		try {
+			const res = await api.get('/sugangperiod');
+			console.log('현재 상태:', res.data);
+			setSugangState(res.data.status);
+		} catch (err) {
+			console.error('상태 로드 실패:', err);
+		}
+	};
+
 	useEffect(() => {
-		const loadSugangState = async () => {
-			try {
-				const res = await api.get('/sugang/period');
-				console.log('loadSugangState', res.data);
-			} catch (err) {}
-		};
 		loadSugangState();
 	}, []);
 
-	// useEffect(() => {
-	// 	const loadSubjectList = async () => {
-	// 		try {
-	// 			const res = await api.post('/sugang/updatePeriod1');
-	// 			console.log('업데이트수강신청', res.data);
-	// 		} catch (e) {
-	// 			console.error('강의 목록 로드 실패:', e);
-	// 		}
-	// 	};
-	// 	loadSubjectList();
-	// }, []);
+	// 🔥 상태 변경 함수 (0→1일 때만 배치 호출)
+	const changeStatus = async (newStatus) => {
+		try {
+			// 1. 상태 변경
+			await api.put('/sugangperiod/update', { status: newStatus });
+
+			// 2. 예비→수강(0→1) 전환일 경우 배치 실행
+			if (sugangState === 0 && newStatus === 1) {
+				console.log('🔥 배치 실행 중...');
+				// StuSubService.movePreToStuSubBatch() 호출용 엔드포인트 필요
+				// 방법 1: SugangPeriodService에서 배치 호출하게 수정
+				// 방법 2: 별도 엔드포인트 추가 (추천)
+				await api.post('/sugang/batch/move-pre-to-regular');
+			}
+
+			alert('수강신청 기간이 변경되었습니다!');
+			loadSugangState();
+		} catch (err) {
+			console.error('상태 변경 실패:', err);
+			alert('변경에 실패했습니다.');
+		}
+	};
 
 	return (
 		<>
 			<h3>수강 신청 기간 설정</h3>
+
 			<div>
 				<span>현재 예비 수강 신청 기간입니다.</span>
-				<button>수강 신청 기간 시작</button>
+				<button onClick={() => changeStatus(1)} disabled={sugangState === 1}>
+					예비 수강 신청 종료, 수강 신청 기간 시작
+				</button>
 			</div>
+
 			<div>
 				<span>현재 수강 신청 기간입니다.</span>
-				<button>수강 신청 기간 종료</button>
+				<button onClick={() => changeStatus(2)} disabled={sugangState === 2}>
+					수강 신청 기간 종료
+				</button>
 			</div>
+
 			<div>
 				<span>이번 학기 수강 신청 기간이 종료되었습니다.</span>
-				<button>없음</button>
+				<button onClick={() => changeStatus(0)} disabled={sugangState === 0}>
+					다시 예비 기간으로 초기화
+				</button>
 			</div>
+
+			<p style={{ marginTop: '20px', fontWeight: 'bold' }}>
+				현재 상태: {sugangState === 0 ? '예비' : sugangState === 1 ? '진행중' : '종료'}
+			</p>
 		</>
 	);
 }
