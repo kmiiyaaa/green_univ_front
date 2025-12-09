@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 
-export default function BreakAppApplication() {
+import DataTable from '../../components/table/DataTable';
+import OptionForm from '../../components/form/OptionForm';
+import '../../assets/css/BreakApplication.css';
+
+export default function BreakApplication() {
 	const navigate = useNavigate();
 
 	const [student, setStudent] = useState(null);
@@ -10,49 +14,95 @@ export default function BreakAppApplication() {
 	const [collName, setCollName] = useState('');
 
 	const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-	const [currentSemester, setCurrentSemester] = useState(1); // 기본값 -> 1학기
+	const [currentSemester, setCurrentSemester] = useState(1);
+
 	const [toYear, setToYear] = useState(String(new Date().getFullYear()));
 	const [toSemester, setToSemester] = useState('2');
 
 	const [type, setType] = useState('일반');
+	const [loading, setLoading] = useState(true);
 
-	// 오늘 날짜 문자열 (YYYY년 MM월 DD일) -> 하단에 날짜 불러옴
-	const today = new Date();
-	const todayStr = `${today.getFullYear()}년 ${String(today.getMonth() + 1).padStart(2, '0')}월 ${String(
-		today.getDate()
-	).padStart(2, '0')}일`;
+	// 오늘 날짜 문자열
+	const todayStr = useMemo(() => {
+		const today = new Date();
+		return `${today.getFullYear()}년 ${String(today.getMonth() + 1).padStart(2, '0')}월 ${String(
+			today.getDate()
+		).padStart(2, '0')}일`;
+	}, []);
 
-	// 신청 화면 데이터 불러오기 (학생/학과/단과대)
+	// 신청 화면 데이터 불러오기
 	useEffect(() => {
 		const loadApplicationData = async () => {
 			try {
-				const res = await api.get('/api/break/application');
+				const res = await api.get('/break/application');
 
 				setStudent(res.data.student);
 				setDeptName(res.data.deptName);
 				setCollName(res.data.collName);
 
-				// 백엔드에서 currentYear/currentSemester 내려줌
 				const serverYear = res.data.currentYear;
 				const serverSemester = res.data.currentSemester;
 
-				// 서버 값이 있으면 서버 값 사용, 없으면 기본값 사용
 				const finalYear = serverYear ?? new Date().getFullYear();
 				const finalSemester = serverSemester ?? 1;
 
 				setCurrentYear(finalYear);
 				setCurrentSemester(finalSemester);
+
 				setToYear(String(finalYear));
 			} catch (e) {
 				console.error(e);
 				alert(e.response?.data?.message ?? '휴학 신청 정보를 불러오지 못했습니다.');
 				navigate(-1, { replace: true });
-			}
+			} finally {
+			setLoading(false);
+		}
 		};
+
 		loadApplicationData();
 	}, [navigate]);
 
-	const yearOptions = [currentYear, currentYear + 1, currentYear + 2];
+	// ---- DataTable 상단 요약(NoticeList 스타일) ----
+	const infoHeaders = useMemo(() => ['항목', '내용'], []);
+	const infoData = useMemo(() => {
+		if (!student) return [];
+		return [
+			{ 항목: '단과대', 내용: collName },
+			{ 항목: '학과', 내용: deptName },
+			{ 항목: '학번', 내용: student.id },
+			{ 항목: '학년', 내용: `${student.grade}학년` },
+			{ 항목: '성명', 내용: student.name },
+			{ 항목: '전화번호', 내용: student.tel },
+			{ 항목: '주소', 내용: student.address },
+		];
+	}, [student, collName, deptName]);
+
+	// ---- 기간 옵션 ----
+	const yearOptions = useMemo(() => [currentYear, currentYear + 1, currentYear + 2], [currentYear]);
+	const yearSelectOptions = useMemo(
+		() => yearOptions.map((y) => ({ value: String(y), label: `${y}` })),
+		[yearOptions]
+	);
+
+	const semesterSelectOptions = useMemo(
+		() => [
+			{ value: '1', label: '1' },
+			{ value: '2', label: '2' },
+		],
+		[]
+	);
+
+	// ---- 휴학구분 옵션(라디오 map) ----
+	const breakTypeOptions = useMemo(
+		() => [
+			{ value: '일반', label: '일반휴학' },
+			{ value: '임신·출산·육아', label: '임신·출산·육아휴학' },
+			{ value: '질병', label: '질병휴학' },
+			{ value: '창업', label: '창업휴학' },
+			{ value: '군입대', label: '군입대휴학' },
+		],
+		[]
+	);
 
 	// 휴학 신청
 	const handleSubmit = async (e) => {
@@ -60,157 +110,114 @@ export default function BreakAppApplication() {
 		if (!window.confirm('휴학을 신청하시겠습니까?')) return;
 
 		try {
-			await api.post('/api/break/application', {
-				type, // 휴학 구분
-				toYear: Number(toYear), // 종료 연도
-				toSemester: Number(toSemester), // 종료 학기
-				studentGrade: student.grade, // hidden으로 보내던 값
+			await api.post('/break/application', {
+				type,
+				toYear: Number(toYear),
+				toSemester: Number(toSemester),
+				studentGrade: student.grade,
 			});
 
 			alert('휴학 신청이 정상적으로 처리되었습니다.');
-			navigate('/break/list'); // 학생용 신청 내역 이동
+			navigate('/break/list');
 		} catch (e) {
 			console.error(e);
 			alert(e.response?.data?.message ?? '휴학 신청 처리 중 오류가 발생했습니다.');
 		}
 	};
 
+	if (loading) return <p>불러오는중 ...</p>;
 	if (!student) return <p>학생 정보를 불러오지 못했습니다.</p>;
 
 	return (
-		<div>
-			<main>
-				<h1>휴학 신청</h1>
-				<div className="split--div"></div>
+		<div className="form-container">
+			<h3>휴학 신청</h3>
+			<div className="split--div"></div>
 
-				<div className="d-flex flex-column align-items-center">
-					<form onSubmit={handleSubmit} className="d-flex flex-column align-items-center">
-						<div className="document--layout">
-							<h3>휴학 신청서</h3>
-							<table border="1">
-								<tbody>
-									<tr>
-										<th>단 과 대</th>
-										<td>{collName}</td>
-										<th>학 과</th>
-										<td>{deptName}</td>
-									</tr>
-									<tr>
-										<th>학 번</th>
-										<td>{student.id}</td>
-										<th>학 년</th>
-										<td>{student.grade}학년</td>
-									</tr>
-									<tr>
-										<th>전 화 번 호</th>
-										<td>{student.tel}</td>
-										<th>성 명</th>
-										<td>{student.name}</td>
-									</tr>
-									<tr>
-										<th>주 소</th>
-										<td colSpan={3}>{student.address}</td>
-									</tr>
-									<tr>
-										<th>기 간</th>
-										<td colSpan={3}>
-											{currentYear}년도 {currentSemester}학기부터&nbsp;
-											<select name="toYear" value={toYear} onChange={(e) => setToYear(e.target.value)}>
-												{yearOptions.map((y) => (
-													<option key={y} value={y}>
-														{y}
-													</option>
-												))}
-											</select>
-											년도
-											<select name="toSemester" value={toSemester} onChange={(e) => setToSemester(e.target.value)}>
-												<option value="1">1</option>
-												<option value="2">2</option>
-											</select>
-											학기까지
-										</td>
-									</tr>
-									<tr>
-										<th>휴 학 구 분</th>
-										<td colSpan={3}>
-											<input
-												type="radio"
-												name="type"
-												id="일반"
-												value="일반"
-												checked={type === '일반'}
-												onChange={(e) => setType(e.target.value)}
-											/>
-											<label htmlFor="일반" style={{ margin: 0 }}>
-												일반휴학
-											</label>
-											&nbsp;
-											<input
-												type="radio"
-												name="type"
-												id="임신"
-												value="임신·출산·육아"
-												checked={type === '임신·출산·육아'}
-												onChange={(e) => setType(e.target.value)}
-											/>
-											<label htmlFor="임신" style={{ margin: 0 }}>
-												임신·출산·육아휴학
-											</label>
-											&nbsp;
-											<input
-												type="radio"
-												name="type"
-												id="질병"
-												value="질병"
-												checked={type === '질병'}
-												onChange={(e) => setType(e.target.value)}
-											/>
-											<label htmlFor="질병" style={{ margin: 0 }}>
-												질병휴학
-											</label>
-											&nbsp;
-											<input
-												type="radio"
-												name="type"
-												id="창업"
-												value="창업"
-												checked={type === '창업'}
-												onChange={(e) => setType(e.target.value)}
-											/>
-											<label htmlFor="창업" style={{ margin: 0 }}>
-												창업휴학
-											</label>
-											&nbsp;
-											<input
-												type="radio"
-												name="type"
-												id="군입대"
-												value="군입대"
-												checked={type === '군입대'}
-												onChange={(e) => setType(e.target.value)}
-											/>
-											<label htmlFor="군입대" style={{ margin: 0 }}>
-												군입대휴학
-											</label>
-										</td>
-									</tr>
-									<tr>
-										<td colSpan={4}>
-											<p>위와 같이 휴학하고자 하오니 허가하여 주시기 바랍니다.</p>
-											<br />
-											<p>{todayStr}</p>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+			<div className="d-flex flex-column align-items-center">
+				<form onSubmit={handleSubmit} className="d-flex flex-column align-items-center" style={{ width: '100%' }}>
+					<div className="document--layout">
+						<h3>휴학 신청서</h3>
 
+						<DataTable headers={infoHeaders} data={infoData} />
+
+						{/* 문서형 입력 핵심만 하단에 */}
+						<table border="1">
+							<tbody>
+								<tr>
+									<th>기 간</th>
+									<td>
+										<div>
+											<span>
+												{currentYear}년도 {currentSemester}학기부터
+											</span>
+
+											<OptionForm
+												label=""
+												name="toYear"
+												value={toYear}
+												onChange={(e) => setToYear(e.target.value)}
+												options={yearSelectOptions}
+												className="input--box"
+											/>
+											<span>년도</span>
+
+											<OptionForm
+												label=""
+												name="toSemester"
+												value={toSemester}
+												onChange={(e) => setToSemester(e.target.value)}
+												options={semesterSelectOptions}
+												className="input--box"
+											/>
+											<span>학기까지</span>
+										</div>
+									</td>
+								</tr>
+
+								<tr>
+									<th>휴 학 구 분</th>
+									<td>
+										<div>
+											{breakTypeOptions.map((opt) => {
+												const id = `break-type-${opt.value}`;
+												return (
+													<div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+														<input
+															type="radio"
+															name="type"
+															id={id}
+															value={opt.value}
+															checked={type === opt.value}
+															onChange={(e) => setType(e.target.value)}
+														/>
+														<label htmlFor={id} style={{ margin: 0 }}>
+															{opt.label}
+														</label>
+													</div>
+												);
+											})}
+										</div>
+									</td>
+								</tr>
+
+								<tr>
+									<td colSpan={2}>
+										<p>위와 같이 휴학하고자 하오니 허가하여 주시기 바랍니다.</p>
+										<br />
+										<p>{todayStr}</p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div className="schedule-list-actions">
 						<button type="submit" className="btn btn-dark">
 							신청하기
 						</button>
-					</form>
-				</div>
-			</main>
+					</div>
+				</form>
+			</div>
 		</div>
 	);
 }
