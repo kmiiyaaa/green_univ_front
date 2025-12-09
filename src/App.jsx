@@ -102,7 +102,8 @@ function App() {
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 					</Route>
-					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} /> {/* 강의계획서 조회 팝업 */}
+					{/* 강의계획서 조회 팝업 */}
+					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />{' '}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>

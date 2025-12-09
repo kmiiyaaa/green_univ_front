@@ -4,11 +4,15 @@ import DataTable from '../../components/table/DataTable';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
 import { refineList } from '../../utils/DeDuple';
+import SubjectStudentList from './SubjectStudentList';
 
 export default function ProfessorSubjectList() {
 	const [subjectList, setSubjectList] = useState([]);
-	const [category, setCategory] = useState(''); // 문자열로 변경
-	const [categoryOptions, setCategoryOptions] = useState([]);
+	const [category, setCategory] = useState(''); // select 선택창 용
+	const [categoryOptions, setCategoryOptions] = useState([]); // select 선택창 용
+
+	const [subjectId, setSubjectId] = useState(); // 학생 목록 조회 용
+	const [listOpen, setListOpen] = useState(false); // 학생 목록 조회 컴포넌트 열기? 여부
 
 	useEffect(() => {
 		// 기본 : 지금 학기 강의 목록 불러오기
@@ -54,6 +58,11 @@ export default function ProfessorSubjectList() {
 		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
 	};
 
+	const handleStudentList = (subjectId) => {
+		setSubjectId(subjectId);
+		setListOpen(true);
+	};
+
 	// 테이블 데이터
 	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록'];
 
@@ -63,24 +72,29 @@ export default function ProfessorSubjectList() {
 			강의명: s.name ?? '',
 			강의시간: s.subDay + ' ' + toHHMM(s.startTime) + '-' + toHHMM(s.endTime) + ' (' + s.roomId + ')',
 			강의계획서: <button onClick={() => handleSubDetail(s.id)}>강의계획서</button>,
-			학생목록: <button>학생목록</button>,
+			학생목록: <button onClick={() => handleStudentList(s.id)}>학생 목록</button>,
 		}));
 	}, [subjectList]);
 
 	return (
 		<div>
-			<OptionForm
-				name="category"
-				label="학기 선택"
-				value={category}
-				onChange={(e) => setCategory(e.target.value)}
-				options={categoryOptions}
-			/>
-			<button onClick={() => searchProfessorSubject()} className="button">
-				검색
-			</button>
-
-			<DataTable headers={headers} data={subjectTable} />
+			{subjectId && listOpen ? (
+				<SubjectStudentList subjectId={subjectId}/>
+			) : (
+				<div>
+					<OptionForm
+						name="category"
+						label="학기 선택"
+						value={category}
+						onChange={(e) => setCategory(e.target.value)}
+						options={categoryOptions}
+					/>
+					<button onClick={() => searchProfessorSubject()} className="button">
+						검색
+					</button>
+					<DataTable headers={headers} data={subjectTable} />{' '}
+				</div>
+			)}
 		</div>
 	);
 }
