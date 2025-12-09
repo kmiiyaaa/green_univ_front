@@ -1,7 +1,7 @@
 // DataTable 테이블 컴포넌트
 import '../../assets/css/DataTable.css';
 
-const DataTable = ({ headers, data, onRowClick }) => {
+const DataTable = ({ headers, data, onRowClick, onCellClick, clickableHeaders = [] }) => {
 	return (
 		<div className="data-table-wrapper">
 			<table className="data-table">
@@ -13,11 +13,28 @@ const DataTable = ({ headers, data, onRowClick }) => {
 					</tr>
 				</thead>
 				<tbody>
-					{data.map((row, idx) => (
-						<tr key={idx} onClick={() => onRowClick?.(row)}>
-							{headers.map((header) => (
-								<td key={header}>{row[header]}</td>
-							))}
+					{data.map((row, rowIdx) => (
+						<tr key={rowIdx} onClick={() => onRowClick?.(row)} className={`${onRowClick ? 'rowClick' : ''}`}>
+							{headers.map((header) => {
+								const isClickable = clickableHeaders.includes(header);
+
+								if (!isClickable) {
+									return <td key={header}>{row[header]}</td>;
+								}
+
+								return (
+									<td
+										key={header}
+										onClick={(e) => {
+											e.stopPropagation(); // 행 클릭 막기
+											onCellClick?.({ row, header, rowIdx }); // 필요 정보 외부로 전달
+										}}
+										style={{ cursor: 'pointer', color: 'blue' }}
+									>
+										{row[header]}
+									</td>
+								);
+							})}
 						</tr>
 					))}
 				</tbody>

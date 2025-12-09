@@ -8,16 +8,17 @@ import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 
-export default function SubList() {
+export default function SubTimetable() {
 	const { user, token, userRole } = useContext(UserContext);
 	const [subTimetable, SetSubTimeTable] = useState([]);
 
-	// 페이징
+	// 페이징 (기본값은 10으로 설정)
 	const [currentPage, setCurrentPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(0);
 	const [totalCount, setTotalCount] = useState(0);
 
-	const [searchParams, setSearchParams] = useSearchParams(); // url에 입력된 값 받기 (쿼리 스트링)
+	// url에 입력된 값 받기 (쿼리 스트링)
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	// 검색 폼
 	const [searchForm, setSearchForm] = useState({
@@ -26,10 +27,10 @@ export default function SubList() {
 		name: '', // 강의명
 	});
 
-	// 강의 목록 조회 (검색 + 페이징)
+	// 강의 목록 조회 (페이징 page + 검색 filters)
 	const loadSubjectList = async (page = 0, filters = null) => {
 		try {
-			const params = { page, size: 20 }; // 쿼리 파라미터 구성
+			const params = { page, size: 10 }; // 쿼리 파라미터 구성
 			const currentFilters = filters || searchForm;
 
 			if (currentFilters.type) params.type = currentFilters.type;
@@ -66,7 +67,7 @@ export default function SubList() {
 		}
 	};
 
-	// 🔥 URL 파라미터 변경 감지 (초기 로드 + URL 변경 시)
+	// URL 파라미터 변경 감지 (초기 로드 + URL 변경 시)
 	useEffect(() => {
 		const page = parseInt(searchParams.get('page') || '0', 10);
 		const type = searchParams.get('type') || '';
@@ -75,9 +76,9 @@ export default function SubList() {
 		console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
 		// URL에서 검색 조건 복원
 		setSearchForm({ type, deptName, name });
-		// 🔥 URL에서 읽은 값을 직접 전달!
+		// URL에서 읽은 값을 직접 전달
 		loadSubjectList(page, { type, deptName, name });
-	}, [searchParams]); // searchParams 변경 시에만 실행
+	}, [searchParams]);
 
 	// 검색 폼 입력 핸들러
 	const handleChange = (e) => {
@@ -85,29 +86,27 @@ export default function SubList() {
 		setSearchForm({ ...searchForm, [name]: value });
 	};
 
-	// 🔥 검색 버튼 클릭 (URL 업데이트 + 0페이지부터)
+	// 검색 버튼 클릭 (URL 업데이트 + 0페이지부터)
 	const handleSearch = () => {
 		const params = { page: '0' };
 		if (searchForm.type) params.type = searchForm.type;
 		if (searchForm.deptName) params.deptName = searchForm.deptName;
 		if (searchForm.name) params.name = searchForm.name;
-
 		setSearchParams(params); // URL 업데이트 → useEffect 자동 실행
 	};
 
-	// 🔥 페이지 변경 (URL 업데이트)
+	// 페이지 변경 (URL 업데이트)
 	const handlePageChange = (newPage) => {
 		if (newPage >= 0 && newPage < totalPages) {
 			const params = { page: newPage.toString() };
 			if (searchForm.type) params.type = searchForm.type;
 			if (searchForm.deptName) params.deptName = searchForm.deptName;
 			if (searchForm.name) params.name = searchForm.name;
-
 			setSearchParams(params); // URL 업데이트 → useEffect 자동 실행
 		}
 	};
 
-	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
+	// 테이블 헤더 정의
 	const headers = [
 		'단과대학',
 		'개설학과',
@@ -122,6 +121,7 @@ export default function SubList() {
 		'강의계획서',
 	];
 
+	// 검색 폼 카테고리
 	const SUBJECT_CATEGORY_OPTIONS = [
 		{ value: '', label: '전체' },
 		{ value: '전공', label: '전공' },

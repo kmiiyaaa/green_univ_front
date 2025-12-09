@@ -59,7 +59,7 @@
 }
 
 /* 클릭 가능 행 커서 */
-.data-table tbody tr {
+.data-table tbody tr.rowClick {
 	cursor: pointer;
 }
 

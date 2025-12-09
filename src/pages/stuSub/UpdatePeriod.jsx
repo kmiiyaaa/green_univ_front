@@ -4,50 +4,51 @@ import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 
+// 수강 신청 기간 상태 변경
+// 예비 수강신청 기간 : 0, 수강신청 기간 : 1, 수강신청 기간 종료 : 2
 export default function UpdatePeriod() {
 	const { user, token, userRole } = useContext(UserContext);
-	const [subjectList, setSubjectList] = useState([]);
+	// 현재 상태를 보여주는 ..
+	const [sugangState, setSugangState] = useState('');
 
+	// 수강 신청 기간 확인
 	useEffect(() => {
-		const loadSubjectList = async () => {
+		const loadSugangState = async () => {
 			try {
-				const res = await api.post('/sugang/updatePeriod1');
-				console.log('업데이트수강신청', res.data);
-
-				// // 3. 데이터 가공 (핵심!: DB 필드 -> 테이블 헤더 이름으로 변환)
-				// const formattedData = rawData.map((sub) => ({
-				// 	id: sub.id, // 클릭 이벤트 등을 위해 ID는 보통 숨겨서라도 가지고 있음
-				// 	강의명: sub.name,
-				// 	교수: sub.professor ? sub.professor.name : '미배정', // null 체크 필수
-				// 	시간: `${sub.subDay} ${sub.startTime}:00~${sub.endTime}:00`, // 시간 예쁘게 합치기
-				// 	강의실: sub.room ? sub.room.id : '미정',
-				// 	원본데이터: sub, // 필요하면 원본도 통째로 넣어둠 (선택사항)
-				// }));
-
-				// setSubjectList(formattedData);
-				// console.log('가공된 데이터:', formattedData);
-			} catch (e) {
-				console.error('강의 목록 로드 실패:', e);
-			}
+				const res = await api.get('/sugang/period');
+				console.log('loadSugangState', res.data);
+			} catch (err) {}
 		};
-		loadSubjectList();
+		loadSugangState();
 	}, []);
 
-	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
-	const headers = ['강의명', '교수', '시간', '강의실'];
+	// useEffect(() => {
+	// 	const loadSubjectList = async () => {
+	// 		try {
+	// 			const res = await api.post('/sugang/updatePeriod1');
+	// 			console.log('업데이트수강신청', res.data);
+	// 		} catch (e) {
+	// 			console.error('강의 목록 로드 실패:', e);
+	// 		}
+	// 	};
+	// 	loadSubjectList();
+	// }, []);
 
 	return (
 		<>
-			<h3>수강 신청 기간</h3>
-			<DataTable
-				headers={headers}
-				data={subjectList}
-				onRowClick={(row) => {
-					// row에는 위에서 가공한 한글 키들이 들어있음
-					console.log('클릭한 강의:', row.강의명);
-					// 상세페이지 이동 시 row.id나 row.원본데이터 사용 가능
-				}}
-			/>
+			<h3>수강 신청 기간 설정</h3>
+			<div>
+				<span>현재 예비 수강 신청 기간입니다.</span>
+				<button>수강 신청 기간 시작</button>
+			</div>
+			<div>
+				<span>현재 수강 신청 기간입니다.</span>
+				<button>수강 신청 기간 종료</button>
+			</div>
+			<div>
+				<span>이번 학기 수강 신청 기간이 종료되었습니다.</span>
+				<button>없음</button>
+			</div>
 		</>
 	);
 }
