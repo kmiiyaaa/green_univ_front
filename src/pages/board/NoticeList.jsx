@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
+import PaginationForm from '../../components/form/PaginationForm';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/NoticeList.css';
 
@@ -10,25 +11,26 @@ const NoticeList = () => {
 	const navigate = useNavigate();
 	const { userRole } = useContext(UserContext);
 
-	// URL query로 상태 유지 (검색/페이지 새로고침 대비)
+	// ✅ URL query
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	const initialPage = Number(searchParams.get('page') || 1);
+	// ✅ 0-based로 복원
+	const initialPage = parseInt(searchParams.get('page') || '0', 10);
 	const initialKeyword = searchParams.get('keyword') || '';
 	const initialType = searchParams.get('type') || 'title';
 
-	const [page, setPage] = useState(initialPage);
+	// ✅ 상태
+	const [currentPage, setCurrentPage] = useState(Number.isNaN(initialPage) ? 0 : initialPage);
+	const [totalPages, setTotalPages] = useState(1);
+	const [noticeList, setNoticeList] = useState([]);
+
 	const [keyword, setKeyword] = useState(initialKeyword);
 	const [type, setType] = useState(initialType);
-
-	const [noticeList, setNoticeList] = useState([]);
-	const [totalPages, setTotalPages] = useState(1);
 
 	const headers = ['번호', '말머리', '제목', '작성일', '조회수'];
 
 	const formatDateTime = (ts) => {
 		if (!ts) return '';
-		// 백엔드 Timestamp 직렬화 형태에 따라 Date 파싱
 		const d = new Date(ts);
 		if (Number.isNaN(d.getTime())) return String(ts);
 		const yyyy = d.getFullYear();
@@ -39,21 +41,21 @@ const NoticeList = () => {
 		return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
 	};
 
-	const loadList = async (targetPage = page, targetKeyword = keyword, targetType = type) => {
+	// ✅ 실제 로드 함수 (useCallback 없음)
+	const loadList = async (page = 0, filters = null) => {
 		try {
-			// 검색어 있으면 search/{page}, 없으면 list/{page}
-			const hasKeyword = targetKeyword && targetKeyword.trim().length > 0;
+			const currentFilters = filters || { keyword, type };
+			const kw = currentFilters.keyword ?? '';
+			const tp = currentFilters.type ?? 'title';
+			const hasKeyword = kw.trim().length > 0;
 
 			const url = hasKeyword
-				? `/notice/search/${targetPage}?keyword=${encodeURIComponent(targetKeyword)}&type=${encodeURIComponent(
-						targetType
-				  )}`
-				: `/notice/list/${targetPage}`;
+				? `/notice/search/${page}?keyword=${encodeURIComponent(kw)}&type=${encodeURIComponent(tp)}`
+				: `/notice/list/${page}`;
 
 			const res = await api.get(url);
 
 			const raw = res.data.noticeList || [];
-
 			const formatted = raw.map((n) => ({
 				id: n.id,
 				번호: n.id,
@@ -65,39 +67,60 @@ const NoticeList = () => {
 			}));
 
 			setNoticeList(formatted);
-			setTotalPages(res.data.listCount || 1);
+			setTotalPages(res.data.listCount ?? 1);
 
-			// URL sync
-			const next = {};
-			next.page = String(targetPage);
-			if (hasKeyword) {
-				next.keyword = targetKeyword;
-				next.type = targetType;
+			// 백이 currentPage도 내려주면 동기화 가능(선택)
+			if (typeof res.data.currentPage === 'number') {
+				setCurrentPage(res.data.currentPage);
 			}
-			setSearchParams(next);
 		} catch (e) {
 			console.error('공지 목록 로드 실패:', e);
 		}
 	};
 
+	// URL 변경 감지 → 상태 복원 + 로드
 	useEffect(() => {
-		loadList(page, keyword, type);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page]);
+		const page = parseInt(searchParams.get('page') || '0', 10);
+		const kw = searchParams.get('keyword') || '';
+		const tp = searchParams.get('type') || 'title';
 
+		setCurrentPage(Number.isNaN(page) ? 0 : page);
+		setKeyword(kw);
+		setType(tp);
+
+		loadList(Number.isNaN(page) ? 0 : page, { keyword: kw, type: tp });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
+
+	// 검색 버튼
 	const handleSearchSubmit = (e) => {
 		e.preventDefault();
-		const nextPage = 1;
-		setPage(nextPage);
-		loadList(nextPage, keyword, type);
+		// 검색은 항상 0페이지부터
+		const params = { page: '0' };
+		if (keyword.trim()) {
+			params.keyword = keyword;
+			params.type = type;
+		}
+		setSearchParams(params); // → useEffect가 자동 로드
 	};
 
+	// 초기화
 	const handleResetSearch = () => {
 		setKeyword('');
 		setType('title');
-		const nextPage = 1;
-		setPage(nextPage);
-		loadList(nextPage, '', 'title');
+		setSearchParams({ page: '0' });
+	};
+
+	// 페이지 변경
+	const handlePageChange = (newPage) => {
+		if (newPage >= 0 && newPage < totalPages) {
+			const params = { page: String(newPage) };
+			if (keyword.trim()) {
+				params.keyword = keyword;
+				params.type = type;
+			}
+			setSearchParams(params);
+		}
 	};
 
 	return (
@@ -114,7 +137,9 @@ const NoticeList = () => {
 					onChange={(e) => setType(e.target.value)}
 				>
 					<option value="title">제목</option>
-					<option value="keyword">제목+내용</option>
+					<option value="content">내용</option>
+					<option value="all">제목+내용</option>
+					{/* 필요하면 */}
 				</select>
 
 				<div className="notice-search-input">
@@ -137,28 +162,24 @@ const NoticeList = () => {
 				</div>
 			</form>
 
-			{/* 목록 테이블 */}
-			<div>
-				<DataTable
-					headers={headers}
-					data={noticeList}
-					onRowClick={(row) => {
-						// 상세 페이지 이동
-						const id = row?.id || row?.원본데이터?.id;
-						if (id) navigate(`/notice/read/${id}`);
-					}}
-				/>
-			</div>
+			{/* 테이블 */}
+			<DataTable
+				headers={headers}
+				data={noticeList}
+				onRowClick={(row) => {
+					const id = row?.id || row?.원본데이터?.id;
+					if (id) navigate(`/notice/read/${id}`);
+				}}
+			/>
 
-			{/* 페이징 */}
+			{/* 페이징 + 등록버튼 */}
 			<div className="paging--container">
-				<div className="paging-pages">
-					{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-						<button key={p} className={`button page-btn ${p === page ? 'active' : ''}`} onClick={() => setPage(p)}>
-							{p}
-						</button>
-					))}
-				</div>
+				<PaginationForm
+					currentPage={currentPage}
+					totalPages={totalPages}
+					blockSize={10}
+					onPageChange={handlePageChange}
+				/>
 
 				{userRole === 'staff' && (
 					<button className="button register-btn" onClick={() => navigate('/notice/write')}>

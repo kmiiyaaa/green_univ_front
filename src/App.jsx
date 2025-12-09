@@ -42,6 +42,9 @@ import BreakAppListStaff from './pages/break/BreakAppListStaff';
 import BreakAppListStudent from './pages/break/BreakAppListStudent';
 import ProfessorSubjectList from './pages/professor/ProfessorSubjectList';
 import ReadSyllabusPopup from './pages/professor/ReadSyllabusPopup';
+import ThisGrade from './pages/grade/ThisGrade';
+import Semester from './pages/grade/Semester';
+import TotalGrade from './pages/grade/TotalGrade';
 
 function App() {
 	return (
@@ -101,6 +104,10 @@ function App() {
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
+						{/* 성적 */}
+						<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
+						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
+						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
 					</Route>
 					{/* 강의계획서 조회 팝업 */}
 					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />{' '}
