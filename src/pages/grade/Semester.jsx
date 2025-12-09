@@ -67,7 +67,7 @@ const Semester = () => {
 		try {
 			const params = {};
 
-			// 서버는 Long을 받지만 query는 문자열이어도 자동 변환됨
+			// 서버:Long 받지만 query는 문자열이어도 자동 변환됨
 			if (subYear) params.subyear = subYear;
 			if (semester) params.semester = semester;
 			if (type) params.type = type;
@@ -134,7 +134,7 @@ const Semester = () => {
 			) : (
 				<div>
 					<h4>과목별 성적</h4>
-					<DataTable headers={headers} rows={rows} />
+					<DataTable headers={headers} data={rows} />
 				</div>
 			)}
 		</div>

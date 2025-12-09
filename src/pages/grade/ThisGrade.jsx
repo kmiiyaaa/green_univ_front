@@ -72,7 +72,7 @@ const ThisGrade = () => {
 					<>
 						<div>
 							<h4>과목별 성적</h4>
-							<DataTable headers={headers1} rows={subjectRows} />
+							<DataTable headers={headers1} data={subjectRows} />
 							<p>※ 강의 평가 후 성적 조회 가능</p>
 						</div>
 
@@ -80,7 +80,7 @@ const ThisGrade = () => {
 
 						<div>
 							<h4>누계 성적</h4>
-							<DataTable headers={headers2} rows={myGradeRows} />
+							<DataTable headers={headers2} data={myGradeRows} />
 						</div>
 					</>
 				)}
