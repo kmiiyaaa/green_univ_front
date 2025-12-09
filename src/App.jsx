@@ -28,7 +28,7 @@ import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
 import SubTimetable from './pages/stuSub/SubTimetable';
 import UpdatePeriod from './pages/stuSub/UpdatePeriod';
-import PreAppList from './pages/stuSub/PreAppList';
+import PreSubApp from './pages/stuSub/PreSubApp';
 import UpdatePassword from './pages/user/update/UpdatePassword';
 import ProfessorList from './pages/user/info/ProfessorList';
 import StudentList from './pages/user/info/StudentList';
@@ -40,6 +40,7 @@ import BreakApplication from './pages/break/BreakApplication';
 import BreakAppDetail from './pages/break/BreakAppDetail';
 import BreakAppListStaff from './pages/break/BreakAppListStaff';
 import BreakAppListStudent from './pages/break/BreakAppListStudent';
+import SubApp from './pages/stuSub/SubApp';
 
 function App() {
 	return (
@@ -70,9 +71,9 @@ function App() {
 						{/* 강의 과목 수강신청 */}
 						<Route path="/subject/list" element={<AllsubList2 />} /> {/* 수정 해야 함 */}
 						<Route path="/sugang/timetable" element={<SubTimetable />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
-						<Route path="/sugang/pre" element={<PreAppList />} /> {/* 예비 수강 신청 */}
-						<Route path="/sugang" element={<SubTimetable />} /> {/* 수강 신청 .. */}
-						<Route path="/sugang/update" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
+						<Route path="/sugang/pre" element={<PreSubApp />} /> {/* 예비 수강 신청 */}
+						<Route path="/sugang" element={<SubApp />} /> {/* 수강 신청 .. */}
+						<Route path="/sugang/period" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
 						{/* 관리자 */}
 						<Route path="/admin" element={<AdminPage />} /> {/* 관리자 통합 페이지 - 삭제 할 수도 */}
 						<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}

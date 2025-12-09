@@ -25,12 +25,23 @@ export default function UpdatePeriod() {
 		loadSugangState();
 	}, []);
 
-	// 상태 변경 함수
+	// 🔥 상태 변경 함수 (0→1일 때만 배치 호출)
 	const changeStatus = async (newStatus) => {
 		try {
+			// 1. 상태 변경
 			await api.put('/sugangperiod/update', { status: newStatus });
+
+			// 2. 예비→수강(0→1) 전환일 경우 배치 실행
+			if (sugangState === 0 && newStatus === 1) {
+				console.log('🔥 배치 실행 중...');
+				// StuSubService.movePreToStuSubBatch() 호출용 엔드포인트 필요
+				// 방법 1: SugangPeriodService에서 배치 호출하게 수정
+				// 방법 2: 별도 엔드포인트 추가 (추천)
+				await api.post('/sugang/batch/move-pre-to-regular');
+			}
+
 			alert('수강신청 기간이 변경되었습니다!');
-			loadSugangState(); // 변경 후 새로고침
+			loadSugangState();
 		} catch (err) {
 			console.error('상태 변경 실패:', err);
 			alert('변경에 실패했습니다.');
