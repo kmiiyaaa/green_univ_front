@@ -41,6 +41,7 @@ import BreakAppDetail from './pages/break/BreakAppDetail';
 import BreakAppListStaff from './pages/break/BreakAppListStaff';
 import BreakAppListStudent from './pages/break/BreakAppListStudent';
 import ProfessorSubjectList from './pages/professor/ProfessorSubjectList';
+import ReadSyllabusPopup from './pages/professor/ReadSyllabusPopup';
 
 function App() {
 	return (
@@ -99,9 +100,9 @@ function App() {
 						<Route path="/break/list/staff" element={<BreakAppListStaff />} /> {/* 교직원 -휴학 신청리스트*/}
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 						{/* 교수 */}
-						<Route path="/professor/subject" element={<ProfessorSubjectList />} />
+						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 					</Route>
-					{/* </Route> */}
+					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} /> {/* 강의계획서 조회 팝업 */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>

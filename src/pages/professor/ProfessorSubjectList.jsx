@@ -4,13 +4,11 @@ import DataTable from '../../components/table/DataTable';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
 import { refineList } from '../../utils/DeDuple';
-import ProfessorSubjectDetail from './ProfessorSubjectDetail';
 
 export default function ProfessorSubjectList() {
 	const [subjectList, setSubjectList] = useState([]);
 	const [category, setCategory] = useState(''); // 문자열로 변경
 	const [categoryOptions, setCategoryOptions] = useState([]);
-	const [popup, setPopup] = useState(false);
 
 	useEffect(() => {
 		// 기본 : 지금 학기 강의 목록 불러오기
@@ -51,8 +49,9 @@ export default function ProfessorSubjectList() {
 		}
 	};
 
-	const handleSubDetail = (id) => {
-		setPopup(true);
+	const handleSubDetail = (subjectId) => {
+		const url = `/professor/syllabus/${subjectId}`;
+		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
 	};
 
 	// 테이블 데이터
@@ -63,7 +62,7 @@ export default function ProfessorSubjectList() {
 			학수번호: s.id ?? '',
 			강의명: s.name ?? '',
 			강의시간: s.subDay + ' ' + toHHMM(s.startTime) + '-' + toHHMM(s.endTime) + ' (' + s.roomId + ')',
-			강의계획서: <button onClick={() => setPopup(true)}>강의계획서</button>,
+			강의계획서: <button onClick={() => handleSubDetail(s.id)}>강의계획서</button>,
 			학생목록: <button>학생목록</button>,
 		}));
 	}, [subjectList]);
@@ -82,8 +81,6 @@ export default function ProfessorSubjectList() {
 			</button>
 
 			<DataTable headers={headers} data={subjectTable} />
-
-			<ProfessorSubjectDetail />
 		</div>
 	);
 }
