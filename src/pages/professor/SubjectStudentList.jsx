@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 
-export default function SubjectStudentList({ subjectId }) {
+export default function SubjectStudentList({ subjectId, subName }) {
 	// 과목 별 수강 학생 조회
 	const [studentList, setStudentList] = useState([]);
 
@@ -39,8 +39,8 @@ export default function SubjectStudentList({ subjectId }) {
 
 	return (
 		<div>
-			<h2>학생 리스트 조회</h2>
-            <hr></hr>
+			<h2>[{subName}] 학생 리스트 조회</h2>
+			<hr></hr>
 
 			{studentList.length > 0 ? (
 				<DataTable headers={headers} data={tableData} />
