@@ -170,9 +170,6 @@ export default function PreAppList() {
 			<DataTable
 				headers={headers}
 				data={subTimetable}
-				// onRowClick={(row) => {
-				// 	console.log('클릭한 강의:', row.강의명);
-				// }}
 				clickableHeaders={['수강신청']}
 				onCellClick={async ({ row, header }) => {
 					if (!window.confirm('해당 강의를 수강 신청 하시겠습니까?')) {

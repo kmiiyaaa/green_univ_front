@@ -90,9 +90,6 @@ function App() {
 						<Route path="/schedule/detail/:id" element={<ScheduleDetail />} /> {/* 교직원용 학사 일정 상세 */}
 						<Route path="/schedule/write" element={<ScheduleWrite />} /> {/* 교직원용 학사 일정 등록 */}
 						<Route path="/schedule/update/:id" element={<ScheduleUpdate />} /> {/* 교직원용 학사일정 수정 */}
-						{/* 휴학 */}
-						<Route path="/break/app" element={<BreakAppApplication />} /> {/* 휴학 신청 (학생) */}
-						<Route path="/break/list" element={<BreakAppDetail />} /> {/* 휴학 관리 */}
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
