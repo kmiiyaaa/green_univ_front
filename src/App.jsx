@@ -40,6 +40,7 @@ import BreakApplication from './pages/break/BreakApplication';
 import BreakAppDetail from './pages/break/BreakAppDetail';
 import BreakAppListStaff from './pages/break/BreakAppListStaff';
 import BreakAppListStudent from './pages/break/BreakAppListStudent';
+import ProfessorSubjectList from './pages/professor/ProfessorSubjectList';
 
 function App() {
 	return (
@@ -97,6 +98,8 @@ function App() {
 						<Route path="/break/detail" element={<BreakAppDetail />} /> {/* 휴학 신청 상세*/}
 						<Route path="/break/list/staff" element={<BreakAppListStaff />} /> {/* 교직원 -휴학 신청리스트*/}
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
+						{/* 교수 */}
+						<Route path="/professor/subject" element={<ProfessorSubjectList />} />
 					</Route>
 					{/* </Route> */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
