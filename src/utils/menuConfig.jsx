@@ -46,6 +46,6 @@ export const SIDEBAR_MENUS = {
 	professor: [
 		{ key: 'SUBJECTS', label: '강의 관리', path: '/subject/list', icon: 'menu_book' },
 		{ key: 'ROOM', label: '강의실', path: '/admin/room', icon: 'meeting_room' },
-		
+		{ key: 'MYSUBJECT', label: '내 강의 조회', path: '/professor/subject', icon: 'my_subject' },
 	],
 };
