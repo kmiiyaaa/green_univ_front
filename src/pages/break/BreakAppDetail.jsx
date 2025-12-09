@@ -90,7 +90,7 @@ export default function BreakAppDetail() {
 			<h3>휴학 내역 조회</h3>
 			<div className="split--div"></div>
 
-			<div className="d-flex flex-column align-items-center" style={{ width: '100%' }}>
+			<div className="d-flex flex-column align-items-center">
 				<div className="document--layout">
 					<h3>휴학 신청서</h3>
 
