@@ -62,6 +62,7 @@ export default function AllSubList() {
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
 		} catch (e) {
+			alert(e.response.data.message);
 			console.error('강의 목록 조회 실패: ', e);
 		}
 	};
