@@ -79,7 +79,6 @@ const NoticeForm = ({
 						type="file"
 						className="custom-file-input"
 						name="file"
-						accept=".jpg, .jpeg, .png"
 						onChange={(e) => setFile(e.target.files?.[0] || null)}
 					/>
 				</div>
