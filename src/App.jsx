@@ -45,7 +45,6 @@ import ReadSyllabusPopup from './pages/professor/ReadSyllabusPopup';
 import ThisGrade from './pages/grade/ThisGrade';
 import Semester from './pages/grade/Semester';
 import TotalGrade from './pages/grade/TotalGrade';
-import SubApp from './pages/stuSub/SubApp';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
