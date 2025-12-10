@@ -22,7 +22,8 @@ export default function CreatePayment() {
 	const submitTuition = async () => {
 		try {
 			const res = await api.get('/tuition/create');
-			setInsertCount(res.data);
+			console.log(res.data.insertCount);
+			setInsertCount(res.data.insertCount);
 		} catch (e) {
 			console.error('등록금 고지서 생성 실패' + e);
 		}

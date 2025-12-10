@@ -11,7 +11,6 @@ const TotalGrade = () => {
 			try {
 				const res = await api.get('/grade/total');
 				const data = res.data;
-				console.log(res.data);
 				setMyGradeList(data.gradeList ?? []);
 			} catch (e) {
 				console.error('총 누계 성적 조회 실패', e);
