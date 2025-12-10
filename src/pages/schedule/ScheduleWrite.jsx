@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
@@ -7,6 +7,7 @@ import ScheduleForm from '../schedule/ScheduleForm';
 const ScheduleWrite = () => {
 	const navigate = useNavigate();
 	const { userRole } = useContext(UserContext);
+	const [error, setError] = useState(null);
 
 	if (userRole !== 'staff') {
 		return (
@@ -23,24 +24,25 @@ const ScheduleWrite = () => {
 		try {
 			await api.post('/schedule/write', { startDay, endDay, information });
 			alert('학사 일정 등록 완료!');
-			navigate('/schedule/list');
-		} catch (e) {
-			console.error('학사 일정 등록 실패:', e);
-			alert('등록 실패');
+			navigate('/schedule');
+		} catch (err) {
+			// TODO: 백엔드에서 날짜 관련 valid 잡기
+			setError(err.response.data.message);
 		}
 	};
 
-	return +(
+	return (
 		<div className="form-container schedule-page">
 			<h3>학사 일정 등록</h3>
 			<div className="split--div"></div>
-
 			<ScheduleForm
 				initialValues={{ startDay: '', endDay: '', information: '' }}
 				onSubmit={handleCreate}
-				onCancel={() => navigate('/schedule/list')}
+				onCancel={() => navigate('/schedule')}
 				submitLabel="등록"
 			/>
+			{/* TODO: 에러 메시지 위치를 어디에서 잡을 것인지 확인하기 */}
+			{error && <div className="error-message">{error}</div>}
 		</div>
 	);
 };
