@@ -6,7 +6,7 @@ export default function PopResult({ name, result, type }) {
 		<div>
 			{type} 찾기
 			<hr />
-			{name} 님의 {type}는 <br>{result}</br> 입니다.
+			{name} 님의 {type}는 {result}입니다.
 		</div>
 	);
 }

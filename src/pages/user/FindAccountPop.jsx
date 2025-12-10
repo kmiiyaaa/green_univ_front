@@ -50,15 +50,19 @@ export default function FindAccountPop() {
 
 	return (
 		<div>
-			<h2>{type === '아이디' ? '아이디 찾기' : '비밀번호 찾기'}</h2>
-			{type === '비밀번호' && <InputForm label="아이디" name="id" value={formData?.id} onChange={handleChange} />}
-			<InputForm label="이름" name="name" value={formData?.name} onChange={handleChange} />
-			<InputForm label="이메일" name="email" value={formData?.email} onChange={handleChange} />
-			<RadioForm name="userRole" value={formData?.userRole} onChange={handleChange} options={roleOptions} />
+			{name && result ? (
+				<PopResult name={name} result={result} type={type} />
+			) : (
+				<div>
+					<h2>{type === '아이디' ? '아이디 찾기' : '비밀번호 찾기'}</h2>
+					{type === '비밀번호' && <InputForm label="아이디" name="id" value={formData?.id} onChange={handleChange} />}
+					<InputForm label="이름" name="name" value={formData?.name} onChange={handleChange} />
+					<InputForm label="이메일" name="email" value={formData?.email} onChange={handleChange} />
+					<RadioForm name="userRole" value={formData?.userRole} onChange={handleChange} options={roleOptions} />
 
-			<button onClick={() => handleSearch()}>{type === '아이디' ? '아이디 찾기' : '임시 비밀번호 발급'}</button>
-
-			{name && result && <PopResult name={name} result={result} type={type} />}
+					<button onClick={() => handleSearch()}>{type === '아이디' ? '아이디 찾기' : '임시 비밀번호 발급'}</button>
+				</div>
+			)}
 		</div>
 	);
 }
