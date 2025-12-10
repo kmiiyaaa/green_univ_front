@@ -15,7 +15,7 @@ const NoticeUpdate = () => {
 		content: '',
 	});
 
-	// 수정시 첨부파일 있으면 가져오기
+	// 수정시 첨부파일명 표시용 state 추가
 	const [currentFileName, setCurrentFileName] = useState('');
 
 	const loadNotice = async () => {
@@ -30,20 +30,18 @@ const NoticeUpdate = () => {
 				content: (n.content ?? '').replaceAll('<br>', '\n'),
 			});
 
+			// 기존 첨부파일명 세팅
 			setCurrentFileName(n?.file?.originFilename ?? '');
-			
 		} catch (e) {
 			console.error('공지 수정 데이터 로드 실패:', e);
 		}
 	};
 
-
 	useEffect(() => {
 		if (userRole !== 'staff') return; // 권한 없으면 로드 안 함
 		loadNotice();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id, userRole]); 
-
+	}, [id, userRole]);
 
 	// 파일첨부 수정버전
 	const handleUpdate = async ({ category, title, content, file }) => {
@@ -54,7 +52,7 @@ const NoticeUpdate = () => {
 			formData.append('content', content);
 			if (file) formData.append('file', file); // 새 파일 있으면 같이 전송
 
-			await api.patch(`/notice/update/${id}`, formData); 
+			await api.patch(`/notice/update/${id}`, formData);
 			// Content-Type은 axios가 multipart로 자동 세팅
 
 			alert('공지 수정 완료!');
@@ -64,7 +62,6 @@ const NoticeUpdate = () => {
 			alert('공지 수정 실패');
 		}
 	};
-
 
 	// 렌더 가드는 훅 아래에서 처리
 	if (userRole !== 'staff') {
@@ -83,18 +80,14 @@ const NoticeUpdate = () => {
 			<h3>공지 수정</h3>
 			<div className="split--div"></div>
 
-			{currentFileName && (
-				<div className="notice-current-file">
-					현재 첨부파일: {currentFileName}
-				</div>
-			)}
-
 			<NoticeForm
 				initialValues={initialValues}
 				onSubmit={handleUpdate}
 				onCancel={() => navigate(-1)}
 				submitLabel="수정"
 				enableFile={true}
+				// 현재 첨부파일명 전달
+				currentFileName={currentFileName}
 			/>
 		</div>
 	);

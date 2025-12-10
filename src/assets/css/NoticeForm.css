@@ -92,9 +92,11 @@ select.input--box:focus {
 /* 파일 영역 */
 .custom-file {
 	display: flex;
-	align-items: center;
+	flex-direction: column;   /* ✅ 세로 정렬로 변경 */
+	align-items: flex-start;  /* ✅ 왼쪽 정렬 */
+	width: 100%;              /* ✅ 줄맞춤 안정 */
+	gap: 6px;                 /* ✅ input과 안내문 간격 */
 }
-
 /* 기본 file input을 "포털 느낌"으로 */
 .custom-file-input {
 	width: 100%;
@@ -136,6 +138,14 @@ select.input--box:focus {
 	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
+/* 현재 첨부파일 */
+.notice-current-file {
+	margin-top: 8px;
+	font-size: 12.5px;
+	color: #6b7280;
+}
+
+
 /* 하단 버튼 영역 */
 .write--div > div:last-child {
 	display: flex;
@@ -144,7 +154,7 @@ select.input--box:focus {
 	margin-top: 6px;
 }
 
-/* ✅ 기존 className="button" 재사용하되
+/* 기존 className="button" 재사용하되
    NoticeForm 내부에서만 안전하게 덮어쓰기 */
 .write--div .button {
 	border-radius: 12px;

@@ -17,6 +17,7 @@ const NoticeForm = ({
 	onCancel,
 	submitLabel = '저장',
 	enableFile = true,
+	currentFileName = '',
 }) => {
 	const [category, setCategory] = useState('[일반]');
 	const [title, setTitle] = useState('');
@@ -81,6 +82,13 @@ const NoticeForm = ({
 						name="file"
 						onChange={(e) => setFile(e.target.files?.[0] || null)}
 					/>
+					
+					{/* 파일선택 아래쪽 현재 첨부파일 표시 */}
+					{currentFileName && (
+						<div className="notice-current-file">
+							현재 첨부파일: {currentFileName}
+						</div>
+					)}
 				</div>
 			)}
 
