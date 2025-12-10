@@ -48,9 +48,8 @@ import TotalGrade from './pages/grade/TotalGrade';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
-import VideoRoom from './pages/video/VideoRoom';
 import VideoRoomTest from './pages/video/VideoRoomTest';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
 	// React Query 라이브러리
