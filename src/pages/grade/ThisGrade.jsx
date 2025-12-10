@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import DataTable from '../../components/table/DataTable';
 import api from '../../api/httpClient';
-
+// 이번 학기 성적 조회
 const ThisGrade = () => {
 	const [gradeList, setGradeList] = useState([]); // 과목별 성적
 	const [myGrade, setMyGrade] = useState(null); // 누계 성적
@@ -9,56 +9,67 @@ const ThisGrade = () => {
 	useEffect(() => {
 		const fetchThisSemester = async () => {
 			try {
-				await api.get('/grade/current');
+				const res = await api.get('/grade/thisSemester');
+				setGradeList(res.data.gradeList);
+				setMyGrade(res.data.myGrade);
+				console.log(res.data);
 			} catch (e) {
-				console.error(e);
+				console.error('이번 학기 성적 조회 실패 : ', e);
 			}
 		};
 		fetchThisSemester();
 	}, []);
 
 	// 강의 평가
-	const openEvaluation = (subjectId) => {
+	const openEvaluation = useCallback((subjectId) => {
+		// 함수 고정
 		window.open(`/evaluation?subjectId=${subjectId}`);
-	};
+	}, []);
 
+	const headers1 = ['연도', '학기', '과목번호', '과목명', '강의 구분', '이수학점', '성적', '강의평가'];
+
+	// 테이블 데이터
 	const subjectRows = useMemo(() => {
-		return gradeList.map((g) => [
-			`${g.subYear}년`,
-			`${g.semester}학기`,
-			g.subjectId,
-			g.name,
-			g.type,
-			g.grades,
-			g.grade,
-			g.evaluationId == null ? (
-				<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId)}>
-					Click
-				</button>
-			) : (
-				<span>완료</span>
-			),
-		]);
-	}, [gradeList]);
+		return (gradeList ?? []).map((g) => ({
+			연도: g.subYear ? `${g.subYear}년` : '',
+			학기: g.semester ? `${g.semester}학기` : '',
+			과목번호: g.subjectId ?? '',
+			과목명: g.name ?? '',
+			'강의 구분': g.type ?? '',
+			이수학점: g.grades ?? '',
+			성적: g.grade ?? '',
+			강의평가:
+				g.evaluationId == null ? (
+					<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId)}>
+						Click
+					</button>
+				) : (
+					<span>완료</span>
+				),
+		}));
+	}, [gradeList, openEvaluation]);
+
+	const headers2 = ['연도', '학기', '신청학점', '취득학점', '평점평균'];
 
 	const myGradeRows = useMemo(() => {
 		if (!myGrade) return [];
+
 		return [
-			[
-				`${myGrade.subYear}년`,
-				`${myGrade.semester}학기`,
-				myGrade.sumGrades,
-				myGrade.myGrades,
-				// 보통은 average 필드로 내려주는 걸 추천
-				myGrade.average ?? myGrade.avg ?? '-',
-			],
+			{
+				연도: myGrade.subYear ? `${myGrade.subYear}년` : '',
+				학기: myGrade.semester ? `${myGrade.semester}학기` : '',
+				신청학점: myGrade.sumGrades ?? '',
+				취득학점: myGrade.myGrades ?? '',
+				평점평균: myGrade.average ?? myGrade.avg ?? '-',
+			},
 		];
 	}, [myGrade]);
 
-	const headers1 = ['연도', '학기', '과목번호', '과목명', '강의 구분', '이수학점', '성적', '강의평가'];
-	const headers2 = ['연도', '학기', '신청학점', '취득학점', '평점평균'];
-
 	const hasNoGrade = gradeList.length === 0 && !myGrade;
+
+	// 평가여부 검증 (evaluationId === null 검사)
+	// 하나라도 null 이면 누계학점 안 뜸
+	const hasNull = gradeList.some((g) => g.evaluationId == null);
 
 	return (
 		<div className="grade-page">
@@ -76,12 +87,17 @@ const ThisGrade = () => {
 							<p>※ 강의 평가 후 성적 조회 가능</p>
 						</div>
 
-						<hr />
+						{/* 강의평가가 하나라도 안 되어있으면 누계성적 출력안함(임시) */}
+						{hasNull !== null && (
+							<div>
+								<hr />
 
-						<div>
-							<h4>누계 성적</h4>
-							<DataTable headers={headers2} data={myGradeRows} />
-						</div>
+								<div>
+									<h4>누계 성적</h4>
+									<DataTable headers={headers2} data={myGradeRows} />
+								</div>
+							</div>
+						)}
 					</>
 				)}
 			</div>

@@ -3,6 +3,8 @@ import OptionForm from '../../components/form/OptionForm';
 import DataTable from '../../components/table/DataTable';
 import api from '../../api/httpClient';
 
+// 학기별 성적 조회
+
 const SUBJECT_TYPE_OPTIONS = [
 	{ value: '전체', label: '전체' },
 	{ value: '전공', label: '전공' },
@@ -10,9 +12,9 @@ const SUBJECT_TYPE_OPTIONS = [
 ];
 
 const Semester = () => {
-	const [yearList, setYearList] = useState([]);
-	const [semesterList, setSemesterList] = useState([]);
-	const [gradeList, setGradeList] = useState([]);
+	const [yearList, setYearList] = useState([]); // 학생이 수강한 년도
+	const [semesterList, setSemesterList] = useState([]); // 학생이 수강한 학기
+	const [gradeList, setGradeList] = useState([]); // 위 기간에 맞는 성적
 
 	const [subYear, setSubYear] = useState('');
 	const [semester, setSemester] = useState('');
@@ -37,7 +39,7 @@ const Semester = () => {
 			try {
 				const res = await api.get('/grade/semester');
 				const data = res.data;
-
+				console.log(data);
 				setYearList(data.yearList ?? []);
 				setSemesterList(data.semesterList ?? []);
 				setGradeList(data.gradeList ?? []);
@@ -64,6 +66,7 @@ const Semester = () => {
 
 	// 옵션 선택 + 조회
 	const handleSearch = async () => {
+		console.log('조회');
 		try {
 			const params = {};
 
@@ -74,7 +77,6 @@ const Semester = () => {
 
 			const res = await api.get('/grade/semester', { params });
 			const data = res.data;
-
 			// 통합 엔드포인트라 year/semesterList도 같이 내려올 수 있음
 			setYearList(data.yearList ?? yearList);
 			setSemesterList(data.semesterList ?? semesterList);
@@ -84,10 +86,23 @@ const Semester = () => {
 		}
 	};
 
-	// DataTable용 rows 변환
+	// DataTable용 rows 변환 -> 헤더 적용이 안되서 기존 방식으로 변경했습니다
+	// const rows = useMemo(() => {
+	// 	return (gradeList ?? []).map((g) => [`${g.subYear}년`, `${g.semester}학기`, g.subjectId, g.name, g.type, g.grade]);
+	// }, [gradeList]);
+
 	const rows = useMemo(() => {
-		return (gradeList ?? []).map((g) => [`${g.subYear}년`, `${g.semester}학기`, g.subjectId, g.name, g.type, g.grade]);
+		return gradeList.map((g) => ({
+			연도: g.subYear ? `${g.subYear}년` : '',
+			학기: g.semester ? `${g.semester}학기` : '',
+			과목번호: g.subjectId ?? '',
+			과목명: g.name ?? '',
+			강의구분: g.type ?? '',
+			학점: g.grade ?? '',
+		}));
 	}, [gradeList]);
+
+	console.log(rows);
 
 	const headers = ['연도', '학기', '과목번호', '과목명', '강의구분', '학점'];
 
