@@ -3,7 +3,7 @@ import '../../assets/css/Navigation.css';
 import { NavLink } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { SIDEBAR_MENUS } from '../../utils/menuConfig';
-import greenLogo from '../../assets/green-university-logo.png';
+import greenLogo from '../../assets/images/green-university-logo.png';
 
 export default function Navigation() {
 	const { user, userRole } = useContext(UserContext);

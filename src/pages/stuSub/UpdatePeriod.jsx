@@ -7,10 +7,10 @@ import DataTable from '../../components/table/DataTable';
 // 수강 신청 기간 상태 변경
 // 예비 수강신청 기간 : 0, 수강신청 기간 : 1, 수강신청 기간 종료 : 2
 export default function UpdatePeriod() {
-	const { user, token, userRole } = useContext(UserContext);
+	const { user, userRole } = useContext(UserContext);
 	const [sugangState, setSugangState] = useState(null);
 
-	// 현재 상태 불러오기
+	// 현재 수강 신청 기간 상태 불러오기
 	const loadSugangState = async () => {
 		try {
 			const res = await api.get('/sugangperiod');
@@ -35,11 +35,8 @@ export default function UpdatePeriod() {
 			if (sugangState === 0 && newStatus === 1) {
 				console.log('🔥 배치 실행 중...');
 				// StuSubService.movePreToStuSubBatch() 호출용 엔드포인트 필요
-				// 방법 1: SugangPeriodService에서 배치 호출하게 수정
-				// 방법 2: 별도 엔드포인트 추가 (추천)
 				await api.post('/sugang/batch/move-pre-to-regular');
 			}
-
 			alert('수강신청 기간이 변경되었습니다!');
 			loadSugangState();
 		} catch (err) {
@@ -53,21 +50,21 @@ export default function UpdatePeriod() {
 			<h3>수강 신청 기간 설정</h3>
 
 			<div>
-				<span>현재 예비 수강 신청 기간입니다.</span>
+				<span>0. 현재 예비 수강 신청 기간입니다.</span>
 				<button onClick={() => changeStatus(1)} disabled={sugangState === 1}>
 					예비 수강 신청 종료, 수강 신청 기간 시작
 				</button>
 			</div>
 
 			<div>
-				<span>현재 수강 신청 기간입니다.</span>
+				<span>1. 현재 수강 신청 기간입니다.</span>
 				<button onClick={() => changeStatus(2)} disabled={sugangState === 2}>
 					수강 신청 기간 종료
 				</button>
 			</div>
 
 			<div>
-				<span>이번 학기 수강 신청 기간이 종료되었습니다.</span>
+				<span>2. 이번 학기 수강 신청 기간이 종료되었습니다.</span>
 				<button onClick={() => changeStatus(0)} disabled={sugangState === 0}>
 					다시 예비 기간으로 초기화
 				</button>

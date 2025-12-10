@@ -3,7 +3,7 @@ import '../../assets/css/Header.css';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { HEADER_MENUS } from '../../utils/menuConfig';
-import greenLogo from '../../assets/green-university-logo.png';
+import greenLogo from '../../assets/images/green-university-logo.png';
 
 // 현재 경로에 맞는 메뉴 찾기
 function getCurrentTopMenuKey(menus, pathname) {

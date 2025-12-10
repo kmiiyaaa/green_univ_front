@@ -92,3 +92,28 @@
 	font-weight: 700;
 	color: var(--primary-green-dark);
 }
+
+/* 액션 버튼 스타일 */
+.action-btn {
+	padding: 6px 12px;
+	border: 1.3px solid #444444d0;
+	background-color: #15803d;
+	color: white;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+	background-color: #2b492e;
+}
+
+.action-btn:active {
+	transform: scale(0.98);
+}
+
+.action-btn:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
+}

@@ -25,9 +25,10 @@ import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
 import Portal from './pages/Portal';
-import SubTimetable from './pages/stuSub/SubTimetable';
+import SubList from './pages/stuSub/SubList';
+import PreSugang from './pages/stuSub/PreSugang';
+import Sugang from './pages/stuSub/Sugang';
 import UpdatePeriod from './pages/stuSub/UpdatePeriod';
-import PreSubApp from './pages/stuSub/PreSubApp';
 import UpdatePassword from './pages/user/update/UpdatePassword';
 import ProfessorList from './pages/user/info/ProfessorList';
 import StudentList from './pages/user/info/StudentList';
@@ -47,6 +48,7 @@ import TotalGrade from './pages/grade/TotalGrade';
 import SubApp from './pages/stuSub/SubApp';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
+import Timetable from './pages/stuSub/Timetable';
 
 function App() {
 	return (
@@ -75,9 +77,10 @@ function App() {
 						<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
 						<Route path="/index" element={<Index />} />
 						{/* 수강신청 */}
-						<Route path="/sugang/timetable" element={<SubTimetable />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
-						<Route path="/sugang/pre" element={<PreSubApp />} /> {/* 예비 수강 신청 */}
-						<Route path="/sugang" element={<SubApp />} /> {/* 수강 신청 .. */}
+						<Route path="/sugang/list" element={<SubList />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
+						<Route path="/sugang/pre" element={<PreSugang />} /> {/* 예비 수강 신청 */}
+						<Route path="/sugang" element={<Sugang />} /> {/* 수강 신청 */}
+						<Route path="/sugang/timetable" element={<Timetable />} /> {/* 학생의 최종 강의 시간표 */}
 						<Route path="/sugang/period" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
 						{/* 관리자 */}
 						<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}
@@ -105,7 +108,8 @@ function App() {
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 						<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
-						<Route path='/professor/evaluation' element={<MyEvaluation />}/>{/* 내 강의 평가 */}
+						<Route path="/professor/evaluation" element={<MyEvaluation />} />
+						{/* 내 강의 평가 */}
 						{/* 학생 - 성적 */}
 						<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
