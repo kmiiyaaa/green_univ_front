@@ -23,15 +23,16 @@ const DataTable = ({ headers, data, onRowClick, onCellClick, clickableHeaders = 
 								}
 
 								return (
-									<td
-										key={header}
-										onClick={(e) => {
-											e.stopPropagation(); // 행 클릭 막기
-											onCellClick?.({ row, header, rowIdx }); // 필요 정보 외부로 전달
-										}}
-										style={{ cursor: 'pointer', color: 'blue' }}
-									>
-										{row[header]}
+									<td key={header}>
+										<button
+											className="action-btn"
+											onClick={(e) => {
+												e.stopPropagation(); // 행 클릭 막기
+												onCellClick?.({ row, header, rowIdx }); // 필요 정보 외부로 전달
+											}}
+										>
+											{row[header]}
+										</button>
 									</td>
 								);
 							})}
