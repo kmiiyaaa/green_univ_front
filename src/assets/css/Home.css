@@ -405,6 +405,11 @@
 	color: #111827;
 }
 
+/* ================= 에러 메시지 error message ================= */
+.error-message {
+	color: red;
+}
+
 /* ================= 반응형 ================= */
 @media (max-width: 1024px) {
 	.public-layout {
