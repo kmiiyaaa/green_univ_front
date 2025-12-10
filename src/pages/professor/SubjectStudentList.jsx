@@ -6,8 +6,8 @@ import GradeInput from './GradeInput';
 export default function SubjectStudentList({ subjectId, subName }) {
 	// 과목 별 수강 학생 조회
 	const [studentList, setStudentList] = useState([]);
-	const [gradeitem, setGradeItem] = useState([]);
-	const [openGrade, setOpenGrade] = useState(false);
+	const [gradeitem, setGradeItem] = useState([]); // 점수기입용 데이터
+	const [openGrade, setOpenGrade] = useState(false); // 점수기입 화면 열기 여부
 
 	useEffect(() => {
 		const loadStudentList = async () => {
@@ -20,18 +20,17 @@ export default function SubjectStudentList({ subjectId, subName }) {
 			}
 		};
 		loadStudentList();
-	}, []);
+	}, [openGrade]);
 
 	// 점수 기입 컴포넌트 열기
 	const handleOpenGrade = useCallback(
 		(s) => {
 			setGradeItem([
 				{
-					studentId: s.studentId,
-					studentName: s.studentName,
-					subjectId: subjectId,
+					...s, // ← 기존 학생 정보 그대로
+					subjectId: subjectId, // ← 과목 ID 추가
 				},
-			]); // 길이 1 배열로 필요한 props 주기
+			]);
 			setOpenGrade(true);
 		},
 		[subjectId]
@@ -57,10 +56,11 @@ export default function SubjectStudentList({ subjectId, subName }) {
 
 	return (
 		<div>
-			{!openGrade && ( // 학생 리스트 조회
+			{!openGrade && (
+				// 학생 리스트 조회
 				<div>
 					<h2>[{subName}] 학생 리스트 조회</h2>
-					<hr></hr>
+					<hr />
 
 					{studentList.length > 0 ? (
 						<DataTable headers={headers} data={tableData} />
@@ -69,6 +69,7 @@ export default function SubjectStudentList({ subjectId, subName }) {
 					)}
 				</div>
 			)}
+
 			{/* 학생 점수 기입 */}
 			{openGrade && <GradeInput gradeitem={gradeitem} setOpenGrade={setOpenGrade} />}
 		</div>

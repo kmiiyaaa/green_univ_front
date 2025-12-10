@@ -45,6 +45,8 @@ import ThisGrade from './pages/grade/ThisGrade';
 import Semester from './pages/grade/Semester';
 import TotalGrade from './pages/grade/TotalGrade';
 import SubApp from './pages/stuSub/SubApp';
+import Evaluation from './pages/evaluation/Evaluation';
+import MyEvaluation from './pages/evaluation/MyEvaluation';
 
 function App() {
 	return (
@@ -102,14 +104,17 @@ function App() {
 						<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 						{/* 교수 */}
 						<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
-						{/* 수업 성적 */}
 						<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
+						<Route path='/professor/evaluation' element={<MyEvaluation />}/>{/* 내 강의 평가 */}
+						{/* 학생 - 성적 */}
 						<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
 					</Route>
+					{/* 팝업들 */}
+					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />
 					{/* 강의계획서 조회 팝업 */}
-					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />{' '}
+					<Route path="/evaluation" element={<Evaluation />} /> {/* 학생 강의 평가 팝업 */}
 					{/* 잘못된 경로 → 로그인 페이지로 */}
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>

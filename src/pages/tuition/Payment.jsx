@@ -31,12 +31,18 @@ export default function Payment() {
 					setCollName(res.data.collName);
 					setTuition(res.data.tuition);
 				}
+				console.log(tuition);
 			} catch (e) {
 				console.error('tuition/payment 불러오기 실패' + e);
 			}
 		};
-		// console.log(tuition);
+
 		loadPayment();
+
+		if (tuition === null) {
+			alert('등록금 조회 기간이 아닙니다!');
+			navigate(-1, { replace: true });
+		}
 	}, [user, userRole, navigate]);
 
 	const handlePayment = async () => {
@@ -56,7 +62,7 @@ export default function Payment() {
 			<h2>등록금 고지서</h2>
 			<hr />
 
-			{test ? (
+			{tuition !== null && test ? (
 				<>
 					<div>
 						<div>
@@ -113,7 +119,7 @@ export default function Payment() {
 							</tbody>
 						</table>
 
-						{tuition.status === 0 && <button onClick={() => handlePayment()}>납부하기</button>}
+						{tuition.status === false && <button onClick={() => handlePayment()}>납부하기</button>}
 					</div>
 				</>
 			) : (
