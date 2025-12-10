@@ -48,6 +48,8 @@ import TotalGrade from './pages/grade/TotalGrade';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
+import VideoRoom from './pages/video/VideoRoom';
+import VideoRoomTest from './pages/video/VideoRoomTest';
 
 function App() {
 	return (
@@ -114,6 +116,9 @@ function App() {
 						<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 						<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
 					</Route>
+					{/* 화상 비디오 */}
+					{/* <Route path="/video" element={<VideoRoom />} /> */}
+					<Route path="/videotest" element={<VideoRoomTest />} />
 					{/* 팝업들 */}
 					<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} />
 					{/* 강의계획서 조회 팝업 */}
