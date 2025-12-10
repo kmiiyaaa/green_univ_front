@@ -11,7 +11,7 @@ const ThisGrade = () => {
 			try {
 				const res = await api.get('/grade/thisSemester');
 				setGradeList(res.data.gradeList);
-				setMyGrade(res.data.myGrade);
+				setMyGrade(res.data.mygrade);
 				console.log(res.data);
 			} catch (e) {
 				console.error('이번 학기 성적 조회 실패 : ', e);
@@ -20,10 +20,10 @@ const ThisGrade = () => {
 		fetchThisSemester();
 	}, []);
 
-	// 강의 평가
-	const openEvaluation = useCallback((subjectId) => {
-		// 함수 고정
-		window.open(`/evaluation?subjectId=${subjectId}`);
+	// 강의 평가 팝업 열기
+	const openEvaluation = useCallback((subjectId, subjectName) => {
+		const url = `/evaluation?subjectId=${subjectId}&subjectName=${encodeURIComponent(subjectName)}`;
+		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
 	}, []);
 
 	const headers1 = ['연도', '학기', '과목번호', '과목명', '강의 구분', '이수학점', '성적', '강의평가'];
@@ -40,8 +40,8 @@ const ThisGrade = () => {
 			성적: g.grade ?? '',
 			강의평가:
 				g.evaluationId == null ? (
-					<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId)}>
-						Click
+					<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId, g.name)}>
+						강의평가
 					</button>
 				) : (
 					<span>완료</span>
@@ -53,7 +53,6 @@ const ThisGrade = () => {
 
 	const myGradeRows = useMemo(() => {
 		if (!myGrade) return [];
-
 		return [
 			{
 				연도: myGrade.subYear ? `${myGrade.subYear}년` : '',
@@ -84,11 +83,11 @@ const ThisGrade = () => {
 						<div>
 							<h4>과목별 성적</h4>
 							<DataTable headers={headers1} data={subjectRows} />
-							<p>※ 강의 평가 후 성적 조회 가능</p>
+							<p>※ 강의 평가 후 누계 성적 조회 가능</p>
 						</div>
 
 						{/* 강의평가가 하나라도 안 되어있으면 누계성적 출력안함(임시) */}
-						{hasNull !== null && (
+						{hasNull === false && (
 							<div>
 								<hr />
 

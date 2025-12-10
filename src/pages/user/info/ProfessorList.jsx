@@ -35,7 +35,7 @@ export default function ProfessorList() {
 			}
 
 			const res = await api.get(`/user/professorList/${page}`, { params });
-			console.log(res.data);
+			// console.log(res.data);
 			setLists(res.data.professorList);
 			setCurrentPage(res.data.page);
 			setTotalPages(res.data.totalPages);
