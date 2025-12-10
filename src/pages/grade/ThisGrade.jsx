@@ -9,10 +9,9 @@ const ThisGrade = () => {
 	useEffect(() => {
 		const fetchThisSemester = async () => {
 			try {
-				const res = await api.get('/grade/thisSemester');
+				const res = await api.get('/grade/current');
 				setGradeList(res.data.gradeList);
 				setMyGrade(res.data.mygrade);
-				console.log(res.data);
 			} catch (e) {
 				console.error('이번 학기 성적 조회 실패 : ', e);
 			}

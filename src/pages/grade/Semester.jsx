@@ -39,7 +39,6 @@ const Semester = () => {
 			try {
 				const res = await api.get('/grade/semester');
 				const data = res.data;
-				console.log(data);
 				setYearList(data.yearList ?? []);
 				setSemesterList(data.semesterList ?? []);
 				setGradeList(data.gradeList ?? []);
@@ -66,7 +65,6 @@ const Semester = () => {
 
 	// 옵션 선택 + 조회
 	const handleSearch = async () => {
-		console.log('조회');
 		try {
 			const params = {};
 
@@ -101,8 +99,6 @@ const Semester = () => {
 			학점: g.grade ?? '',
 		}));
 	}, [gradeList]);
-
-	console.log(rows);
 
 	const headers = ['연도', '학기', '과목번호', '과목명', '강의구분', '학점'];
 
