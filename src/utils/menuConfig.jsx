@@ -3,8 +3,8 @@ export const HEADER_MENUS = {
 	student: [
 		{ key: 'HOME', label: '홈', path: '/portal' },
 		{ key: 'MY', label: 'MY', path: '/user/info' },
-		{ key: 'COURSE', label: '수업', path: '/student/course' },
-		{ key: 'ENROLL', label: '수강신청', path: '/student/enroll' },
+		{ key: 'COURSE', label: '수업', path: '/subject/list' },
+		{ key: 'ENROLL', label: '수강신청', path: '/sugang/list' },
 		{ key: 'GRADE', label: '성적', path: '/student/grade' },
 		{ key: 'INFO', label: '학사정보', path: '/notice' },
 	],
@@ -32,10 +32,11 @@ export const SIDEBAR_MENUS = {
 		{ key: 'USERINFO', label: '내 정보', path: '/user/info', icon: 'person' },
 		{ key: 'UPDATEPASSWORD', label: '비밀번호 변경', path: '/user/update/password', icon: 'Password' },
 
-		{ key: 'SUBJECTTIMETABLE', label: '강의 시간표 조회', path: '/user/info', icon: 'TIMETABLE' },
-		{ key: 'PRESUBJECT', label: '예비 수강 신청', path: '/user/info', icon: 'PREAPP' },
-		{ key: 'APPSUBJECT', label: '수강 신청', path: '/user/info', icon: 'APP' },
-		{ key: 'SUGANGLIST', label: '수강 신청 내역 조회', path: '/user/info', icon: 'SUGANGLIST' },
+		{ key: 'SUBJECTTIMETABLE', label: '강의 시간표 조회', path: '/subject/list', icon: 'TIMETABLE' },
+		{ key: 'SUBJECTPERIODUPDATE', label: '수강 신청 기간 변경', path: '/sugang/period', icon: 'APP' },
+		{ key: 'PRESUBJECT', label: '예비 수강 신청', path: '/sugang/pre', icon: 'PREAPP' },
+		{ key: 'APPSUBJECT', label: '수강 신청', path: '/sugang', icon: 'APP' },
+		{ key: 'SUGANGLIST', label: '수강 신청 내역 조회', path: '/sugang/timetable', icon: 'SUGANGLIST' },
 
 		{ key: 'THISGRADE', label: '이번학기 성적', path: '/grade/current', icon: 'THISGRADE' },
 		{ key: 'SEMESTERGRADE', label: '학기별 성적', path: '/grade/semester', icon: 'SEMESTERGRADE' },

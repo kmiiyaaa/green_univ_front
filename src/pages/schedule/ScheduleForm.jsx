@@ -32,6 +32,7 @@ const ScheduleForm = ({
 		<form onSubmit={handleSubmit} className="schedule-form">
 			<div className="schedule-form-row">
 				<div className="schedule-field">
+					{/* TODO: 날짜의 연도 부분이 4자리가 아니라 6자리임 */}
 					<label className="schedule-label">시작 날짜</label>
 					<input
 						type="date"

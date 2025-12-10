@@ -30,7 +30,7 @@ const ScheduleDetail = () => {
 		try {
 			await api.delete(`/schedule/delete/${id}`);
 			alert('삭제 완료');
-			navigate('/schedule/list');
+			navigate('/schedule');
 		} catch (e) {
 			console.error(e);
 			alert('삭제 실패');

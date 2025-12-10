@@ -8,7 +8,7 @@ import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 
-export default function SubTimetable() {
+export default function SubList() {
 	const { user, token, userRole } = useContext(UserContext);
 	const [subTimetable, SetSubTimeTable] = useState([]);
 
