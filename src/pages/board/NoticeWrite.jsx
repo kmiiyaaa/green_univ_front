@@ -3,10 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
 import NoticeForm from '../board/NoticeForm';
+import { useMutation } from '@tanstack/react-query';
 
-const NoticeWrite = () => {
+export default function NoticeWrite() {
 	const navigate = useNavigate();
 	const { userRole } = useContext(UserContext);
+
+	// 등록 로직을 Mutation으로 정의
+	const createNoticeMutation = useMutation({
+		mutationFn: (formData) => api.post('/notice/write', formData),
+		onSuccess: () => {
+			alert('공지 등록 완료!');
+			navigate('/notice');
+		},
+		onError: (error) => {
+			console.error('등록 실패:', error);
+			alert('공지 등록 실패');
+		},
+	});
 
 	if (userRole !== 'staff') {
 		return (
@@ -20,21 +34,12 @@ const NoticeWrite = () => {
 	}
 
 	const handleCreate = async ({ category, title, content, file }) => {
-		try {
-			const formData = new FormData();
-			formData.append('category', category);
-			formData.append('title', title);
-			formData.append('content', content);
-			if (file) formData.append('file', file);
-
-			await api.post('/notice/write', formData);
-
-			alert('공지 등록 완료!');
-			navigate('/notice');
-		} catch (e) {
-			console.error('공지 등록 실패:', e);
-			alert('공지 등록 실패');
-		}
+		const formData = new FormData();
+		formData.append('category', category);
+		formData.append('title', title);
+		formData.append('content', content);
+		if (file) formData.append('file', file);
+		createNoticeMutation.mutate(formData);
 	};
 
 	return (
@@ -46,11 +51,9 @@ const NoticeWrite = () => {
 				initialValues={{ category: '[일반]', title: '', content: '' }}
 				onSubmit={handleCreate}
 				onCancel={() => navigate('/notice')}
-				submitLabel="등록"
+				submitLabel={createNoticeMutation.isPending ? '등록 중...' : '등록'} // 로딩 상태 활용
 				enableFile={true}
 			/>
 		</div>
 	);
-};
-
-export default NoticeWrite;
+}

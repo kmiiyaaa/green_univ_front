@@ -29,9 +29,9 @@ export default function Login() {
 			});
 			console.log('로그인res.data', res.data); // id, userRole, accessToken
 			const { id, userRole, accessToken } = res.data;
-			console.log('id', id); //
-			console.log('userRole', userRole);
-			console.log('accessToken', accessToken); // 모두 변수 저장됨
+			// console.log('id', id); //
+			// console.log('userRole', userRole);
+			// console.log('accessToken', accessToken); // 모두 변수 저장됨
 			if (accessToken) setToken(accessToken);
 			localStorage.setItem('token', accessToken);
 			if (id) setUser(id); // 유저 아이디 (기본키 저장)
@@ -46,17 +46,11 @@ export default function Login() {
 		}
 	};
 
-	// Jwtdecode 라이브러리
-	// 백에서 JWT build 하면서 넣은 값들 뽑아 쓰는 방법
-
-	// if (localStorage.getItem('token')) {
-	// 	const token = localStorage.getItem('token');
-	// 	const decoded = jwtDecode(token);
-
-	// 	console.log(decoded); // 전체 payload 출력
-	// 	console.log(decoded.sub); // userId
-	// 	console.log(decoded.role); // userRole
-	// }
+	// 아이디/비밀번호 찾기
+	const AccountPop = (type) => {
+		const url = `/findAccount/${type}`;
+		window.open(url, '_blank', 'width=600,height=400,scrollbars=no');
+	};
 
 	return (
 		<div className="public-login-card">
@@ -105,11 +99,11 @@ export default function Login() {
 				</button>
 
 				<div className="public-login-links">
-					<button type="button" className="public-link-button">
-						ID 신청
+					<button type="button" onClick={() => AccountPop('아이디')} className="public-link-button">
+						아이디 찾기
 					</button>
 					<span className="public-link-divider">·</span>
-					<button type="button" className="public-link-button">
+					<button type="button" onClick={() => AccountPop('비밀번호')} className="public-link-button">
 						비밀번호 찾기
 					</button>
 					<span className="public-link-divider">·</span>

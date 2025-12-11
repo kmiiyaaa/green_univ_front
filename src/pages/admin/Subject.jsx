@@ -3,8 +3,8 @@ import api from '../../api/httpClient';
 import InputForm from '../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
 
-const Subject2 = () => {
-	// 강의 전용 상태 관리
+// 관리자 강의 등록 + 목록 (페이징 처리 안 됐음)
+export default function Subject2() {
 	const [formData, setFormData] = useState({
 		name: '',
 		professorId: '',
@@ -130,5 +130,4 @@ const Subject2 = () => {
 			</div>
 		</div>
 	);
-};
-export default Subject2;
+}

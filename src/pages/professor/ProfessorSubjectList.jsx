@@ -12,6 +12,7 @@ export default function ProfessorSubjectList() {
 	const [categoryOptions, setCategoryOptions] = useState([]); // select 선택창 용
 
 	const [subjectId, setSubjectId] = useState(); // 학생 목록 조회 용
+	const [subName, setSubName] = useState(); // 과목 이름 표시 용
 	const [listOpen, setListOpen] = useState(false); // 학생 목록 조회 컴포넌트 열기? 여부
 
 	useEffect(() => {
@@ -58,8 +59,9 @@ export default function ProfessorSubjectList() {
 		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
 	};
 
-	const handleStudentList = (subjectId) => {
+	const handleStudentList = (subjectId, subName) => {
 		setSubjectId(subjectId);
+		setSubName(subName);
 		setListOpen(true);
 	};
 
@@ -72,14 +74,14 @@ export default function ProfessorSubjectList() {
 			강의명: s.name ?? '',
 			강의시간: s.subDay + ' ' + toHHMM(s.startTime) + '-' + toHHMM(s.endTime) + ' (' + s.roomId + ')',
 			강의계획서: <button onClick={() => handleSubDetail(s.id)}>강의계획서</button>,
-			학생목록: <button onClick={() => handleStudentList(s.id)}>학생 목록</button>,
+			학생목록: <button onClick={() => handleStudentList(s.id, s.name)}>학생 목록</button>,
 		}));
 	}, [subjectList]);
 
 	return (
 		<div>
 			{subjectId && listOpen ? (
-				<SubjectStudentList subjectId={subjectId}/>
+				<SubjectStudentList subjectId={subjectId} subName={subName} />
 			) : (
 				<div>
 					<OptionForm

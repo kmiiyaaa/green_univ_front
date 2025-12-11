@@ -8,8 +8,9 @@ import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 
-export default function PreSubApp() {
+export default function PreSugang() {
 	const { user, token, userRole } = useContext(UserContext);
+	const [error, setError] = useState(null);
 	const [subTimetable, SetSubTimeTable] = useState([]);
 	const [myPreList, setMyPreList] = useState([]); // 내가 신청한 예비 목록
 	const [totalGrades, setTotalGrades] = useState(0); // 총 학점
@@ -33,6 +34,7 @@ export default function PreSubApp() {
 	const loadMyPreList = async () => {
 		try {
 			const res = await api.get('/sugang/stusublist');
+			// period, preStuSubList, totalGrades
 			if (res.data.period === 0) {
 				const preRaw = res.data.preStuSubList || [];
 				setMyPreList(
@@ -50,6 +52,7 @@ export default function PreSubApp() {
 				setTotalGrades(res.data.totalGrades || 0);
 			}
 		} catch (e) {
+			setError(e.response?.data?.message);
 			console.error('예비 목록 조회 실패:', e);
 		}
 	};
@@ -65,7 +68,7 @@ export default function PreSubApp() {
 			if (currentFilters.name) params.name = currentFilters.name;
 
 			const res = await api.get('/sugang/presubjectlist', { params });
-			console.log('res.data', res.data);
+			console.log('강의 목록', res.data);
 
 			const rawData = res.data.lists; // 데이터만 추출
 			const formattedData = rawData.map((sub) => ({
@@ -88,7 +91,8 @@ export default function PreSubApp() {
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
 		} catch (e) {
-			console.error('강의 목록 조회 실패: ', e);
+			setError(e.response?.data?.message);
+			console.error('예비 목록 조회 실패: ', e);
 		}
 	};
 
@@ -158,8 +162,9 @@ export default function PreSubApp() {
 
 	return (
 		<>
-			<h2>예비 수강 신청</h2>
+			{error && <div className="error-message">{error}</div>}
 
+			<h2>예비 수강 신청 (장바구니)</h2>
 			{/* 🔥 내가 신청한 예비 목록 */}
 			{myPreList.length > 0 && (
 				<>
@@ -168,7 +173,6 @@ export default function PreSubApp() {
 					<hr style={{ margin: '30px 0' }} />
 				</>
 			)}
-
 			{/* 검색 폼 */}
 			<div>
 				<OptionForm
@@ -200,7 +204,6 @@ export default function PreSubApp() {
 					검색
 				</button>
 			</div>
-
 			{/* 페이징 정보 */}
 			<h3>강의 목록</h3>
 			<div>
@@ -208,7 +211,6 @@ export default function PreSubApp() {
 					전체 {totalCount}개 | {currentPage + 1} / {totalPages} 페이지
 				</p>
 			</div>
-
 			<DataTable
 				headers={headers}
 				data={subTimetable}

@@ -40,6 +40,7 @@ export default function UpdatePassword() {
 				passwordCheck: '',
 			});
 		} catch (e) {
+			alert(e.response.data.message);
 			console.error('비밀번호 변경 실패' + e);
 		}
 	};
