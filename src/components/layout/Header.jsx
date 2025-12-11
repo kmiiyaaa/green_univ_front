@@ -3,7 +3,7 @@ import '../../assets/css/Header.css';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { HEADER_MENUS, getActiveHeaderKey } from '../../utils/menuConfig';
-import greenLogo from '../../assets/green-university-logo.png';
+import greenLogo from '../../assets/images/green-university-logo.png';
 
 // 역할 정규화 (userRole 값이 STUDENT/ROLE_STUDENT 등이어도 안전)
 const normalizeRole = (role) => {

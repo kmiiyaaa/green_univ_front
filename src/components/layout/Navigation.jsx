@@ -2,8 +2,6 @@ import React, { useContext } from 'react';
 import '../../assets/css/Navigation.css';
 import { NavLink, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { SIDEBAR_MENUS } from '../../utils/menuConfig';
-import greenLogo from '../../assets/images/green-university-logo.png';
 import { getActiveHeaderKey, getSidebarMenus } from '../../utils/menuConfig';
 
 const normalizeRole = (role) => {
