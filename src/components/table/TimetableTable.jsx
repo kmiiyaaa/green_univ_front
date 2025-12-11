@@ -3,7 +3,8 @@ import '../../assets/css/TimetableTable.css';
 // 컴포넌트 예시
 const TimetableTable = ({ title = '최종 수강 신청 시간표', year, term, courses = [] }) => {
 	const DAYS = ['월', '화', '수', '목', '금'];
-	const HEADER_HEIGHT = 60; // 요일 헤더 높이(셀 한 칸 높이랑 동일)
+	const HEADER_HEIGHT = 68; // 요일 헤더 높이(셀 한 칸 높이랑 동일)
+	const BODY_HEIGHT = 80;
 
 	// 9~17시 기준
 	const hours = Array.from({ length: 9 }, (_, i) => 9 + i);
@@ -64,8 +65,8 @@ const TimetableTable = ({ title = '최종 수강 신청 시간표', year, term, 
 						))}
 
 						{getBlocksByDay(day).map((course) => {
-							const top = HEADER_HEIGHT + (course.start - 9) * 60; // 헤더 + 시간칸만큼 내려주기
-							const height = (course.end - course.start) * 60;
+							const top = HEADER_HEIGHT + (course.start - 9) * BODY_HEIGHT;
+							const height = (course.end - course.start) * BODY_HEIGHT;
 
 							return (
 								<div

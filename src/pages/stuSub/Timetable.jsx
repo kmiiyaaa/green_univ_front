@@ -1,24 +1,63 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import TimetableTable from '../../components/table/TimetableTable';
 
-// 더미 데이터 넣어서 대충 구현만 했음
 export default function Timetable() {
-	const { user, token, userRole } = useContext(UserContext);
+	const [courses, setCourses] = useState([]);
+	const [totalGrades, setTotalGrades] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
 
-	const mockCourses = [
-		{ id: 1, day: '월', start: 9, end: 12, name: '재무설계계획', room: '9-602', color: 'yellow' },
-		{ id: 2, day: '화', start: 12, end: 15, name: '블록코딩과 AI기초', room: '5남240', color: 'blue' },
-		{ id: 3, day: '화', start: 15, end: 17, name: '소비자상담', room: '9-504', color: 'green' },
-		{ id: 4, day: '목', start: 13, end: 15, name: '문제해결 글쓰기', room: '60주년-227', color: 'red' },
-	];
+	const palette = ['yellow', 'red', 'blue', 'green', 'orange', 'purple'];
+	const pickColor = (id) => palette[Math.abs(Number(id ?? 0)) % palette.length];
+
+	const loadTimetable = async () => {
+		setLoading(true);
+		setError('');
+
+		try {
+			const res = await api.get('/sugang/timetable');
+			const list = res.data?.courses ?? [];
+
+			const mapped = list.map((c) => ({
+				id: c.subjectId,
+				day: c.subDay,
+				start: c.startTime,
+				end: c.endTime,
+				name: c.subjectName,
+				room: c.roomId ?? '',
+				color: pickColor(c.subjectId),
+			}));
+
+			setCourses(mapped);
+			setTotalGrades(res.data?.totalGrades ?? 0);
+		} catch (e) {
+			console.error(e);
+			setError(e.response?.data?.message || '시간표 조회 실패');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		loadTimetable();
+	}, []);
 
 	return (
-		<div style={{ padding: 24, background: '#f3f4f6', minHeight: '100vh' }}>
-			<TimetableTable year={2025} term="1학기" courses={mockCourses} />
+		<div style={{ padding: 24, background: '#f9fcf6ff', minHeight: '100vh' }}>
+			{loading && <p>시간표 불러오는 중...</p>}
+			{error && <p style={{ color: 'crimson' }}>{error}</p>}
+
+			{!loading && !error && courses.length === 0 && <p>최종 수강 신청 내역이 없습니다.</p>}
+
+			{!loading && !error && courses.length > 0 && (
+				<TimetableTable
+					title={`최종 수강 신청 시간표 (총 ${totalGrades}학점)`}
+					year={2025}
+					term="1학기"
+					courses={courses}
+				/>
+			)}
 		</div>
 	);
 }
