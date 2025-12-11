@@ -88,7 +88,7 @@ const CollTuit = () => {
 		if (!window.confirm(`[${row.단과대}] 등록금을 삭제하시겠습니까?`)) return;
 
 		try {
-			await api.delete(`/admin/tuition/delete/${row.id}`);
+			await api.delete(`/admin/tuition/${row.id}`);
 			alert('단대별 등록금 삭제가 완료되었습니다.');
 
 			// 지금 수정 중인 대상이면 폼도 리셋
