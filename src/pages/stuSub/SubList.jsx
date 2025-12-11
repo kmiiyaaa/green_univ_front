@@ -178,13 +178,7 @@ export default function SubList() {
 				</p>
 			</div>
 
-			<DataTable
-				headers={headers}
-				data={subTimetable}
-				onRowClick={(row) => {
-					console.log('클릭한 강의:', row.강의명);
-				}}
-			/>
+			<DataTable headers={headers} data={subTimetable} />
 
 			<PaginationForm
 				currentPage={currentPage}

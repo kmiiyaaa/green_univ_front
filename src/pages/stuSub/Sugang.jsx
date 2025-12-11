@@ -107,13 +107,16 @@ export default function Sugang() {
 	}, []);
 
 	const headers = ['학수번호', '강의명', '담당교수', '학점', '요일시간 (강의실)', '현재인원', '정원', '수강신청'];
+
+	// TODO: 관리자가 수강신청 종료를 눌렀을 때 예비 수강신청 목록은 초기화를 시켜야 할까?
+	// 현재는 그냥 테이블에 남아 있음. 지워야겠지 ..?
 	return (
 		<>
 			<h2>나의 수강 신청 내역</h2>
 
 			{pendingList.length > 0 && (
 				<>
-					<h3>신청 미완료 강의 (다시 신청 필요)</h3>
+					<h3>신청 미완료 강의</h3>
 					<DataTable
 						headers={headers}
 						data={pendingList}

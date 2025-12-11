@@ -64,7 +64,7 @@
 	border-radius: 16px;
 	border: 1px solid #e5e7eb;
 	overflow: hidden;
-	width: 1600px;
+	width: 100%;
 	justify-self: center;
 }
 
@@ -119,12 +119,14 @@
 	left: 4px;
 	right: 4px;
 	border-radius: 10px;
-	padding: 6px 6px 4px;
+	/* padding: 6px 6px 4px; */
+	padding: 0 0 0 15px;
 	font-size: 11px;
 	color: #ffffff;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	/* justify-content: space-between; */
+	justify-content: space-evenly;
 	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
 	overflow: hidden;
 }
