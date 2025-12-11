@@ -139,11 +139,11 @@ const CollTuit = () => {
 					headers={headers}
 					data={collTuit}
 					renderActions={(row) => (
-						<div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
+						<div>
+							<button type="button"  onClick={() => handleEditRow(row)}>
 								수정
 							</button>
-							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
+							<button type="button"  onClick={() => handleDeleteRow(row)}>
 								삭제
 							</button>
 						</div>
