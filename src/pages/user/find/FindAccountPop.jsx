@@ -2,7 +2,6 @@ import { useState } from 'react';
 import InputForm from '../../../components/form/InputForm';
 import RadioForm from '../../../components/form/RadioForm';
 import api from '../../../api/httpClient';
-import PopResult from './update/PopResult';
 import { useParams } from 'react-router-dom';
 
 export default function FindAccountPop() {

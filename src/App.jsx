@@ -47,10 +47,10 @@ import Semester from './pages/grade/Semester';
 import TotalGrade from './pages/grade/TotalGrade';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
-import FindAccountPop from './pages/user/FindAccountPop';
 import Timetable from './pages/stuSub/Timetable';
 import VideoRoomTest from './pages/video/VideoRoomTest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import FindAccountPop from './pages/user/find/FindAccountPop';
 
 function App() {
 	// React Query 라이브러리
