@@ -7,6 +7,7 @@ import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
+import { toHHMM } from '../../utils/DateTimeUtil';
 
 export default function Sugang() {
 	const { user, token, userRole } = useContext(UserContext);
@@ -56,7 +57,7 @@ export default function Sugang() {
 		강의명: sub.subjectName,
 		담당교수: sub.professorName,
 		학점: sub.grades,
-		'요일시간 (강의실)': `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
+		'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
 		현재인원: sub.numOfStudent,
 		정원: sub.capacity,
 		isOver: sub.numOfStudent > sub.capacity,

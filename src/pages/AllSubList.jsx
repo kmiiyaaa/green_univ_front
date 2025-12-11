@@ -128,6 +128,12 @@ export default function AllSubList() {
 		{ value: '교양', label: '교양' },
 	];
 
+	// 강의계획서 팝업 열기
+	const handleSubDetail = (subjectId) => {
+		const url = `/professor/syllabus/${subjectId}`;
+		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
+	};
+
 	return (
 		<>
 			<h2>전체 강의 조회</h2>
@@ -175,7 +181,7 @@ export default function AllSubList() {
 				headers={headers}
 				data={subjectList}
 				onRowClick={(row) => {
-					console.log('클릭한 강의:', row.강의명);
+					handleSubDetail(row.학수번호);
 				}}
 			/>
 

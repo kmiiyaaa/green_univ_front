@@ -94,7 +94,7 @@ export default function ProfessorSubjectList() {
 					<button onClick={() => searchProfessorSubject()} className="button">
 						검색
 					</button>
-					<DataTable headers={headers} data={subjectTable} />{' '}
+					<DataTable headers={headers} data={subjectTable} />
 				</div>
 			)}
 		</div>

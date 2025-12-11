@@ -7,6 +7,7 @@ import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
+import { toHHMM } from '../../utils/DateTimeUtil';
 
 export default function SubList() {
 	const { user, token, userRole } = useContext(UserContext);
@@ -26,6 +27,12 @@ export default function SubList() {
 		deptName: '', // 학과명
 		name: '', // 강의명
 	});
+
+	// 강의계획서 팝업 열기
+	const handleSubDetail = (subjectId) => {
+		const url = `/professor/syllabus/${subjectId}`;
+		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
+	};
 
 	// 강의 목록 조회 (페이징 page + 검색 filters)
 	const loadSubjectList = async (page = 0, filters = null) => {
@@ -52,10 +59,10 @@ export default function SubList() {
 				강의명: sub.name,
 				담당교수: sub.professorName,
 				학점: sub.grades,
-				'요일시간 (강의실)': `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
+				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: sub.id, // 강의 계획서 이 부분 수정해야함
+				강의계획서: <button onClick={() => handleSubDetail(sub.id)}>강의계획서</button>, // 강의 계획서 이 부분 수정해야함
 			}));
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
