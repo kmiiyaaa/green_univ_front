@@ -37,7 +37,40 @@ const NoticeDetail = () => {
 		}
 	};
 
+	
+	// 다운로드(공지ID 기준 API)
+	// const handleDownload = () => {
+	// 	// api 인스턴스 baseURL이 붙는 구조라면 window.open이 가장 단순
+	// 	window.open(`/api/notice/file/download/${id}`, '_blank');
+	// };
+
+	const handleDownload = async () => {
+  try {
+    const res = await api.get(`/notice/file/download/${id}`, {
+      responseType: "blob",
+	  //blob : 이 응답은 파일이니까 파일로 받으라고 axios에게 알려주는 옵션
+    });
+
+    const blob = new Blob([res.data]);
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = notice.file?.originFilename || "download";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error("다운로드 실패:", e);
+    alert("다운로드 실패");
+  }
+};
+
 	if (!notice) return <div className="form-container">로딩중...</div>;
+
+	const fileName = notice?.file?.originFilename || '';
 
 	return (
 		<div className="form-container notice-detail">
@@ -60,6 +93,24 @@ const NoticeDetail = () => {
 						<td className="type">조회수</td>
 						<td>{notice.views ?? 0}</td>
 					</tr>
+					<tr>
+						<td className="type">첨부파일</td>
+						<td>
+							{notice?.hasFile ? (
+							<>
+								<span>{notice.file?.originFilename}</span>
+								<button className="button" type="button" onClick={handleDownload}>
+									다운로드
+								</button>
+
+							</>
+							) : (
+							<span>첨부파일 없음</span>
+							)}
+						</td>
+					</tr>
+
+
 					<tr className="content--container">
 						<td className="type">내용</td>
 						<td>

@@ -15,16 +15,8 @@ const NoticeUpdate = () => {
 		content: '',
 	});
 
-	if (userRole !== 'staff') {
-		return (
-			<div className="form-container">
-				권한이 없습니다.
-				<button className="button" onClick={() => navigate(-1)}>
-					뒤로
-				</button>
-			</div>
-		);
-	}
+	// 수정시 첨부파일명 표시용 state 추가
+	const [currentFileName, setCurrentFileName] = useState('');
 
 	const loadNotice = async () => {
 		try {
@@ -37,26 +29,31 @@ const NoticeUpdate = () => {
 				// read에서 <br> 변환되어 올 수 있어서 줄바꿈 복원
 				content: (n.content ?? '').replaceAll('<br>', '\n'),
 			});
+
+			// 기존 첨부파일명 세팅
+			setCurrentFileName(n?.file?.originFilename ?? '');
 		} catch (e) {
 			console.error('공지 수정 데이터 로드 실패:', e);
 		}
 	};
 
-	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
+		if (userRole !== 'staff') return; // 권한 없으면 로드 안 함
 		loadNotice();
-	}, [id]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [id, userRole]);
 
-	const handleUpdate = async ({ category, title, content }) => {
+	// 파일첨부 수정버전
+	const handleUpdate = async ({ category, title, content, file }) => {
 		try {
-			const params = new URLSearchParams();
-			params.append('category', category);
-			params.append('title', title);
-			params.append('content', content);
+			const formData = new FormData();
+			formData.append('category', category);
+			formData.append('title', title);
+			formData.append('content', content);
+			if (file) formData.append('file', file); // 새 파일 있으면 같이 전송
 
-			await api.patch(`/notice/update/${id}`, params, {
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			});
+			await api.patch(`/notice/update/${id}`, formData);
+			// Content-Type은 axios가 multipart로 자동 세팅
 
 			alert('공지 수정 완료!');
 			navigate(`/notice/read/${id}`);
@@ -65,6 +62,18 @@ const NoticeUpdate = () => {
 			alert('공지 수정 실패');
 		}
 	};
+
+	// 렌더 가드는 훅 아래에서 처리
+	if (userRole !== 'staff') {
+		return (
+			<div className="form-container">
+				권한이 없습니다.
+				<button className="button" onClick={() => navigate(-1)}>
+					뒤로
+				</button>
+			</div>
+		);
+	}
 
 	return (
 		<div className="form-container">
@@ -76,7 +85,9 @@ const NoticeUpdate = () => {
 				onSubmit={handleUpdate}
 				onCancel={() => navigate(-1)}
 				submitLabel="수정"
-				enableFile={false}
+				enableFile={true}
+				// 현재 첨부파일명 전달
+				currentFileName={currentFileName}
 			/>
 		</div>
 	);

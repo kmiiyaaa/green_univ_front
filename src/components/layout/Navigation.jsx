@@ -1,15 +1,26 @@
 import React, { useContext } from 'react';
 import '../../assets/css/Navigation.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { SIDEBAR_MENUS } from '../../utils/menuConfig';
-import greenLogo from '../../assets/images/green-university-logo.png';
+import { getActiveHeaderKey, getSidebarMenus } from '../../utils/menuConfig';
+
+const normalizeRole = (role) => {
+	if (!role) return 'student';
+	const r = String(role).toLowerCase().trim();
+	if (r.includes('student')) return 'student';
+	if (r.includes('staff') || r.includes('admin')) return 'staff';
+	if (r.includes('professor')) return 'professor';
+	return r;
+};
 
 export default function Navigation() {
-	const { user, userRole } = useContext(UserContext);
+	const { userRole } = useContext(UserContext);
+	const { pathname } = useLocation();
 
-	const role = userRole || 'student';
-	const sidebarItems = SIDEBAR_MENUS[role] || SIDEBAR_MENUS.student;
+	const role = normalizeRole(userRole);
+
+	const activeHeaderKey = getActiveHeaderKey(role, pathname);
+	const sidebarItems = getSidebarMenus(role, activeHeaderKey);
 
 	return (
 		<aside className="sidebar">
@@ -20,7 +31,6 @@ export default function Navigation() {
 						to={item.path}
 						className={({ isActive }) => (isActive ? 'sidebar-item active' : 'sidebar-item')}
 					>
-						{/* Material Icon 사용 예시 */}
 						{item.icon && <span className="material-symbols-rounded">{item.icon}</span>}
 						<span className="sidebar-label">{item.label}</span>
 					</NavLink>
