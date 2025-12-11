@@ -4,31 +4,36 @@ import InputForm from './../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
 
 const Department = () => {
-	// 학과 전용 상태 관리
+	// 학과 전용 상태 
 	const [formData, setFormData] = useState({
 		name: '',
-		collegeId: '',
 		collegeName: '',
 	});
 
 	// 학과 목록 가져오기
 	const [dept, setDept] = useState([]);
 
+	// 어떤 학과 수정중인지, null 이면 등록
+	const [selectedDeptId ,setSelectedDeptId ] = useState(null);
+
+	// 학과 목록 조회
 	const loadDepartment = async () => {
 		try {
 			const res = await api.get('/admin/department');
-			// console.log(res.data);
+			console.log(res.data);
 			const rawData = res.data.departmentList;
 			console.log(rawData);
+
 			const formattedData = rawData.map((dept) => ({
 				id: dept.id,
 				학과명: dept.name,
 				단과대: dept.college.name,
+				단과대ID : dept.college.id,
 				원본데이터: dept,
-			}));
+			}));	
 
 			setDept(formattedData);
-			console.log('가공된 데이터:', formattedData);
+			console.log('학과 데이터', formattedData);
 		} catch (e) {
 			console.error('학과 목록 로드 실패:', e);
 		}
@@ -41,26 +46,84 @@ const Department = () => {
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
+		setFormData((prev) => ({ 
+			...prev, 
+			[name]: value 
+		}));
 	};
 
+	// 등록,수정 공통
 	const handleSubmit = async () => {
-		try {
-			const res = await api.post('/admin/department', formData);
-			console.log('학과 등록 성공:', res.data);
-			alert('학과 등록 완료!');
+		
+		if (!formData.name.trim()) {
+			alert('학과명을 입력해주세요.');
+			return;
+		}
+		if (!formData.collegeName.trim()) {
+			alert('단과대명을 입력해주세요.');
+			return;
+		}
 
-			// 등록 후 입력값 비우기
-			setFormData({ name: '', collegeId: '', collegeName: '' });
-			// 등록 끝난 다음, 최신 목록 다시 가져오기
+		try {
+			if(!selectedDeptId){
+				//등록
+				const res = await api.post('/admin/department',formData);
+				alert("학과 등록 완료");
+			} else {
+				//수정
+				const res = await api.patch(`/admin/department/${selectedDeptId}`, formData);
+				alert("학과 수정 완료");
+			}
+
+			setFormData({ name: '', collegeName: '' });
+			setSelectedDeptId(null);
+			await loadDepartment();
+			
+		} catch (e) {
+			console.error(e);
+			alert(e.response?.data?.message || '학과 등록/수정 실패');
+			}			
+	}
+
+	// 수정 모드 취소
+	const handleCancelEdit = () => {
+		setSelectedDeptId(null);
+		setFormData({ name: '', collegeName: '' });
+	};
+
+	// 행 "수정" 버튼
+	const handleEditRow = (row) => {
+		setSelectedDeptId(row.id);
+		setFormData({
+			name: row.학과명,
+			collegeName: row.단과대,
+		});
+	};
+
+	// 행 "삭제" 버튼
+	const handleDeleteRow = async (row) => {
+		if (!window.confirm(`'${row.학과명}' 학과를 삭제하시겠습니까?`)) return;
+
+		try {
+			await api.delete(`/admin/department/${row.id}`);
+			alert('학과 삭제가 완료되었습니다.');
+
+			// 삭제 대상이 현재 수정 중이던 학과라면 상태 초기화
+			if (selectedDeptId === row.id) {
+				setSelectedDeptId(null);
+				setFormData({ name: '', collegeName: '' });
+			}
+
 			await loadDepartment();
 		} catch (e) {
-			console.error('학과 등록 실패:', e);
+			console.error('학과 삭제 실패:', e);
+			alert(e.response?.data?.message || '학과 삭제 중 오류가 발생했습니다.');
 		}
 	};
 
+
 	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
-	const headers = ['학과명', '단과대'];
+	const headers = ['학과명', '단과대', '단과대ID'];
 
 	return (
 		<div className="form-container">
@@ -68,12 +131,18 @@ const Department = () => {
 			<div className="subject--form">
 				<InputForm label="학과명" name="name" value={formData.name} onChange={handleChange} />
 				{/* 기존 버전은 select 형식이었음 */}
-				{/* <InputForm label="단과대 아이디" name="collegeId" value={formData.collegeId} onChange={handleChange} /> */}
 				<InputForm label="단과대명" name="collegeName" value={formData.collegeName} onChange={handleChange} />
 
-				<button onClick={handleSubmit} className="button">
-					학과 등록
-				</button>
+				<div>
+					<button onClick={handleSubmit} className="button">
+						{selectedDeptId ? '학과 수정' : '학과 등록'}
+					</button>
+					{selectedDeptId && (
+						<button type="button" onClick={handleCancelEdit}>
+							취소
+						</button>
+					)}
+				</div>
 			</div>
 
 			<h3>학과 목록</h3>
@@ -82,10 +151,26 @@ const Department = () => {
 					headers={headers}
 					data={dept}
 					onRowClick={(row) => {
-						// row에는 위에서 가공한 한글 키들이 들어있음
-						console.log('클릭한 학과:', row.학과);
-						// 상세페이지 이동 시 row.id나 row.원본데이터 사용 가능
+						console.log('클릭한 학과:', row.학과명);
 					}}
+					renderActions={(row) => (
+						<div>
+							<button
+								type="button"
+								className="button button--sm"
+								onClick={() => handleEditRow(row)}
+							>
+								수정
+							</button>
+							<button
+								type="button"
+								className="button button--sm button--danger"
+								onClick={() => handleDeleteRow(row)}
+							>
+								삭제
+							</button>
+						</div>
+					)}
 				/>
 			</div>
 		</div>
