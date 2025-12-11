@@ -11,7 +11,7 @@ const CollTuit = () => {
 		amount: '',
 	});
 
-	// 어떤 단과대를 수정 중인지 (null이면 "새 등록" 모드)
+	// 어떤 단과대를 수정 중인지 , null 이면 등록
 	const [selectedCollegeId, setSelectedCollegeId] = useState(null);
 
 	// 단대별 등록금 목록
@@ -70,11 +70,11 @@ const CollTuit = () => {
 			await loadCollTuit();
 		} catch (e) {
 			console.error('단대별 등록금 등록/수정 실패:', e.response?.data || e);
-			alert(e.response?.data || '등록/수정에 실패했습니다.');
+			alert(e.response?.data.message || '등록/수정에 실패했습니다.');
 		}
 	};
 
-	// 행 "수정" 버튼
+	// 행 수정 버튼
 	const handleEditRow = (row) => {
 		setSelectedCollegeId(row.id);
 		setFormData({
@@ -83,7 +83,7 @@ const CollTuit = () => {
 		});
 	};
 
-	// 행 "삭제" 버튼
+	// 행 삭제 버튼
 	const handleDeleteRow = async (row) => {
 		if (!window.confirm(`[${row.단과대}] 등록금을 삭제하시겠습니까?`)) return;
 
@@ -100,7 +100,7 @@ const CollTuit = () => {
 			await loadCollTuit();
 		} catch (e) {
 			console.error('단대별 등록금 삭제 실패:', e.response?.data || e);
-			alert(e.response?.data || '삭제에 실패했습니다.');
+			alert(e.response?.data.message || '삭제에 실패했습니다.');
 		}
 	};
 
@@ -138,8 +138,6 @@ const CollTuit = () => {
 				<DataTable
 					headers={headers}
 					data={collTuit}
-					// 필요하면 onRowClick 도 쓸 수 있음
-					// onRowClick={(row) => console.log(row)}
 					renderActions={(row) => (
 						<div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
 							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
