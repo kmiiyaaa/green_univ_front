@@ -6,6 +6,7 @@ import GradeInput from './GradeInput';
 export default function SubjectStudentList({ subjectId, subName }) {
 	// 과목 별 수강 학생 조회
 	const [studentList, setStudentList] = useState([]);
+	const [stuNum, setStuNum] = useState(0); // 수강 학생 수
 	const [gradeitem, setGradeItem] = useState([]); // 점수기입용 데이터
 	const [openGrade, setOpenGrade] = useState(false); // 점수기입 화면 열기 여부
 
@@ -15,6 +16,7 @@ export default function SubjectStudentList({ subjectId, subName }) {
 				const res = await api.get(`/professor/subject/${subjectId}`);
 				console.log(res.data);
 				setStudentList(res.data.studentList);
+				setStuNum(res.data.stuNum);
 			} catch (e) {
 				console.error('수강 학생 조회 에러 : ', e);
 			}
@@ -37,7 +39,19 @@ export default function SubjectStudentList({ subjectId, subName }) {
 	);
 
 	// 테이블 데이터
-	const headers = ['번호', '이름', '소속', '결석', '지각', '과제점수', '중간시험', '기말시험', '환산점수', '점수기입'];
+	const headers = [
+		'번호',
+		'이름',
+		'소속',
+		'결석',
+		'지각',
+		'과제점수',
+		'중간시험',
+		'기말시험',
+		'환산점수',
+		'등급',
+		'점수기입',
+	];
 
 	const tableData = useMemo(() => {
 		return studentList.map((s) => ({
@@ -50,6 +64,7 @@ export default function SubjectStudentList({ subjectId, subName }) {
 			중간시험: s.midExam ?? ' ',
 			기말시험: s.finalExam ?? ' ',
 			환산점수: s.convertedMark ?? ' ',
+			등급: s.grade ?? '',
 			점수기입: <button onClick={() => handleOpenGrade(s)}>점수기입</button>,
 		}));
 	}, [studentList, handleOpenGrade]);
@@ -63,7 +78,13 @@ export default function SubjectStudentList({ subjectId, subName }) {
 					<hr />
 
 					{studentList.length > 0 ? (
-						<DataTable headers={headers} data={tableData} />
+						<div>
+							{' '}
+							<h4>
+								수강 인원 : {stuNum}명 ({stuNum < 20 ? '절대평가' : '상대평가'})
+							</h4>
+							<DataTable headers={headers} data={tableData} />
+						</div>
 					) : (
 						<h4>해당 강의를 수강하는 학생이 존재하지 않습니다.</h4>
 					)}
