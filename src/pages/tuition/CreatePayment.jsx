@@ -24,10 +24,10 @@ export default function CreatePayment() {
 			const res = await api.get('/tuition/create');
 			console.log(res.data.insertCount);
 			setInsertCount(res.data.insertCount);
+			alert(insertCount + '개의 고지서가 생성되었습니다!');
 		} catch (e) {
 			console.error('등록금 고지서 생성 실패' + e);
 		}
-		alert(insertCount + '개의 고지서가 생성되었습니다!');
 	};
 
 	return (

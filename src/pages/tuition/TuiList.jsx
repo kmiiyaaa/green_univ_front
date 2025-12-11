@@ -4,6 +4,7 @@ import api from '../../api/httpClient';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import DataTable from '../../components/table/DataTable';
+import { comma } from '../../utils/FmtMoney';
 
 export default function TuiList() {
 	// 납부된 등록금 내역을 조회하는 컴포넌트
@@ -40,9 +41,9 @@ export default function TuiList() {
 			등록연도: t.tuiYear ?? '',
 			등록학기: t.semester ?? '',
 			장학유형: t?.schType?.type ?? '',
-			등록금: t.tuiAmount ?? '',
-			장학금: t.schAmount ?? '',
-			납입금: t.payAmount ?? '',
+			등록금: comma(t.tuiAmount) ?? '',
+			장학금: comma(t.schAmount) ?? '',
+			납입금: comma(t.payAmount) ?? '',
 		}));
 	}, [tuiList]);
 

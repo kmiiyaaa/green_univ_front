@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
+import { comma } from '../../utils/FmtMoney';
 
 export default function Payment() {
 	// 등록금 고지서를 조회하는 컴포넌트 tuitionController
@@ -87,23 +88,23 @@ export default function Payment() {
 
 								<tr>
 									<th>장학유형</th>
-									<td colSpan="3">{tuition?.schType?.type}</td>
+									<td colSpan="3">{tuition?.schType?.type ?? "장학금 지급 대상 아님"}</td>
 								</tr>
 
 								{/* 금액 format 필요 */}
 								<tr>
 									<th>등록금</th>
-									<td colSpan="3">{tuition?.schAmount}</td>
+									<td colSpan="3">{comma(tuition?.schAmount)}</td>
 								</tr>
 
 								<tr>
 									<th>장학금</th>
-									<td colSpan="3">{tuition?.schAmount}</td>
+									<td colSpan="3">{comma(tuition?.schAmount)}</td>
 								</tr>
 
 								<tr>
 									<th>납부금</th>
-									<td colSpan="3">{tuition?.payAmount}</td>
+									<td colSpan="3">{comma(tuition?.payAmount)}</td>
 								</tr>
 
 								<tr>

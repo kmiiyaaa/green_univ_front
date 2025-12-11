@@ -16,7 +16,7 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 	}, [gradeitem]);
 
 	// gradeitem에서 기본값 먼저 세팅
-	const base = gradeitem[0]; // s 객체
+	const base = gradeitem[0]; // 객체
 
 	const subjectId = base?.subjectId;
 	const studentId = base?.studentId;
@@ -28,7 +28,7 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 		homework: base?.homework ?? '',
 		midExam: base?.midExam ?? '',
 		finalExam: base?.finalExam ?? '',
-		convertedMark: base?.convertedMark ?? '',
+		convertedMark: base?.convertedMark ?? '', // 환산점수
 		grade: base?.grade ?? '',
 	});
 
@@ -93,7 +93,7 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 				</div>
 
 				<div>
-					<InputForm label="환산점수" name="convertedMark" value={value.convertedMark} onChange={handleChange} />
+					<InputForm label="환산점수" name="convertedMark" value={value?.convertedMark} onChange={handleChange} />
 				</div>
 
 				<div>
