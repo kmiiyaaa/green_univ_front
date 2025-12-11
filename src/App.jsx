@@ -51,6 +51,7 @@ import Timetable from './pages/stuSub/Timetable';
 import VideoRoomTest from './pages/video/VideoRoomTest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
+import SugangApplication from './pages/stuSub/SugangApplication';
 
 function App() {
 	// React Query 라이브러리
@@ -84,6 +85,7 @@ function App() {
 							<Route path="/index" element={<Index />} />
 							{/* 수강신청 */}
 							<Route path="/sugang/list" element={<SubList />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
+							<Route path="/sugang/app" element={<SugangApplication />} /> {/* 수강 신청 컴포넌트!! */}
 							<Route path="/sugang/pre" element={<PreSugang />} /> {/* 예비 수강 신청 */}
 							<Route path="/sugang" element={<Sugang />} /> {/* 수강 신청 */}
 							<Route path="/sugang/timetable" element={<Timetable />} /> {/* 학생의 최종 강의 시간표 */}
