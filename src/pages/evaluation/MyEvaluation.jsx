@@ -45,14 +45,20 @@ export default function MyEvaluation() {
 
 	return (
 		<div>
-			<select name="subName" value={subName ?? '과목 선택'} onChange={(e) => setSubName(e.target.value)}>
-				{subNameList.map((sub, idx) => (
-					<option key={idx}>{sub.name}</option>
-				))}
-			</select>
-			<button onClick={() => loadMyEvaluation()}>검색</button>
+			{evalList.length > 0 ? (
+				<div>
+					<select name="subName" value={subName ?? '과목 선택'} onChange={(e) => setSubName(e.target.value)}>
+						{subNameList.map((sub, idx) => (
+							<option key={idx}>{sub.name}</option>
+						))}
+					</select>
+					<button onClick={() => loadMyEvaluation()}>검색</button>
 
-			<DataTable headers={headers} data={tableData} />
+					<DataTable headers={headers} data={tableData} />
+				</div>
+			) : (
+				'아직 등록된 강의 평가가 없습니다.'
+			)}
 		</div>
 	);
 }

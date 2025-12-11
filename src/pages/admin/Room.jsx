@@ -93,7 +93,7 @@ export default function Room() {
 		<div className="form-container">
 			<h3>강의실 등록</h3>
 			<div className="room--form">
-				<InputForm label="강의실 호수" name="id" value={roomData.id} onChange={handleChange} placeholder="예: 101" />
+				<InputForm label="강의실 호수" name="id" value={roomData.id} onChange={handleChange} placeholder="예: 101" />				
 				<InputForm
 					label="단과대 ID"
 					name="collegeId"

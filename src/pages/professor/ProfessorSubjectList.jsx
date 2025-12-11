@@ -81,7 +81,8 @@ export default function ProfessorSubjectList() {
 	return (
 		<div>
 			{subjectId && listOpen ? (
-				<SubjectStudentList subjectId={subjectId} subName={subName} />
+				// 학생 목록 컴포넌트
+				<SubjectStudentList subjectId={subjectId} subName={subName} setListOpen={setListOpen} />
 			) : (
 				<div>
 					<OptionForm
