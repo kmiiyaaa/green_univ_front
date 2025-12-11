@@ -40,12 +40,14 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 
 	// 상대평가 과목 : 성적을 모두 기입한 경우, 전체 학생 등급 산출
 	const getRelativeGrade = async () => {
-		try {
-			await api.patch(`/professor/relativeGrade/${subjectId}`);
-		} catch (e) {
-			alert(e.response.data.message);
-			console.error('전체 학생 등급 산출 에러 : ', e);
-		}
+		if (window.confirm('전체 학생 등급을 산출하시겠습니까?'))
+			try {
+				await api.patch(`/professor/relativeGrade/${subjectId}`);
+				alert('등급 산출이 완료되었습니다!');
+			} catch (e) {
+				alert(e.response.data.message);
+				console.error('전체 학생 등급 산출 에러 : ', e);
+			}
 		loadStudentList();
 	};
 
@@ -96,6 +98,8 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 							</h4>
 							{/* 상대평가 과목일 때, 전체 학생 등급 산출 */}
 							{stuNum >= 20 && <button onClick={() => getRelativeGrade()}>전체 학생 등급 산출</button>}
+							* 직접 수정한 등급도 전체 등급 재산출 시 자동 등급으로 다시 변경됩니다.
+							<br />
 							<button onClick={() => setListOpen()}>내 강의 목록</button>
 							<DataTable headers={headers} data={tableData} />
 						</div>
