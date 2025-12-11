@@ -100,7 +100,7 @@ export const SIDEBAR_BY_HEADER = {
 		COURSE: [
 			{ key: 'SUBJECT_ALL', label: '전체 강의 조회', path: '/subject/list' },
 			{ key: 'MY_SUB', label: '내 강의 조회', path: '/professor/subject' },
-			{ key: 'EVAL', label: '내 강의 평가', path: '/evaluation/read' },
+			{ key: 'EVAL', label: '내 강의 평가', path: '/professor/evaluation' },
 		],
 
 		INFO: [

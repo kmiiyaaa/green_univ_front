@@ -5,7 +5,7 @@ import api from '../../api/httpClient';
 import OptionForm from '../../components/form/OptionForm';
 
 // 교수 - 성적 기입 컴포넌트
-export default function GradeInput({ gradeitem, setOpenGrade }) {
+export default function GradeInput({ gradeitem, setOpenGrade, stuNum }) {
 	// 학생 기본 정보 props에서 뽑기
 	const headers = ['번호', '이름'];
 	const tableData = useMemo(() => {
@@ -28,7 +28,6 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 		homework: base?.homework ?? '',
 		midExam: base?.midExam ?? '',
 		finalExam: base?.finalExam ?? '',
-		convertedMark: base?.convertedMark ?? '', // 환산점수
 		grade: base?.grade ?? '',
 	});
 
@@ -64,6 +63,9 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 
 	return (
 		<div>
+			<h3>성적 기입</h3>
+
+			<button onClick={() => setOpenGrade(false)}>학생 목록</button>
 			<DataTable headers={headers} data={tableData} />
 
 			<form
@@ -73,41 +75,79 @@ export default function GradeInput({ gradeitem, setOpenGrade }) {
 				}}
 			>
 				<div>
-					<InputForm label="결석" name="absent" value={value.absent} onChange={handleChange} required />
-				</div>
-
-				<div>
-					<InputForm label="지각" name="lateness" value={value.lateness} onChange={handleChange} required />
-				</div>
-
-				<div>
-					<InputForm label="과제점수" name="homework" value={value.homework} onChange={handleChange} required />
-				</div>
-
-				<div>
-					<InputForm label="중간시험" name="midExam" value={value.midExam} onChange={handleChange} required />
-				</div>
-
-				<div>
-					<InputForm label="기말시험" name="finalExam" value={value.finalExam} onChange={handleChange} />
-				</div>
-
-				<div>
-					<InputForm label="환산점수" name="convertedMark" value={value?.convertedMark} onChange={handleChange} />
-				</div>
-
-				<div>
-					<OptionForm
-						label="등급"
-						name="grade"
-						value={value.grade}
+					<InputForm
+						label="결석"
+						name="absent"
+						value={value.absent}
 						onChange={handleChange}
-						options={gradeOptions}
-						placeholder="등급 선택"
+						placeholder={'결석 5회 이상 F'}
+						required
 					/>
 				</div>
 
-				<button type="submit">성적 입력</button>
+				<div>
+					<InputForm
+						label="지각"
+						name="lateness"
+						value={value.lateness}
+						onChange={handleChange}
+						placeholder={'지각 3회 시 결석 1번'}
+						required
+					/>
+				</div>
+
+				<div>
+					<InputForm
+						label="과제점수"
+						name="homework"
+						value={value.homework}
+						onChange={handleChange}
+						placeholder={'20% 반영'}
+						required
+					/>
+				</div>
+
+				<div>
+					<InputForm
+						label="중간시험"
+						name="midExam"
+						value={value.midExam}
+						placeholder={'40% 반영'}
+						onChange={handleChange}
+						required
+					/>
+				</div>
+
+				<div>
+					<InputForm
+						label="기말시험"
+						name="finalExam"
+						value={value.finalExam}
+						placeholder={'40% 반영'}
+						onChange={handleChange}
+					/>
+				</div>
+
+				{value.grade ? (
+					<div>
+						<OptionForm
+							label="등급"
+							name="grade"
+							value={value.grade}
+							onChange={handleChange}
+							options={gradeOptions}
+							placeholder="등급 선택"
+						/>
+					</div>
+				) : stuNum >= 20 ? (
+					'상대평가 과목입니다. 등급은 일괄 산출됩니다.'
+				) : (
+					'절대평가 과목은 최초 입력 시 성적을 기준으로 자동 등급이 산출됩니다.'
+				)}
+
+				<br />
+				<br />
+				<button type="submit">{gradeitem ? '성적 수정' : '성적 입력'}</button>
 			</form>
 		</div>
 	);
