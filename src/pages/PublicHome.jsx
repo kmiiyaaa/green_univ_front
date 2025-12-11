@@ -29,7 +29,7 @@ function PublicHome() {
 	const loadLatestNotices = async () => {
 		try {
 			// 최신 공지를 1페이지에서 가져온 뒤 3개만 사용
-			const res = await api.get('/notice/list/1');
+			const res = await api.get('/notice/list/0');
 			const list = res.data.noticeList || [];
 
 			setLatestNotices(list.slice(0, 3));
