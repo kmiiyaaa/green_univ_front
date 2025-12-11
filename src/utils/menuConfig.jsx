@@ -38,10 +38,10 @@ export const SIDEBAR_BY_HEADER = {
 		COURSE: [{ key: 'SUBJECT_ALL', label: '전체 강의 조회', path: '/subject/list' }],
 
 		ENROLL: [
-			{ key: 'TIMETABLE', label: '강의 시간표 조회', path: '/sugang/timetable' },
+			{ key: 'TIMETABLE', label: '강의 시간표 조회', path: '/sugang/list' },
 			{ key: 'PRE_SUGANG', label: '예비 수강 신청', path: '/sugang/pre' },
 			{ key: 'APP', label: '수강 신청', path: '/sugang' },
-			{ key: 'SUGANG_LIST', label: '수강 신청 내역 조회', path: '/sugang/list' },
+			{ key: 'SUGANG_LIST', label: '수강 신청 내역 조회', path: '/sugang/timetable' },
 		],
 
 		GRADE: [

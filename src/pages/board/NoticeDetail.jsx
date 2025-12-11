@@ -17,6 +17,7 @@ const NoticeDetail = () => {
 			setNotice(res.data.notice);
 		} catch (e) {
 			console.error('공지 상세 로드 실패:', e);
+			alert(e.response.data.message);
 		}
 	};
 
@@ -33,40 +34,35 @@ const NoticeDetail = () => {
 			navigate('/notice');
 		} catch (e) {
 			console.error('공지 삭제 실패:', e);
-			alert('삭제 실패');
+			alert(e.reponse.data.message);
 		}
 	};
 
-	
-	// 다운로드(공지ID 기준 API)
-	// const handleDownload = () => {
-	// 	// api 인스턴스 baseURL이 붙는 구조라면 window.open이 가장 단순
-	// 	window.open(`/api/notice/file/download/${id}`, '_blank');
-	// };
-
 	const handleDownload = async () => {
-  try {
-    const res = await api.get(`/notice/file/download/${id}`, {
-      responseType: "blob",
-	  //blob : 이 응답은 파일이니까 파일로 받으라고 axios에게 알려주는 옵션
-    });
+		try {
+			const res = await api.get(`/notice/file/download/${id}`, {
+				responseType: 'blob',
+				//blob : 이 응답은 파일이니까 파일로 받으라고 axios에게 알려주는 옵션
+			});
 
-    const blob = new Blob([res.data]);
-    const url = window.URL.createObjectURL(blob);
+			//여기서 blob 메모리 안에 존재하는 파일 덩어리
+			const blob = new Blob([res.data]);
+			const url = window.URL.createObjectURL(blob); // blob: 으로 시작하는 임시 URL을 하나 만들어 줌
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = notice.file?.originFilename || "download";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+			const a = document.createElement('a'); // 다운로드를 걸기 위한 가짜 <a> 태그
+			a.href = url; //만든 blob URL을 링크로 설정
+			a.download = notice.file?.originFilename || 'download';
+			document.body.appendChild(a); // DOM에 잠깐 붙여 a.click() 을 호출 -> 강제로 클릭 이벤트를 발생
+			a.click();
+			a.remove(); // 끝나면 DOM에서 제거 (화면에 남기지 않음)
 
-    window.URL.revokeObjectURL(url);
-  } catch (e) {
-    console.error("다운로드 실패:", e);
-    alert("다운로드 실패");
-  }
-};
+			window.URL.revokeObjectURL(url); // 메모리 정리 (url 해제)
+		} catch (e) {
+			console.error('다운로드 실패:', e);
+
+			alert('다운로드 실패');
+		}
+	};
 
 	if (!notice) return <div className="form-container">로딩중...</div>;
 
@@ -97,19 +93,17 @@ const NoticeDetail = () => {
 						<td className="type">첨부파일</td>
 						<td>
 							{notice?.hasFile ? (
-							<>
-								<span>{notice.file?.originFilename}</span>
-								<button className="button" type="button" onClick={handleDownload}>
-									다운로드
-								</button>
-
-							</>
+								<>
+									<span>{notice.file?.originFilename}</span>
+									<button className="button" type="button" onClick={handleDownload}>
+										다운로드
+									</button>
+								</>
 							) : (
-							<span>첨부파일 없음</span>
+								<span>첨부파일 없음</span>
 							)}
 						</td>
 					</tr>
-
 
 					<tr className="content--container">
 						<td className="type">내용</td>

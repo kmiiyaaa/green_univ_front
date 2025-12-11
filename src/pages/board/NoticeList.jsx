@@ -6,20 +6,20 @@ import InputForm from '../../components/form/InputForm';
 import PaginationForm from '../../components/form/PaginationForm';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/NoticeList.css';
+import OptionForm from '../../components/form/OptionForm';
 
 const NoticeList = () => {
 	const navigate = useNavigate();
 	const { userRole } = useContext(UserContext);
 
-	// ✅ URL query
+	// URL query
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	// ✅ 0-based로 복원
 	const initialPage = parseInt(searchParams.get('page') || '0', 10);
 	const initialKeyword = searchParams.get('keyword') || '';
 	const initialType = searchParams.get('type') || 'title';
 
-	// ✅ 상태
+	// 페이징
 	const [currentPage, setCurrentPage] = useState(Number.isNaN(initialPage) ? 0 : initialPage);
 	const [totalPages, setTotalPages] = useState(1);
 	const [noticeList, setNoticeList] = useState([]);
@@ -41,7 +41,7 @@ const NoticeList = () => {
 		return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
 	};
 
-	// ✅ 실제 로드 함수 (useCallback 없음)
+	// 실제 로드 함수
 	const loadList = async (page = 0, filters = null) => {
 		try {
 			const currentFilters = filters || { keyword, type };
@@ -123,6 +123,13 @@ const NoticeList = () => {
 		}
 	};
 
+	// 검색 카테고리
+	const NOTICE_SEARCH_OPTIONS = [
+		{ value: 'title', label: '제목' },
+		{ value: 'content', label: '내용' },
+		{ value: 'all', label: '제목+내용' },
+	];
+
 	return (
 		<div className="form-container">
 			<h3>공지사항</h3>
@@ -130,17 +137,12 @@ const NoticeList = () => {
 
 			{/* 검색 폼 */}
 			<form onSubmit={handleSearchSubmit} className="notice-search-bar">
-				<select
-					className="input--box notice-search-type"
+				<OptionForm
 					name="type"
 					value={type}
 					onChange={(e) => setType(e.target.value)}
-				>
-					<option value="title">제목</option>
-					<option value="content">내용</option>
-					<option value="all">제목+내용</option>
-					{/* 필요하면 */}
-				</select>
+					options={NOTICE_SEARCH_OPTIONS}
+				/>
 
 				<div className="notice-search-input">
 					<InputForm
