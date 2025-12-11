@@ -58,7 +58,6 @@ export default function Subject2() {
 					시간: sub.startTime,
 					이수학점: sub.grades,
 					정원: sub.capacity,
-					신청인원: sub.numOfStudent,
 					원본데이터: sub,
 				}));
 
@@ -71,20 +70,7 @@ export default function Subject2() {
 		loadSubject();
 	}, []);
 
-	const headers = [
-		'id',
-		'강의명',
-		'교수',
-		'강의실',
-		'학과ID',
-		'구분',
-		'연도',
-		'학기',
-		'시간',
-		'이수학점',
-		'정원',
-		'신청인원',
-	];
+	const headers = ['id', '강의명', '교수', '강의실', '학과ID', '구분', '연도', '학기', '시간', '이수학점', '정원'];
 
 	return (
 		<div className="form-container">

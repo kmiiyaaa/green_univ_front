@@ -11,6 +11,34 @@ const Department = () => {
 		collegeName: '',
 	});
 
+	// 학과 목록 가져오기
+	const [dept, setDept] = useState([]);
+
+	const loadDepartment = async () => {
+		try {
+			const res = await api.get('/admin/department');
+			// console.log(res.data);
+			const rawData = res.data.departmentList;
+			console.log(rawData);
+			const formattedData = rawData.map((dept) => ({
+				id: dept.id,
+				학과명: dept.name,
+				단과대: dept.college.name,
+				원본데이터: dept,
+			}));
+
+			setDept(formattedData);
+			console.log('가공된 데이터:', formattedData);
+		} catch (e) {
+			console.error('학과 목록 로드 실패:', e);
+		}
+	};
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		loadDepartment();
+	}, []);
+
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
@@ -21,37 +49,15 @@ const Department = () => {
 			const res = await api.post('/admin/department', formData);
 			console.log('학과 등록 성공:', res.data);
 			alert('학과 등록 완료!');
-			// 필요하면 여기서 입력창 초기화 or 페이지 이동
+
+			// 등록 후 입력값 비우기
+			setFormData({ name: '', collegeId: '', collegeName: '' });
+			// 등록 끝난 다음, 최신 목록 다시 가져오기
+			await loadDepartment();
 		} catch (e) {
 			console.error('학과 등록 실패:', e);
 		}
 	};
-
-	// 학과 목록 가져오기
-	const [dept, setDept] = useState([]);
-
-	useEffect(() => {
-		const loadCollTuit = async () => {
-			try {
-				const res = await api.get('/admin/department');
-				// console.log(res.data);
-				const rawData = res.data.departmentList;
-				console.log(rawData);
-				const formattedData = rawData.map((dept) => ({
-					id: dept.id,
-					학과명: dept.name,
-					단과대: dept.college.name,
-					원본데이터: dept,
-				}));
-
-				setDept(formattedData);
-				console.log('가공된 데이터:', formattedData);
-			} catch (e) {
-				console.error('학과 목록 로드 실패:', e);
-			}
-		};
-		loadCollTuit();
-	}, []);
 
 	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
 	const headers = ['학과명', '단과대'];
@@ -62,7 +68,7 @@ const Department = () => {
 			<div className="subject--form">
 				<InputForm label="학과명" name="name" value={formData.name} onChange={handleChange} />
 				{/* 기존 버전은 select 형식이었음 */}
-				<InputForm label="단과대 아이디" name="collegeId" value={formData.collegeId} onChange={handleChange} />
+				{/* <InputForm label="단과대 아이디" name="collegeId" value={formData.collegeId} onChange={handleChange} /> */}
 				<InputForm label="단과대명" name="collegeName" value={formData.collegeName} onChange={handleChange} />
 
 				<button onClick={handleSubmit} className="button">

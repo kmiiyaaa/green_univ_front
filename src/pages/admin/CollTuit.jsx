@@ -1,83 +1,136 @@
-// components/feature/RoomForm.jsx
+// components/feature/CollTuit.jsx
 import { useEffect, useState } from 'react';
 import api from '../../api/httpClient';
 import InputForm from './../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
 
 const CollTuit = () => {
-	// 단대별 등록금 전용 상태 관리
+	// 폼 상태
 	const [formData, setFormData] = useState({
-		collegeId: '',
-		collegeName: '',
+		name: '',
 		amount: '',
 	});
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
-	};
+	// 어떤 단과대를 수정 중인지 (null이면 "새 등록" 모드)
+	const [selectedCollegeId, setSelectedCollegeId] = useState(null);
 
-	const handleSubmit = async () => {
+	// 단대별 등록금 목록
+	const [collTuit, setCollTuit] = useState([]);
+
+	// 목록 조회
+	const loadCollTuit = async () => {
 		try {
-			const res = await api.post('/admin/tuition', formData);
-			console.log('단대별 등록금 등록 성공:', res.data);
-			alert('단대별 등록금 등록 완료!');
+			const res = await api.get('/admin/tuition');
+			const rawData = res.data.collTuitList || [];
+
+			const formattedData = rawData.map((col) => ({
+				id: col.collegeId,
+				단과대: col.name,
+				등록금: col.amount,
+				원본데이터: col,
+			}));
+
+			setCollTuit(formattedData);
 		} catch (e) {
-			console.error('단대별 등록금 등록 실패:', e);
+			console.error('단대별 등록금 목록 로드 실패:', e);
 		}
 	};
 
-	// 단대별 등록금 목록 가져오기
-	const [collTuit, setCollTuit] = useState([]);
-
 	useEffect(() => {
-		const loadCollTuit = async () => {
-			try {
-				const res = await api.get('/admin/tuition');
-				console.log(res.data.collTuitList);
-				const rawData = res.data.collTuitList;
-				const formattedData = rawData.map((col) => ({
-					id: col.id,
-					단과대: col.name,
-					등록금: col.amount,
-					원본데이터: col, // 필요하면 원본도 통째로 넣어둠 (선택사항)
-				}));
-
-				setCollTuit(formattedData);
-				console.log('가공된 데이터:', formattedData);
-			} catch (e) {
-				console.error('단대별 등록금 목록 로드 실패:', e);
-			}
-		};
 		loadCollTuit();
 	}, []);
 
-	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
+	// 인풋 변경
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	// 등록 / 수정 공통 처리
+	const handleSubmit = async () => {
+		try {
+			if (!selectedCollegeId) {
+				// 등록
+				const res = await api.post('/admin/tuition', formData);
+				console.log('단대별 등록금 등록 성공:', res.data);
+				alert('단대별 등록금 등록이 완료되었습니다.');
+			} else {
+				// 수정
+				const res = await api.patch(`/admin/tuition/${selectedCollegeId}`, formData);
+				console.log('단대별 등록금 수정 성공:', res.data);
+				alert('단대별 등록금 수정이 완료되었습니다.');
+			}
+
+			// 폼 초기화 + 목록 갱신
+			setFormData({ name: '', amount: '' });
+			setSelectedCollegeId(null);
+			await loadCollTuit();
+		} catch (e) {
+			console.error('단대별 등록금 등록/수정 실패:', e.response?.data || e);
+			alert(e.response?.data || '등록/수정에 실패했습니다.');
+		}
+	};
+
+	// 행 "수정" 버튼
+	const handleEditRow = (row) => {
+		setSelectedCollegeId(row.id);
+		setFormData({
+			name: row.단과대,
+			amount: row.등록금,
+		});
+	};
+
+	// 행 "삭제" 버튼
+	const handleDeleteRow = async (row) => {
+		if (!window.confirm(`[${row.단과대}] 등록금을 삭제하시겠습니까?`)) return;
+
+		try {
+			await api.delete(`/admin/tuition/delete/${row.id}`);
+			alert('단대별 등록금 삭제가 완료되었습니다.');
+
+			// 지금 수정 중인 대상이면 폼도 리셋
+			if (selectedCollegeId === row.id) {
+				setSelectedCollegeId(null);
+				setFormData({ name: '', amount: '' });
+			}
+
+			await loadCollTuit();
+		} catch (e) {
+			console.error('단대별 등록금 삭제 실패:', e.response?.data || e);
+			alert(e.response?.data || '삭제에 실패했습니다.');
+		}
+	};
+
 	const headers = ['단과대', '등록금'];
 
 	return (
 		<div className="form-container">
-			<h3>단대별 등록금 등록</h3>
+			<h3>단대별 등록금 등록 / 수정</h3>
+
 			<div className="room--form">
-				<InputForm
-					label="단과대 ID"
-					name="collegeId"
-					placeholder="입력"
-					value={formData.collegeId}
-					onChange={handleChange}
-				/>
-				<InputForm
-					label="단과대 이름"
-					name="collegeName"
-					placeholder="입력"
-					value={formData.collegeName}
-					onChange={handleChange}
-				/>
+				<InputForm label="단과대 이름" name="name" placeholder="입력" value={formData.name} onChange={handleChange} />
 				<InputForm label="등록금" name="amount" placeholder="입력" value={formData.amount} onChange={handleChange} />
 
-				<button onClick={handleSubmit} className="button">
-					단대별 등록금 등록
-				</button>
+				<div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+					<button type="button" className="button" onClick={handleSubmit}>
+						{selectedCollegeId ? '등록금 수정' : '등록금 등록'}
+					</button>
+					{selectedCollegeId && (
+						<button
+							type="button"
+							className="button button--ghost"
+							onClick={() => {
+								setSelectedCollegeId(null);
+								setFormData({ name: '', amount: '' });
+							}}
+						>
+							취소
+						</button>
+					)}
+				</div>
 			</div>
 
 			<h3>단대별 등록금 목록</h3>
@@ -85,14 +138,22 @@ const CollTuit = () => {
 				<DataTable
 					headers={headers}
 					data={collTuit}
-					onRowClick={(row) => {
-						// row에는 위에서 가공한 한글 키들이 들어있음
-						console.log('클릭한 단대별 등록금:', row.등록금);
-						// 상세페이지 이동 시 row.id나 row.원본데이터 사용 가능
-					}}
+					// 필요하면 onRowClick 도 쓸 수 있음
+					// onRowClick={(row) => console.log(row)}
+					renderActions={(row) => (
+						<div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
+								수정
+							</button>
+							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
+								삭제
+							</button>
+						</div>
+					)}
 				/>
 			</div>
 		</div>
 	);
 };
+
 export default CollTuit;
