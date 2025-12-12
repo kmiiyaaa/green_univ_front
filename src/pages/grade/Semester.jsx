@@ -29,7 +29,12 @@ const Semester = () => {
 	);
 
 	const semesterOptions = useMemo(
-		() => semesterList.map((g) => ({ value: String(g.semester), label: `${g.semester}학기` })),
+		// set에 저장해서 중복 제거
+		() =>
+			[...new Set(semesterList.map((g) => g.semester))].map((s) => ({
+				value: String(s),
+				label: `${s}학기`,
+			})),
 		[semesterList]
 	);
 
@@ -79,7 +84,7 @@ const Semester = () => {
 			setYearList(data.yearList ?? yearList);
 			setSemesterList(data.semesterList ?? semesterList);
 			setGradeList(data.gradeList ?? []);
-			console.log(res.data)
+			console.log(res.data);
 		} catch (e) {
 			console.error(e);
 		}
