@@ -118,7 +118,8 @@
 }
 
 /* ===========================
-   버튼 공통 스타일
+/* ===========================
+   버튼 공통 스타일 (공지 검색 버튼 톤 재사용)
    =========================== */
 
 .button {
@@ -126,24 +127,26 @@
 	align-items: center;
 	justify-content: center;
 
-	padding: 8px 16px;
-	border-radius: 999px;
-	font-size: 13px;
-	font-weight: 600;
+	/* 🔽 공지 검색 버튼 사이즈 느낌 */
+	padding: 9px 12px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 700;
 
-	border: 1px solid transparent;
-	background-color: var(--admin-green);
+	border: none;
 	color: #ffffff;
+	background: linear-gradient(90deg, var(--primary-green), var(--primary-green-dark));
+	box-shadow: 0 10px 22px rgba(22, 163, 74, 0.22);
 
 	cursor: pointer;
 	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease,
-		transform 0.05s ease;
+		transform 0.06s ease;
 }
 
 .button:hover {
-	background-color: #166534;
-	box-shadow: 0 6px 14px rgba(22, 163, 74, 0.28);
+	filter: brightness(1.03);
 	transform: translateY(-1px);
+	box-shadow: 0 14px 28px rgba(22, 163, 74, 0.32);
 }
 
 .button:active {
@@ -151,46 +154,50 @@
 	box-shadow: none;
 }
 
+/* 작은 버튼 (테이블 안 수정/삭제) */
 .button--sm {
-	padding: 5px 12px;
-	font-size: 12px;
+	padding: 6px 9px;
+	font-size: 11px;
+	border-radius: 10px;
+	box-shadow: none;
 }
 
-/* 서브 버튼 (새로입력, 취소 등) */
+/* 서브 버튼 (새로입력, 취소 등) – 공지 reset 버튼 스타일 */
 .button--ghost {
-	background-color: #ffffff;
-	color: var(--text-sub);
-	border-color: #d1d5db;
+	background: #ffffff;
+	border: 1px solid var(--border-soft);
+	color: var(--text-main);
+	box-shadow: none;
 }
 
 .button--ghost:hover {
-	background-color: #f9fafb;
+	background: #f3f4f6;
+	border-color: #d1d5db;
 }
 
-/* 아웃라인 공통 */
-.button--outline {
-	background-color: #ffffff;
-}
-
-/* 수정 버튼 – 초록 아웃라인 */
-.button--outline-green {
-	border-color: var(--admin-green-border);
+/* 수정 버튼 – 초록 아웃라인 (테이블 액션용) */
+.button--outline.button--outline-green {
+	background: #ffffff;
+	border: 1px solid rgba(21, 128, 61, 0.35);
 	color: #14532d;
+	box-shadow: none;
 }
 
-.button--outline-green:hover {
-	background-color: #ecfdf3;
+.button--outline.button--outline-green:hover {
+	background: #ecfdf3;
 	box-shadow: 0 4px 10px rgba(22, 163, 74, 0.16);
 }
 
-/* 삭제 버튼 – 빨강 아웃라인 */
-.button--outline-red {
-	border-color: #fecaca;
-	color: #b91c1c;
+/* 삭제 버튼 – 빨강 아웃라인 (테이블 액션용) */
+.button--outline.button--outline-red {
+	background: #ffffff;
+	border: 1px solid #fecaca;
+	color: #eb4343;
+	box-shadow: none;
 }
 
-.button--outline-red:hover {
-	background-color: #fef2f2;
+.button--outline.button--outline-red:hover {
+	background: #fef2f2;
 	box-shadow: 0 4px 10px rgba(248, 113, 113, 0.18);
 }
 
@@ -199,28 +206,8 @@
 	opacity: 0.6;
 	cursor: not-allowed;
 	box-shadow: none;
+	transform: none;
 }
-
-/* ===========================
-   폼 내부 버튼 사이즈 튜닝
-   =========================== */
-
-/* 폼(등록 영역) 안에 있는 버튼은 기본보다 작게 */
-.entity-form .button {
-	height: 34px; /* ✅ 확 줄어든 높이 */
-	padding: 4px 12px; /* 위아래 여백 줄이기 */
-	font-size: 12px; /* 글씨도 살짝 작게 */
-	border-radius: 999px; /* 모양은 그대로 필 형태 유지 */
-}
-
-/* 단과대 / 학과 / 등록금 / 강의실 폼처럼
-   오른쪽에 딱 붙어 있는 버튼은 폭도 조금만 */
-.entity-form--simple .button,
-.entity-form--room .button {
-	min-width: 86px; /* 너무 길게 안 퍼지게 */
-	padding-inline: 10px;
-}
-
 /* ===========================
    등록 폼 아래 테이블 여백
    =========================== */

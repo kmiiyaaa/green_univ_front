@@ -6,6 +6,7 @@ import StudentInfoTable from './infoTable/StudentInfoTable';
 import ProfessorInfoTable from './infoTable/ProfessorInfoTable';
 import StaffInfoTable from './infoTable/StaffInfotable';
 import UpdateUserInfo from './infoTable/UpdateUserInfo';
+import '../../../assets/css/MyPage.css';
 
 export default function UserInfo() {
 	const { userRole, token } = useContext(UserContext);
@@ -67,14 +68,17 @@ export default function UserInfo() {
 	}, [userRole, token, navigate, isEdit]);
 
 	return (
-		<div>
+		<div className="mypage-shell">
 			{!isEdit && (
-				<div>
-					<h2>내 정보 조회</h2>
+				<div className="mypage-card">
+					<h2 className="mypage-title">내 정보 조회</h2>
 					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />}
 					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />}
 					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />}
-					<button onClick={() => setIsEdit(true)}>수정하기</button>
+
+					<button className="button mypage-edit-btn" onClick={() => setIsEdit(true)}>
+						정보 수정하기
+					</button>
 				</div>
 			)}
 			{isEdit && <UpdateUserInfo userInfo={userInfo} setIsEdit={setIsEdit} />}
