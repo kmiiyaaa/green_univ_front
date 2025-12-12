@@ -28,7 +28,7 @@ export default function GradeInput({ gradeitem, setOpenGrade, stuNum }) {
 		homework: base?.homework ?? '',
 		midExam: base?.midExam ?? '',
 		finalExam: base?.finalExam ?? '',
-		grade: base?.grade ?? '',
+		grade: base?.grade ?? null,
 	});
 
 	// 성적 입력 및 수정 처리
@@ -147,8 +147,9 @@ export default function GradeInput({ gradeitem, setOpenGrade, stuNum }) {
 
 				<br />
 				<br />
-				<button type="submit">{gradeitem ? '성적 수정' : '성적 입력'}</button>
+				<button type="submit">{value.grade || value.finalExam ? '성적 수정' : '성적 입력'}</button>
 			</form>
 		</div>
 	);
 }
+   
