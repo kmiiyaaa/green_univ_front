@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import { UserContext } from '../../context/UserContext';
 export default function ReadSyllabus({ syllabus, setIsEdit }) {
-	const { userRole } = useContext(UserContext);
-
+	const { userRole, user } = useContext(UserContext);
+	console.log(syllabus);
 	return (
 		<div>
 			<h2>강의 계획서 조회</h2>
@@ -100,7 +100,9 @@ export default function ReadSyllabus({ syllabus, setIsEdit }) {
 				</tbody>
 			</table>
 
-			{userRole === 'professor' && <button onClick={() => setIsEdit(true)}>수정</button>}
+			{userRole === 'professor' && user === syllabus.professorId && (
+				<button onClick={() => setIsEdit(true)}>수정</button>
+			)}
 		</div>
 	);
 }

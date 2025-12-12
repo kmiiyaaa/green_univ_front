@@ -12,16 +12,40 @@ export default function CommonUserFields({ formData, onChange }) {
 	return (
 		<>
 			<InputForm label="이름" name="name" value={formData.name} onChange={onChange} />
-			{/* TODO: 생년월일 막기 */}
 			<InputForm
 				label="생년월일"
-				type="date"
 				name="birthDate"
+				type="date"
 				value={formData.birthDate}
+				onKeyDown={(e) => e.preventDefault()}
 				onChange={onChange}
-				placeholder="예 : YYYY-MM-DD"
 			/>
-			<RadioForm label="성별" name="gender" value={formData.gender} onChange={onChange} options={genderOptions} />
+			<tr>
+				<td>
+					<label>성별</label>
+				</td>
+				<td>
+					<label htmlFor="male">남성</label>
+					<input
+						type="radio"
+						name="gender"
+						id="male"
+						value="남성"
+						checked={formData.gender === '남성'}
+						onChange={onChange}
+					/>
+					&nbsp;
+					<label htmlFor="female">여성</label>
+					<input
+						type="radio"
+						name="gender"
+						id="female"
+						value="여성"
+						checked={formData.gender === '여성'}
+						onChange={onChange}
+					/>
+				</td>
+			</tr>
 			<InputForm label="주소" name="address" value={formData.address} onChange={onChange} />
 			<InputForm
 				label="전화번호"
