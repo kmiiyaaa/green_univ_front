@@ -32,10 +32,9 @@ const ScheduleWrite = () => {
 	};
 
 	return (
-		<div className="form-container schedule-page">
-			<h3>학사 일정 등록</h3>
-			<div className="split--div"></div>
+		<>
 			<ScheduleForm
+				title="학사 일정 등록"
 				initialValues={{ startDay: '', endDay: '', information: '' }}
 				onSubmit={handleCreate}
 				onCancel={() => navigate('/schedule')}
@@ -43,7 +42,7 @@ const ScheduleWrite = () => {
 			/>
 			{/* TODO: 에러 메시지 위치를 어디에서 잡을 것인지 확인하기 */}
 			{error && <div className="error-message">{error}</div>}
-		</div>
+		</>
 	);
 };
 

@@ -38,10 +38,10 @@ export const SIDEBAR_BY_HEADER = {
 		COURSE: [{ key: 'SUBJECT_ALL', label: '전체 강의 조회', path: '/subject/list' }],
 
 		ENROLL: [
-			{ key: 'TIMETABLE', label: '강의 시간표 조회', path: '/sugang/timetable' },
+			{ key: 'TIMETABLE', label: '강의 시간표 조회', path: '/sugang/list' },
 			{ key: 'PRE_SUGANG', label: '예비 수강 신청', path: '/sugang/pre' },
 			{ key: 'APP', label: '수강 신청', path: '/sugang' },
-			{ key: 'SUGANG_LIST', label: '수강 신청 내역 조회', path: '/sugang/list' },
+			{ key: 'SUGANG_LIST', label: '수강 신청 내역 조회', path: '/sugang/timetable' },
 		],
 
 		GRADE: [
@@ -73,7 +73,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'TUI_BILL', label: '등록금 고지서 발송', path: '/tuition/bill' },
 			{ key: 'BREAK_STAFF', label: '휴학 처리', path: '/break/list/staff' },
 
-			{ key: 'SUGANG_SET', label: '수강신청 기간 설정', path: '/sugang/update' },
+			{ key: 'SUGANG_SET', label: '수강신청 기간 설정', path: '/sugang/period' },
 		],
 
 		REGISTER: [

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
-import api from '../../api/httpClient';
-import DataTable from '../../components/table/DataTable';
-import InputForm from '../../components/form/InputForm';
-import OptionForm from '../../components/form/OptionForm';
-import PaginationForm from '../../components/form/PaginationForm';
-import { toHHMM } from '../../utils/DateTimeUtil';
+import { UserContext } from '../context/UserContext';
+import api from '../api/httpClient';
+import DataTable from '../components/table/DataTable';
+import InputForm from '../components/form/InputForm';
+import OptionForm from '../components/form/OptionForm';
+import PaginationForm from '../components/form/PaginationForm';
 
-export default function SubList() {
+export default function PreSugang() {
 	const { user, token, userRole } = useContext(UserContext);
+	const [error, setError] = useState(null);
 	const [subTimetable, SetSubTimeTable] = useState([]);
+	const [myPreList, setMyPreList] = useState([]); // 내가 신청한 예비 목록
+	const [totalGrades, setTotalGrades] = useState(0); // 총 학점
 
 	// 페이징 (기본값은 10으로 설정)
 	const [currentPage, setCurrentPage] = useState(0);
@@ -28,27 +30,46 @@ export default function SubList() {
 		name: '', // 강의명
 	});
 
-	// 강의계획서 팝업 열기
-	const handleSubDetail = (subjectId) => {
-		const url = `/professor/syllabus/${subjectId}`;
-		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
+	// 🔥 내가 신청한 예비 목록 조회
+	const loadMyPreList = async () => {
+		try {
+			const res = await api.get('/sugang/stusublist');
+			// period, preStuSubList, totalGrades
+			if (res.data.period === 0) {
+				const preRaw = res.data.preStuSubList || [];
+				setMyPreList(
+					preRaw.map((sub) => ({
+						id: sub.id,
+						학수번호: sub.subjectId,
+						강의명: sub.subjectName,
+						담당교수: sub.professorName,
+						학점: sub.grades,
+						'요일시간 (강의실)': `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
+						현재인원: sub.numOfStudent,
+						정원: sub.capacity,
+					}))
+				);
+				setTotalGrades(res.data.totalGrades || 0);
+			}
+		} catch (e) {
+			setError(e.response?.data?.message);
+			console.error('예비 목록 조회 실패:', e);
+		}
 	};
 
 	// 강의 목록 조회 (페이징 page + 검색 filters)
 	const loadSubjectList = async (page = 0, filters = null) => {
 		try {
-			const params = { page, size: 10 }; // 쿼리 파라미터 구성
+			const params = { page, size: 10 };
 			const currentFilters = filters || searchForm;
 
 			if (currentFilters.type) params.type = currentFilters.type;
 			if (currentFilters.deptName) params.deptName = currentFilters.deptName;
 			if (currentFilters.name) params.name = currentFilters.name;
 
-			console.log('🔍 API 요청 파라미터:', params); // 디버깅용
+			const res = await api.get('/sugang/presubjectlist', { params });
+			console.log('강의 목록', res.data);
 
-			const res = await api.get('/sugang/subjectList', { params });
-			console.log('학생이 확인하는 강의 목록', res.data);
-			// currentpage현재페이지:0, listCount:총개수, lists:데이터들, totalPages총페이지수:2
 			const rawData = res.data.lists; // 데이터만 추출
 			const formattedData = rawData.map((sub) => ({
 				id: sub.id,
@@ -59,18 +80,19 @@ export default function SubList() {
 				강의명: sub.name,
 				담당교수: sub.professorName,
 				학점: sub.grades,
-				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
+				'요일시간 (강의실)': `${sub.subDay}, ${sub.startTime}-${sub.endTime} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: <button onClick={() => handleSubDetail(sub.id)}>강의계획서</button>, // 강의 계획서 이 부분 수정해야함
+				isEnrolled: sub.status,
+				예비신청: sub.status ? '취소' : '신청',
 			}));
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
-			console.log('가공된 데이터:', formattedData);
 		} catch (e) {
-			console.error('강의 목록 조회 실패: ', e);
+			setError(e.response?.data?.message);
+			console.error('예비 목록 조회 실패: ', e);
 		}
 	};
 
@@ -85,6 +107,7 @@ export default function SubList() {
 		setSearchForm({ type, deptName, name });
 		// URL에서 읽은 값을 직접 전달
 		loadSubjectList(page, { type, deptName, name });
+		loadMyPreList(); // 내 예비 목록도 로드
 	}, [searchParams]);
 
 	// 검색 폼 입력 핸들러
@@ -125,8 +148,10 @@ export default function SubList() {
 		'요일시간 (강의실)',
 		'현재인원',
 		'정원',
-		'강의계획서',
+		'예비신청',
 	];
+
+	const myListHeaders = ['학수번호', '강의명', '담당교수', '학점', '요일시간 (강의실)', '현재인원', '정원'];
 
 	// 검색 폼 카테고리
 	const SUBJECT_CATEGORY_OPTIONS = [
@@ -137,7 +162,17 @@ export default function SubList() {
 
 	return (
 		<>
-			<h2>강의 시간표 조회</h2>
+			{error && <div className="error-message">{error}</div>}
+
+			<h2>예비 수강 신청 (장바구니)</h2>
+			{/* 🔥 내가 신청한 예비 목록 */}
+			{myPreList.length > 0 && (
+				<>
+					<h3>내 예비 수강 신청 목록 (총 {totalGrades}학점)</h3>
+					<DataTable headers={myListHeaders} data={myPreList} />
+					<hr style={{ margin: '30px 0' }} />
+				</>
+			)}
 			{/* 검색 폼 */}
 			<div>
 				<OptionForm
@@ -169,7 +204,6 @@ export default function SubList() {
 					검색
 				</button>
 			</div>
-
 			{/* 페이징 정보 */}
 			<h3>강의 목록</h3>
 			<div>
@@ -177,9 +211,30 @@ export default function SubList() {
 					전체 {totalCount}개 | {currentPage + 1} / {totalPages} 페이지
 				</p>
 			</div>
-
-			<DataTable headers={headers} data={subTimetable} />
-
+			<DataTable
+				headers={headers}
+				data={subTimetable}
+				clickableHeaders={['예비신청']}
+				onCellClick={async ({ row, header }) => {
+					if (header === '예비신청') {
+						const isEnrolled = row.isEnrolled; // 현재 신청 상태 확인
+						try {
+							if (isEnrolled) {
+								if (!window.confirm('예비 수강 신청을 취소하시겠습니까?')) return;
+								await api.delete(`/sugang/pre/${row.id}`); // 수강 취소 클릭
+							} else {
+								if (!window.confirm('해당 강의를 예비 수강 신청 하시겠습니까?')) return;
+								await api.post(`/sugang/pre/${row.id}`); // 수강 신청 클릭
+							}
+							await loadSubjectList(currentPage, searchForm); // 현재 인원 렌더링 하기 위해
+							await loadMyPreList(); // 내 목록도 새로고침
+						} catch (err) {
+							const errorMessage = err.response?.data?.message || '처리 중 오류가 발생했습니다.';
+							alert(errorMessage);
+						}
+					}
+				}}
+			/>
 			<PaginationForm
 				currentPage={currentPage}
 				totalPages={totalPages}

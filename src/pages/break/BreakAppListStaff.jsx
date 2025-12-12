@@ -18,10 +18,12 @@ export default function BreakAppListStaff() {
 			const res = await api.get('/break/list/staff');
 			const raw = res.data.breakAppList || [];
 
+			console.log(res.data);
+
 			const formatted = raw.map((b) => ({
 				id: b.id,
 				신청일자: b.appDate ?? '',
-				'신청자 학번': b.studentId ?? '',
+				'신청자 학번': b.student.id ?? '',
 				구분: `${b.type ?? ''}휴학`,
 				시작학기: `${b.fromYear ?? ''}년도 ${b.fromSemester ?? ''}학기`,
 				종료학기: `${b.toYear ?? ''}년도 ${b.toSemester ?? ''}학기`,

@@ -37,41 +37,40 @@ const ScheduleDetail = () => {
 		}
 	};
 
-	if (!schedule) return <div className="form-container schedule-page">로딩중...</div>;
+	if (!schedule) return <div className="schedule-card-wrappe">로딩중...</div>;
 
 	return (
-		<div className="form-container schedule-page schedule-detail">
-			<h3>학사 일정 상세</h3>
-			<div className="split--div"></div>
+		<div className="schedule-card-wrapper">
+			<h3 className="form-title">학사 일정 상세</h3>
 
-			<table className="table schedule-detail-table">
+			<table className="schedule-detail-table">
 				<tbody>
 					<tr>
 						<td className="type">시작 날짜</td>
-						<td>{schedule.startDay ?? ''}</td>
+						<td>{schedule.startDay}</td>
 					</tr>
 					<tr>
 						<td className="type">종료 날짜</td>
-						<td>{schedule.endDay ?? ''}</td>
+						<td>{schedule.endDay}</td>
 					</tr>
-					<tr className="schedule-detail-content-row">
+					<tr>
 						<td className="type">내용</td>
-						<td>{schedule.information ?? ''}</td>
+						<td>{schedule.information}</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<div className="select--button schedule-detail-actions">
-				<button className="button" onClick={() => navigate('/schedule')}>
+			<div className="form-actions">
+				<button className="btn btn-cancel" onClick={() => navigate('/schedule')}>
 					목록
 				</button>
 
 				{userRole === 'staff' && (
 					<>
-						<button className="button" onClick={() => navigate(`/schedule/update/${id}`)}>
+						<button className="btn btn-submit" onClick={() => navigate(`/schedule/update/${id}`)}>
 							수정
 						</button>
-						<button className="button" onClick={handleDelete}>
+						<button className="btn btn-delete" onClick={handleDelete}>
 							삭제
 						</button>
 					</>

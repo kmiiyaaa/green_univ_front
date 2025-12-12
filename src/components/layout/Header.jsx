@@ -5,7 +5,7 @@ import { UserContext } from '../../context/UserContext';
 import { HEADER_MENUS, getActiveHeaderKey } from '../../utils/menuConfig';
 import greenLogo from '../../assets/images/green-university-logo.png';
 
-// 역할 정규화 (userRole 값이 STUDENT/ROLE_STUDENT 등이어도 안전)
+// 역할 정규화
 const normalizeRole = (role) => {
 	if (!role) return 'student';
 	const r = String(role).toLowerCase().trim();
@@ -18,7 +18,7 @@ const normalizeRole = (role) => {
 // 유저 표시용 안전 텍스트
 const getUserIdText = (user) => {
 	if (!user) return '';
-	// 프로젝트마다 필드명이 다를 수 있어서 넓게 대응
+	// 필드명이 다를 수 있어서 넓게 대응
 	return user.username || user.userId || user.id || user.email || '';
 };
 

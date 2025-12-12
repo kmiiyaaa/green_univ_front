@@ -108,7 +108,7 @@ function App() {
 							<Route path="/schedule/update/:id" element={<ScheduleUpdate />} /> {/* 교직원용 학사일정 수정 */}
 							{/* 휴학 */}
 							<Route path="/break/application" element={<BreakApplication />} /> {/* 휴학 신청폼*/}
-							<Route path="/break/detail" element={<BreakAppDetail />} /> {/* 휴학 신청 상세*/}
+							<Route path="/break/detail/:id" element={<BreakAppDetail />} /> {/* 휴학 신청 상세*/}
 							<Route path="/break/list/staff" element={<BreakAppListStaff />} /> {/* 교직원 -휴학 신청리스트*/}
 							<Route path="/break/list" element={<BreakAppListStudent />} /> {/* 학생 - 휴학 신청내역*/}
 							{/* 교수 */}

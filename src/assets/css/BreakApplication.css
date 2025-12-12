@@ -25,7 +25,7 @@
    과한 전역 느낌 없이 "깔끔한 기본"만 제공 */
 .form-container {
 	width: 100%;
-	max-width: 1100px;
+	max-width: 1300px;
 	margin: 0 auto;
 	padding: 26px 24px 52px;
 	color: var(--text-main);
@@ -44,7 +44,7 @@
 
 /* 타이틀 앞 그린 포인트 바 */
 .form-container > h3::before {
-	content: "";
+	content: '';
 	width: 10px;
 	height: 10px;
 	border-radius: 999px;
@@ -92,7 +92,7 @@
 
 /* 제목 아래 얇은 그린 포인트 */
 .document--layout > h3::after {
-	content: "";
+	content: '';
 	position: absolute;
 	left: 50%;
 	bottom: -1px;
@@ -222,7 +222,7 @@
 }
 
 /* 라디오 영역: 한 줄 정돈 */
-.document--layout input[type="radio"] {
+.document--layout input[type='radio'] {
 	transform: translateY(1px);
 }
 
@@ -403,7 +403,6 @@
 .break-detail .schedule-list-actions .d-flex {
 	gap: 10px;
 }
-
 
 @media (max-width: 520px) {
 	.document--layout {

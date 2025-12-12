@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
-import { toHHMM } from '../../utils/DateTimeUtil';
 
-export default function SubList() {
-	const { user, token, userRole } = useContext(UserContext);
+// 공통 컴포넌트 : preSugang + Sugang에서 사용됨
+export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAction, formatRowData }) {
+	const [error, setError] = useState(null);
+
 	const [subTimetable, SetSubTimeTable] = useState([]);
 
 	// 페이징 (기본값은 10으로 설정)
@@ -28,49 +27,32 @@ export default function SubList() {
 		name: '', // 강의명
 	});
 
-	// 강의계획서 팝업 열기
-	const handleSubDetail = (subjectId) => {
-		const url = `/professor/syllabus/${subjectId}`;
-		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
-	};
-
 	// 강의 목록 조회 (페이징 page + 검색 filters)
 	const loadSubjectList = async (page = 0, filters = null) => {
 		try {
-			const params = { page, size: 10 }; // 쿼리 파라미터 구성
+			setError(null);
+			const params = { page, size: 10 };
 			const currentFilters = filters || searchForm;
 
 			if (currentFilters.type) params.type = currentFilters.type;
 			if (currentFilters.deptName) params.deptName = currentFilters.deptName;
 			if (currentFilters.name) params.name = currentFilters.name;
 
-			console.log('🔍 API 요청 파라미터:', params); // 디버깅용
-
-			const res = await api.get('/sugang/subjectList', { params });
-			console.log('학생이 확인하는 강의 목록', res.data);
-			// currentpage현재페이지:0, listCount:총개수, lists:데이터들, totalPages총페이지수:2
+			// 🔥 이 부분을 예비 수강 신청, 수강 신청에 따라 다르게 보여줘야 하나요?
+			// 아뇨 동일하게 보여줘도 됩니다 다만, 헤더에 '수강신청' 부분이 달라져야 함!
+			const res = await api.get(apiEndpoint, { params });
+			//console.log('[컴포넌트 res.data]', res.data);
 			const rawData = res.data.lists; // 데이터만 추출
-			const formattedData = rawData.map((sub) => ({
-				id: sub.id,
-				단과대학: sub.collName,
-				개설학과: sub.deptName,
-				학수번호: sub.id,
-				강의구분: sub.type,
-				강의명: sub.name,
-				담당교수: sub.professorName,
-				학점: sub.grades,
-				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
-				현재인원: sub.numOfStudent,
-				정원: sub.capacity,
-				강의계획서: <button onClick={() => handleSubDetail(sub.id)}>강의계획서</button>, // 강의 계획서 이 부분 수정해야함
-			}));
+
+			// 부모에서 전달받은 포맷팅 함수 적용
+			const formattedData = rawData.map((sub) => formatRowData(sub, actionHeaderLabel));
+			//console.log('[컴포넌트 formatted]', formattedData);
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
-			console.log('가공된 데이터:', formattedData);
-		} catch (e) {
-			console.error('강의 목록 조회 실패: ', e);
+		} catch (err) {
+			setError(err.response?.data?.message || '목록을 불러오는 중 오류가 발생했습니다.');
 		}
 	};
 
@@ -81,11 +63,13 @@ export default function SubList() {
 		const deptName = searchParams.get('deptName') || '';
 		const name = searchParams.get('name') || '';
 		console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
+
 		// URL에서 검색 조건 복원
 		setSearchForm({ type, deptName, name });
+
 		// URL에서 읽은 값을 직접 전달
 		loadSubjectList(page, { type, deptName, name });
-	}, [searchParams]);
+	}, [searchParams, onAction]);
 
 	// 검색 폼 입력 핸들러
 	const handleChange = (e) => {
@@ -113,7 +97,7 @@ export default function SubList() {
 		}
 	};
 
-	// 테이블 헤더 정의
+	// 테이블 헤더 (actionHeaderLabel : 동적으로 헤더명 설정)
 	const headers = [
 		'단과대학',
 		'개설학과',
@@ -125,7 +109,7 @@ export default function SubList() {
 		'요일시간 (강의실)',
 		'현재인원',
 		'정원',
-		'강의계획서',
+		actionHeaderLabel,
 	];
 
 	// 검색 폼 카테고리
@@ -137,7 +121,8 @@ export default function SubList() {
 
 	return (
 		<>
-			<h2>강의 시간표 조회</h2>
+			{error && <div className="error-message">{error}</div>}
+
 			{/* 검색 폼 */}
 			<div>
 				<OptionForm
@@ -170,20 +155,27 @@ export default function SubList() {
 				</button>
 			</div>
 
-			{/* 페이징 정보 */}
 			<h3>강의 목록</h3>
-			<div>
-				<p>
-					전체 {totalCount}개 | {currentPage + 1} / {totalPages} 페이지
-				</p>
-			</div>
+			<p>
+				전체 {totalCount}개 | {currentPage + 1} / {totalPages} 페이지
+			</p>
 
-			<DataTable headers={headers} data={subTimetable} />
+			<DataTable
+				headers={headers}
+				data={subTimetable}
+				clickableHeaders={[actionHeaderLabel]}
+				onCellClick={async ({ row, header }) => {
+					if (header === actionHeaderLabel) {
+						await onAction(row, loadSubjectList, currentPage, searchForm);
+						// TODO: 마감된 경우 버튼 누를 수 없게 막을 수 없나?
+					}
+				}}
+			/>
 
 			<PaginationForm
 				currentPage={currentPage}
 				totalPages={totalPages}
-				blockSize={20}
+				blockSize={10}
 				onPageChange={handlePageChange}
 			/>
 		</>

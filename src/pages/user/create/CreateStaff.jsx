@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import api from '../../../api/httpClient';
 import CommonUserFields from '../../user/create/CommonUserFields';
+import InputForm from '../../../components/form/InputForm';
 
 export default function StaffCreatePage() {
 	const [formData, setFormData] = useState({
 		name: '',
 		birthDate: '',
-		gender: '남성',
+		gender: '여성',
 		address: '',
 		tel: '',
 		email: '',
+		hireDate: '',
 	});
 
 	const handleChange = (e) => {
@@ -29,10 +31,11 @@ export default function StaffCreatePage() {
 			setFormData({
 				name: '',
 				birthDate: '',
-				gender: '남성',
+				gender: '여성',
 				address: '',
 				tel: '',
 				email: '',
+				hireDate: '',
 			});
 		} catch (err) {
 			console.error(err);
@@ -46,12 +49,10 @@ export default function StaffCreatePage() {
 				<h1>직원 등록</h1>
 			</div>
 			<form>
-				<table className="table--container">
-					<tbody>
-						<CommonUserFields formData={formData} onChange={handleChange} />
-					</tbody>
-				</table>
-				<button onSubmit={handleSubmit}>등록</button>
+				<CommonUserFields formData={formData} onChange={handleChange} />
+				{/* 직원 전용 필드 */}
+				<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
+				<button onClick={handleSubmit}>등록</button>
 			</form>
 		</>
 	);

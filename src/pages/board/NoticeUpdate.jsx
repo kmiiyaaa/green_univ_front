@@ -34,6 +34,7 @@ const NoticeUpdate = () => {
 			setCurrentFileName(n?.file?.originFilename ?? '');
 		} catch (e) {
 			console.error('공지 수정 데이터 로드 실패:', e);
+			alert(e.response.data.message);
 		}
 	};
 
