@@ -1,177 +1,151 @@
-/* =========================
-   ScheduleForm.css
-   - 학사일정 Write + Detail + Update 공용
-   - 표 기반 상세/폼 레이아웃 통일
-========================= */
-
-/* fallback vars */
+/* ScheduleForm.css */
 :root {
-	--primary-green: #15803d;
-	--primary-green-dark: #0f6b3a;
-	--border-soft: #e5e7eb;
-	--text-main: #111827;
-	--text-sub: #6b7280;
+	--primary-green: #006838;
+	--primary-green-dark: #004b29;
+	--bg-input: #f8fafc;
+	--border-color: #e2e8f0;
+	--text-label: #64748b;
+	--text-main: #1e293b;
+	--card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-/* 공통 페이지 여백 흐름 */
-.schedule-page .split--div {
-	margin-bottom: 18px;
+/* --- 공통 카드 래퍼 (Form & Detail) --- */
+.schedule-card-wrapper {
+	background-color: #ffffff;
+	border-radius: 20px;
+	box-shadow: var(--card-shadow);
+	padding: 40px;
+	border: 1px solid var(--border-color);
+	max-width: 800px;
+	margin: 40px auto; /* 중앙 정렬 */
 }
 
-/* =========================
-   Detail 테이블 스타일
-========================= */
-
-.schedule-detail .table,
-.schedule-form .table {
-	width: 100%;
-	border-collapse: separate;
-	border-spacing: 0;
-	background: #ffffff;
-	border: 1px solid var(--border-soft);
-	border-radius: 14px;
-	overflow: hidden;
-	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
-}
-
-/* label(왼쪽 칸) */
-.schedule-detail .table .type,
-.schedule-form .table .type {
-	width: 160px;
-	background: #f9fafb;
-	color: var(--text-sub);
-
-	font-size: 12.5px;
+/* 타이틀 스타일 */
+.form-title {
+	font-size: 22px;
 	font-weight: 700;
-	letter-spacing: 0.04em;
-
-	padding: 12px 14px;
-	border-right: 1px solid var(--border-soft);
-	border-bottom: 1px solid var(--border-soft);
+	color: var(--primary-green);
+	margin-bottom: 30px;
+	padding-bottom: 15px;
+	border-bottom: 2px solid #f1f5f9;
 }
 
-/* value(오른쪽 칸) */
-.schedule-detail .table td:not(.type),
-.schedule-form .table td:not(.type) {
-	padding: 12px 14px;
-	font-size: 13.5px;
-	color: var(--text-main);
-	border-bottom: 1px solid var(--border-soft);
+/* --- 폼(Form) 스타일 --- */
+.form-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+	margin-bottom: 30px;
 }
 
-/* 마지막 줄 border 정리 */
-.schedule-detail .table tr:last-child td,
-.schedule-form .table tr:last-child td {
-	border-bottom: none;
+@media (min-width: 768px) {
+	.form-grid {
+		grid-template-columns: 1fr 1fr; /* PC에선 2열 */
+	}
 }
 
-/* =========================
-   Write/Update input 영역 정렬
-========================= */
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
 
-/* 날짜/텍스트 input이 기본 스타일일 때 대비 */
-.schedule-form input[type='date'],
-.schedule-form input[type='text'],
-.schedule-form textarea {
+.form-full-width {
+	grid-column: 1 / -1; /* 가로 꽉 차게 */
+}
+
+.form-label {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-label);
+}
+
+/* 인풋 공통 스타일 */
+.form-input {
 	width: 100%;
-	padding: 10px 12px;
+	padding: 14px 16px;
 	border-radius: 12px;
-
-	border: 1px solid var(--border-soft);
-	background: #f9fafb;
-
-	font-size: 13.5px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-input);
+	font-size: 15px;
 	color: var(--text-main);
+	transition: all 0.2s ease;
 	outline: none;
-
-	transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-.schedule-form textarea {
-	min-height: 120px;
-	resize: vertical;
-}
-
-.schedule-form input::placeholder,
-.schedule-form textarea::placeholder {
-	color: #9ca3af;
-}
-
-.schedule-form input:focus,
-.schedule-form textarea:focus {
-	background: #ffffff;
+.form-input:focus {
+	background-color: #ffffff;
 	border-color: var(--primary-green);
-	box-shadow: 0 0 0 1px rgba(0, 104, 56, 0.18);
+	box-shadow: 0 0 0 4px rgba(0, 104, 56, 0.1);
 }
 
-/* =========================
-   하단 버튼 영역 공통
-   (목록/수정/삭제/등록)
-========================= */
+/* --- 상세 페이지(Detail) 테이블 스타일 --- */
+.schedule-detail-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 30px;
+}
 
-.schedule-page .select--button {
+.schedule-detail-table tr {
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.schedule-detail-table td {
+	padding: 20px 10px;
+	font-size: 15px;
+	color: var(--text-main);
+}
+
+.schedule-detail-table .type {
+	width: 120px;
+	font-weight: 600;
+	color: var(--text-label);
+	background-color: #fcfcfc; /* 라벨 부분 살짝 배경색 */
+}
+
+/* --- 버튼 영역 --- */
+.form-actions {
 	display: flex;
 	justify-content: flex-end;
-	gap: 10px;
-	margin-top: 14px;
+	gap: 12px;
+	margin-top: 20px;
 }
 
-/* 기존 .button 유지하면서 schedule 페이지 톤에서만 살짝 통일 */
-.schedule-page .select--button .button {
-	border-radius: 12px;
-	padding: 10px 14px;
-
-	font-size: 12.5px;
-	font-weight: 700;
-
-	transition: transform 0.06s ease, box-shadow 0.18s ease, filter 0.12s ease, background-color 0.15s ease,
-		border-color 0.15s ease;
-}
-
-/* 기본 버튼(목록 등) */
-.schedule-page .select--button .button[type='button'],
-.schedule-page .select--button .button:not([data-variant]) {
-	background: #ffffff;
-	border: 1px solid var(--border-soft);
-	color: var(--text-main);
-}
-
-.schedule-page .select--button .button[type='button']:hover,
-.schedule-page .select--button .button:not([data-variant]):hover {
-	background: #f9fafb;
-	border-color: #d1d5db;
-}
-
-/* 강조 버튼이 필요하면 data-variant로 사용 가능 */
-.schedule-page .select--button .button[data-variant='primary'] {
+.btn {
+	padding: 12px 28px;
+	border-radius: 10px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
 	border: none;
+	transition: all 0.2s;
+}
+
+.btn-cancel {
+	background-color: #f1f5f9;
+	color: #64748b;
+}
+
+.btn-cancel:hover {
+	background-color: #e2e8f0;
+}
+
+.btn-submit {
+	background-color: var(--primary-green);
 	color: #ffffff;
-	background: linear-gradient(90deg, var(--primary-green), var(--primary-green-dark));
-	box-shadow: 0 10px 22px rgba(22, 163, 74, 0.22);
 }
 
-.schedule-page .select--button .button[data-variant='primary']:hover {
-	filter: brightness(1.03);
-	transform: translateY(-1px);
-	box-shadow: 0 14px 30px rgba(22, 163, 74, 0.32);
+.btn-submit:hover {
+	background-color: var(--primary-green-dark);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 104, 56, 0.2);
 }
 
-/* =========================
-   반응형
-========================= */
+.btn-delete {
+	background-color: #fee2e2;
+	color: #ef4444;
+}
 
-@media (max-width: 768px) {
-	.schedule-detail .table .type,
-	.schedule-form .table .type {
-		width: 120px;
-	}
-
-	.schedule-page .select--button {
-		flex-wrap: wrap;
-		justify-content: stretch;
-	}
-
-	.schedule-page .select--button .button {
-		flex: 1;
-	}
+.btn-delete:hover {
+	background-color: #fecaca;
 }

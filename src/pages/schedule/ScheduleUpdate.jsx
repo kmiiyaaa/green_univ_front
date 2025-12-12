@@ -8,7 +8,6 @@ const ScheduleUpdate = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { userRole } = useContext(UserContext);
-
 	const [initialValues, setInitialValues] = useState(null);
 
 	if (userRole !== 'staff') {
@@ -26,7 +25,6 @@ const ScheduleUpdate = () => {
 		try {
 			const res = await api.get(`/schedule/detail/${id}`);
 			const s = res.data.schedule;
-
 			setInitialValues({
 				startDay: s?.startDay ?? '',
 				endDay: s?.endDay ?? '',
@@ -53,20 +51,18 @@ const ScheduleUpdate = () => {
 		}
 	};
 
-	if (!initialValues) return <div className="form-container schedule-page">로딩중...</div>;
+	if (!initialValues) return <div className="schedule-card-wrapper">로딩 중...</div>;
 
 	return (
-		<div className="form-container schedule-page">
-			<h3>학사 일정 수정</h3>
-			<div className="split--div"></div>
-
+		<>
 			<ScheduleForm
+				title="학사 일정 수정"
 				initialValues={initialValues}
 				onSubmit={handleUpdate}
 				onCancel={() => navigate(`/schedule/detail/${id}`)}
 				submitLabel="수정"
 			/>
-		</div>
+		</>
 	);
 };
 
