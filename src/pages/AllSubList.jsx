@@ -169,6 +169,19 @@ export default function AllSubList() {
 				<button onClick={handleSearch} className="button">
 					검색
 				</button>
+				<button
+					onClick={() =>
+						setSearchForm({
+							type: '', // 강의구분
+							subYear: '', // 연도
+							semester: '', // 학기
+							deptName: '', // 학과명
+							name: '', // 강의명
+						})
+					}
+				>
+					초기화
+				</button>
 			</div>
 
 			{/* 페이징 정보 */}
