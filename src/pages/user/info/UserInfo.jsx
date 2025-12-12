@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/httpClient';
-import StudentInfoTable from '../../../components/infoTable/StudentInfoTable';
-import ProfessorInfoTable from '../../../components/infoTable/ProfessorInfoTable';
-import StaffInfoTable from '../../../components/infoTable/StaffInfotable';
-import UpdateUserInfo from '../../../components/infoTable/UpdateUserInfo';
+import StudentInfoTable from './infoTable/StudentInfoTable';
+import ProfessorInfoTable from './infoTable/ProfessorInfoTable';
+import StaffInfoTable from './infoTable/StaffInfotable';
+import UpdateUserInfo from './infoTable/UpdateUserInfo';
 
 export default function UserInfo() {
 	const { userRole, token } = useContext(UserContext);

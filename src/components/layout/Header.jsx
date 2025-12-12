@@ -25,7 +25,7 @@ const getUserIdText = (user) => {
 export default function Header({ handleLogout }) {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { user, userRole } = useContext(UserContext);
+	const { user, userRole, name } = useContext(UserContext);
 
 	const role = normalizeRole(userRole);
 	const menus = HEADER_MENUS[role] || HEADER_MENUS.student;
@@ -44,7 +44,7 @@ export default function Header({ handleLogout }) {
 					{user ? (
 						<div className="top-userbar-right">
 							<span className="top-userbar-text">
-								{(user.name ?? '사용자') + '님' + (userIdText ? `(${userIdText})` : '')}
+								{(name ? name : '사용자') + '님' + (userIdText ? `(${userIdText})` : '')}
 							</span>
 							<span className="top-userbar-divider">|</span>
 							<button onClick={handleLogout} className="top-userbar-link" type="button">

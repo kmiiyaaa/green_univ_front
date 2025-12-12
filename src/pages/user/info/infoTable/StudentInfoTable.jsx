@@ -1,5 +1,5 @@
 // import { useEffect, useState } from 'react';
-import DataTable from '../table/DataTable';
+import DataTable from '../../../../components/table/DataTable';
 import UserInfoTable from './UserInfoTable';
 
 export default function StudentInfoTable({ userInfo, stustatList }) {

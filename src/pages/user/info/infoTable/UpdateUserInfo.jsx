@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import api from '../../api/httpClient';
-import InputForm from '../form/InputForm';
-import { UserContext } from '../../context/UserContext';
+import InputForm from '../../../../components/form/InputForm';
+import api from '../../../../api/httpClient';
 
 export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 	const [value, setValue] = useState({

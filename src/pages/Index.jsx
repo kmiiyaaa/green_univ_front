@@ -1,6 +1,9 @@
+import { useContext } from 'react';
 import DataTable from '../components/table/DataTable';
+import { UserContext } from '../context/UserContext';
 
 function Index() {
+	const { name } = useContext(UserContext);
 	const headers1 = ['공지사항', '글쓴이'];
 	const notice = [
 		{ 공지사항: '공지사항1', 글쓴이: '김공지' },
@@ -67,7 +70,7 @@ function Index() {
 								<li>
 									<span className="material-symbols-rounded">person</span>
 								</li>
-								<li>사용자님, 환영합니다.</li>
+								<li>{name}님, 환영합니다.</li>
 							</ul>
 							<hr />
 							{/* 학생 테이블 */}

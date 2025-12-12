@@ -79,15 +79,11 @@ const Semester = () => {
 			setYearList(data.yearList ?? yearList);
 			setSemesterList(data.semesterList ?? semesterList);
 			setGradeList(data.gradeList ?? []);
+			console.log(res.data)
 		} catch (e) {
 			console.error(e);
 		}
 	};
-
-	// DataTable용 rows 변환 -> 헤더 적용이 안되서 기존 방식으로 변경했습니다
-	// const rows = useMemo(() => {
-	// 	return (gradeList ?? []).map((g) => [`${g.subYear}년`, `${g.semester}학기`, g.subjectId, g.name, g.type, g.grade]);
-	// }, [gradeList]);
 
 	const rows = useMemo(() => {
 		return gradeList.map((g) => ({
