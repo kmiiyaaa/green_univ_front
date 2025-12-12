@@ -131,6 +131,7 @@ export default function Evaluation() {
 					cols={5}
 					rows={5}
 					placeholder={'개선이 필요한 점이나 좋았던 점을 자유롭게 작성해주세요.'}
+					value={value.improvements}
 					onChange={handleChange}
 				/>
 

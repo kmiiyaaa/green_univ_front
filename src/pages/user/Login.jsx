@@ -27,7 +27,7 @@ export default function Login() {
 				id: loginId,
 				password: password,
 			});
-			console.log('로그인res.data', res.data); // id, userRole, accessToken
+			// console.log('로그인res.data', res.data); // id, userRole, accessToken
 			const { id, userRole, accessToken } = res.data;
 			// console.log('id', id); //
 			// console.log('userRole', userRole);
