@@ -6,6 +6,7 @@ import StudentInfoTable from './infoTable/StudentInfoTable';
 import ProfessorInfoTable from './infoTable/ProfessorInfoTable';
 import StaffInfoTable from './infoTable/StaffInfotable';
 import UpdateUserInfo from './infoTable/UpdateUserInfo';
+import '../../../assets/css/MyPage.css';
 
 export default function UserInfo() {
 	const { userRole, token } = useContext(UserContext);

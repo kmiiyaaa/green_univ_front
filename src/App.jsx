@@ -6,7 +6,7 @@ import TuiList from './pages/tuition/TuiList';
 import Payment from './pages/tuition/Payment';
 import CreatePayment from './pages/tuition/CreatePayment';
 import UserInfo from './pages/user/info/UserInfo';
-import Index from './pages/Index';
+import Index from './pages/';
 
 import NoticeList from './pages/board/NoticeList';
 import NoticeUpdate from './pages/board/NoticeUpdate';
@@ -69,6 +69,7 @@ function App() {
 						{/* <Route element={<PrivateRoute />}> */}
 						<Route element={<PortalLayout />}>
 							{/* 로그인 후 메인 대시보드 */}
+							<Route path="/index" element={<Index />} />
 							<Route path="/portal" element={<Portal />} />
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
