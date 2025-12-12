@@ -16,7 +16,7 @@
 
 .form-container {
 	width: 100%;
-	max-width: 1120px; /* 가운데 카드 폭 */
+	max-width: 1300px; /* 가운데 카드 폭 */
 	margin: 0 auto 24px;
 
 	background: #ffffff;
@@ -92,6 +92,10 @@
 	margin-top: 2px;
 }
 
+.college-fom {
+	border: 1px solid rgb(18, 54, 18);
+}
+
 /* ===========================
    페이지별 레이아웃 튜닝
    =========================== */
@@ -116,12 +120,6 @@
 /* ===========================
    버튼 공통 스타일
    =========================== */
-
-.button-row {
-	margin-top: 8px;
-	display: flex;
-	gap: 8px;
-}
 
 .button {
 	display: inline-flex;
@@ -201,6 +199,26 @@
 	opacity: 0.6;
 	cursor: not-allowed;
 	box-shadow: none;
+}
+
+/* ===========================
+   폼 내부 버튼 사이즈 튜닝
+   =========================== */
+
+/* 폼(등록 영역) 안에 있는 버튼은 기본보다 작게 */
+.entity-form .button {
+	height: 34px; /* ✅ 확 줄어든 높이 */
+	padding: 4px 12px; /* 위아래 여백 줄이기 */
+	font-size: 12px; /* 글씨도 살짝 작게 */
+	border-radius: 999px; /* 모양은 그대로 필 형태 유지 */
+}
+
+/* 단과대 / 학과 / 등록금 / 강의실 폼처럼
+   오른쪽에 딱 붙어 있는 버튼은 폭도 조금만 */
+.entity-form--simple .button,
+.entity-form--room .button {
+	min-width: 86px; /* 너무 길게 안 퍼지게 */
+	padding-inline: 10px;
 }
 
 /* ===========================
