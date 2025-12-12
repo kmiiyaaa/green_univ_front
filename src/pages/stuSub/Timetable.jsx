@@ -46,7 +46,7 @@ export default function Timetable() {
 	return (
 		<div style={{ padding: 24, background: '#f9fcf6ff', minHeight: '100vh' }}>
 			{loading && <p>시간표 불러오는 중...</p>}
-			{error && <p style={{ color: 'crimson' }}>{error}</p>}
+			{error && <p className="error-message">{error}</p>}
 
 			{!loading && !error && courses.length === 0 && <p>최종 수강 신청 내역이 없습니다.</p>}
 

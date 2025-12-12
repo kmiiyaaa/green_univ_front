@@ -8,6 +8,8 @@ import PaginationForm from '../../components/form/PaginationForm';
 
 // 공통 컴포넌트 : preSugang + Sugang에서 사용됨
 export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAction, formatRowData }) {
+	const [error, setError] = useState(null);
+
 	const [subTimetable, SetSubTimeTable] = useState([]);
 
 	// 페이징 (기본값은 10으로 설정)
@@ -28,6 +30,7 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 	// 강의 목록 조회 (페이징 page + 검색 filters)
 	const loadSubjectList = async (page = 0, filters = null) => {
 		try {
+			setError(null);
 			const params = { page, size: 10 };
 			const currentFilters = filters || searchForm;
 
@@ -35,21 +38,21 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 			if (currentFilters.deptName) params.deptName = currentFilters.deptName;
 			if (currentFilters.name) params.name = currentFilters.name;
 
-			// 🍎 이 부분을 예비 수강 신청, 수강 신청에 따라 다르게 보여줘야 하나요?
+			// 🔥 이 부분을 예비 수강 신청, 수강 신청에 따라 다르게 보여줘야 하나요?
 			// 아뇨 동일하게 보여줘도 됩니다 다만, 헤더에 '수강신청' 부분이 달라져야 함!
 			const res = await api.get(apiEndpoint, { params });
-			console.log('[컴포넌트 res.data]', res.data);
+			//console.log('[컴포넌트 res.data]', res.data);
 			const rawData = res.data.lists; // 데이터만 추출
 
 			// 부모에서 전달받은 포맷팅 함수 적용
 			const formattedData = rawData.map((sub) => formatRowData(sub, actionHeaderLabel));
-			console.log('[app]', formattedData);
+			//console.log('[컴포넌트 formatted]', formattedData);
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
 		} catch (err) {
-			console.error(' 목록 조회 실패: ', err);
+			setError(err.response?.data?.message || '목록을 불러오는 중 오류가 발생했습니다.');
 		}
 	};
 
@@ -66,7 +69,7 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 
 		// URL에서 읽은 값을 직접 전달
 		loadSubjectList(page, { type, deptName, name });
-	}, [searchParams]);
+	}, [searchParams, onAction]);
 
 	// 검색 폼 입력 핸들러
 	const handleChange = (e) => {
@@ -118,6 +121,8 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 
 	return (
 		<>
+			{error && <div className="error-message">{error}</div>}
+
 			{/* 검색 폼 */}
 			<div>
 				<OptionForm

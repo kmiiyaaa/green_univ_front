@@ -13,6 +13,7 @@ const DataTable = ({ headers, data, onRowClick, onCellClick, clickableHeaders = 
 					</tr>
 				</thead>
 				<tbody>
+					{/* 넘겨온 props, data를 map으로 돌려서 (row 라는 이름으로 썼네) 넣어주기 */}
 					{data.map((row, rowIdx) => (
 						<tr key={rowIdx} onClick={() => onRowClick?.(row)} className={`${onRowClick ? 'rowClick' : ''}`}>
 							{headers.map((header) => {
