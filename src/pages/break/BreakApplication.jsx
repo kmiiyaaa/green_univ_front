@@ -55,8 +55,8 @@ export default function BreakApplication() {
 				alert(e.response?.data?.message ?? '휴학 신청 정보를 불러오지 못했습니다.');
 				navigate(-1, { replace: true });
 			} finally {
-			setLoading(false);
-		}
+				setLoading(false);
+			}
 		};
 
 		loadApplicationData();
@@ -79,10 +79,7 @@ export default function BreakApplication() {
 
 	// ---- 기간 옵션 ----
 	const yearOptions = useMemo(() => [currentYear, currentYear + 1, currentYear + 2], [currentYear]);
-	const yearSelectOptions = useMemo(
-		() => yearOptions.map((y) => ({ value: String(y), label: `${y}` })),
-		[yearOptions]
-	);
+	const yearSelectOptions = useMemo(() => yearOptions.map((y) => ({ value: String(y), label: `${y}` })), [yearOptions]);
 
 	const semesterSelectOptions = useMemo(
 		() => [
@@ -111,6 +108,8 @@ export default function BreakApplication() {
 
 		try {
 			await api.post('/break/application', {
+				// fromYear: serverYear,
+				// fromSemeter: serverSemester,
 				type,
 				toYear: Number(toYear),
 				toSemester: Number(toSemester),

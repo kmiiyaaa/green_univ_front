@@ -66,7 +66,7 @@ export default function ProfessorSubjectList() {
 	};
 
 	// 테이블 데이터
-	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록'];
+	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록',];
 
 	const subjectTable = useMemo(() => {
 		return subjectList.map((s) => ({

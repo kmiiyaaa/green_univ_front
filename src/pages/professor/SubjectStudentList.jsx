@@ -63,6 +63,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		'기말시험',
 		'환산점수',
 		'등급',
+		'경고여부',
 		'점수기입',
 	];
 
@@ -78,6 +79,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 			기말시험: s.finalExam ?? ' ',
 			환산점수: s.convertedMark ?? ' ',
 			등급: s.grade ?? '',
+			경고여부: s.status ?? '',
 			점수기입: <button onClick={() => handleOpenGrade(s)}>점수기입</button>,
 		}));
 	}, [studentList, handleOpenGrade]);
