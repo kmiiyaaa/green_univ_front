@@ -123,7 +123,7 @@ const College = () => {
 		<div className="form-container">
 			<h3>단과대 등록 / 수정</h3>
 
-			<div className="room--form">
+			<div className="entity-form entity-form-card college-form">
 				<InputForm
 					label="단과대 이름"
 					name="name"
@@ -132,14 +132,14 @@ const College = () => {
 					onChange={handleChange}
 				/>
 
-				<div>
+				<div className="button-row">
 					<button type="button" className="button" onClick={handleSubmit}>
 						{selectedCollegeId ? '단과대 수정' : '단과대 등록'}
 					</button>
 					{selectedCollegeId && (
 						<button
 							type="button"
-							className="button button--ghost"
+							className="button button-secondary"
 							onClick={() => {
 								setSelectedCollegeId(null);
 								setFormData({ name: '' });
@@ -151,17 +151,25 @@ const College = () => {
 				</div>
 			</div>
 
-			<h3>단과대 목록🧡</h3>
+			<h3>단과대 목록</h3>
 			<div>
 				<DataTable
 					headers={headers}
 					data={collegeList}
 					renderActions={(row) => (
 						<div>
-							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-green"
+								onClick={() => handleEditRow(row)}
+							>
 								수정
 							</button>
-							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-red"
+								onClick={() => handleDeleteRow(row)}
+							>
 								삭제
 							</button>
 						</div>
@@ -171,5 +179,4 @@ const College = () => {
 		</div>
 	);
 };
-
 export default College;

@@ -183,14 +183,14 @@ export default function Room() {
 	return (
 		<div className="form-container">
 			<h3>강의실 등록 / 수정</h3>
-			<div className="room--form">
+
+			<div className="entity-form entity-form-card room-form">
 				<InputForm
 					label="강의실 호수"
 					name="id"
 					value={roomData.id}
 					onChange={handleChange}
 					placeholder="예: E601"
-					// 수정 모드일 때는 강의실 ID는 바꾸지 않도록 비활성화
 					disabled={!!selectedRoomId}
 				/>
 
@@ -202,14 +202,13 @@ export default function Room() {
 					placeholder="숫자 입력"
 				/>
 
-				{/* 로딩 중이면 버튼 비활성화 */}
-				<div>
+				<div className="button-row">
 					<button onClick={handleSubmit} className="button" disabled={isMutating}>
 						{isMutating ? '처리 중...' : selectedRoomId ? '강의실 수정' : '강의실 등록'}
 					</button>
 
 					{selectedRoomId && (
-						<button type="button" className="button button--ghost" onClick={handleCancelEdit}>
+						<button type="button" className="button button-secondary" onClick={handleCancelEdit}>
 							취소
 						</button>
 					)}
@@ -223,10 +222,18 @@ export default function Room() {
 					data={roomList}
 					renderActions={(row) => (
 						<div>
-							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-green"
+								onClick={() => handleEditRow(row)}
+							>
 								수정
 							</button>
-							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-red"
+								onClick={() => handleDeleteRow(row)}
+							>
 								삭제
 							</button>
 						</div>

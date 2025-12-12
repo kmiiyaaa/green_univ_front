@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import api from '../../api/httpClient';
 import InputForm from '../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
+import PaginationForm from '../../components/form/PaginationForm';
+import '../../assets/css/AdminFormLayout.css';
 
-// 관리자 강의 등록 + 목록 (페이징 처리 안 됐음)
 export default function Subject() {
+	// ================== 강의 등록/수정 폼 ==================
 	const [formData, setFormData] = useState({
 		name: '',
 		professorName: '',
 		roomId: '',
+		deptName: '',
 		type: '전공',
 		subYear: '',
 		semester: '',
@@ -61,9 +66,71 @@ export default function Subject() {
 			endTime: formData.endTime ? Number(formData.endTime) : null,
 			grades: formData.grades ? Number(formData.grades) : null,
 			capacity: formData.capacity ? Number(formData.capacity) : null,
-			// professorName, deptName, roomId, name, type, subDay 는 문자열 그대로
 		};
 	};
+
+	// ================== 페이징 상태 ==================
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [currentPage, setCurrentPage] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+	const [totalCount, setTotalCount] = useState(0);
+
+	// ================== 강의 목록 상태 ==================
+	const [subjectList, setSubjectList] = useState([]);
+
+	// 강의 목록 조회(페이징)
+	const loadSubjectList = async (page = 0) => {
+		try {
+			const params = { page, size: 10 }; // 쿼리 파라미터 구성
+			const res = await api.get('/subject/list', { params });
+
+			const rawData = res.data.lists; // 리스트 부분만 추출
+
+			const formattedData = rawData.map((sub) => ({
+				id: sub.id,
+				강의명: sub.name,
+				교수: sub.professorName,
+				강의실: sub.roomId,
+				학과: sub.deptName,
+				구분: sub.type,
+				연도: sub.subYear,
+				학기: sub.semester,
+				요일: sub.subDay,
+				시간: `${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)}`,
+				이수학점: sub.grades,
+				정원: sub.capacity,
+				원본데이터: sub,
+			}));
+
+			setSubjectList(formattedData);
+			setCurrentPage(res.data.currentPage);
+			setTotalPages(res.data.totalPages);
+			setTotalCount(res.data.listCount);
+		} catch (e) {
+			console.error('강의 목록 로드 실패:', e);
+		}
+	};
+
+	// URL 파라미터 변경 감지 (초기 로드 + 페이지 변경 시)
+	useEffect(() => {
+		const page = parseInt(searchParams.get('page') || '0', 10);
+
+		console.log('🔗 URL에서 읽은 관리자 강의 페이지:', { page });
+
+		loadSubjectList(page);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
+
+	// 페이지 변경 (URL 업데이트)
+	const handlePageChange = (newPage) => {
+		if (newPage >= 0 && newPage < totalPages) {
+			const params = { page: newPage.toString() };
+			setSearchParams(params); // URL 업데이트 → useEffect 자동 실행
+		}
+	};
+
+	// ================== 등록 / 수정 / 삭제 ==================
 
 	const handleSubmit = async () => {
 		try {
@@ -82,7 +149,8 @@ export default function Subject() {
 				alert('강의 수정 완료!');
 			}
 
-			await loadSubject();
+			// 목록 새로고침 (현재 페이지 유지)
+			await loadSubjectList(currentPage);
 			resetForm();
 		} catch (e) {
 			console.error('강의 등록/수정 실패:', e);
@@ -96,7 +164,7 @@ export default function Subject() {
 		}
 	};
 
-	// 강의 삭제 (이 부분은 그대로 사용)
+	// 강의 삭제
 	const handleDelete = async () => {
 		if (editingId === null) {
 			alert('삭제할 강의를 먼저 선택해주세요.');
@@ -108,7 +176,9 @@ export default function Subject() {
 			const res = await api.delete(`/admin/subject/${editingId}`);
 			console.log('강의 삭제 성공:', res.data);
 			alert('강의 삭제 완료!');
-			await loadSubject();
+
+			// 목록 새로고침 (현재 페이지 유지)
+			await loadSubjectList(currentPage);
 			resetForm();
 		} catch (e) {
 			console.error('강의 삭제 실패:', e);
@@ -122,42 +192,47 @@ export default function Subject() {
 		}
 	};
 
-	// 강의 목록 가져오기
-	const [subjectList, setSubjectList] = useState([]);
+	// 행 수정 버튼 (표 옆 "수정" 버튼)
+	const handleEditRow = (row) => {
+		const sub = row.원본데이터;
 
-	const loadSubject = async () => {
+		setFormData({
+			name: sub.name || '',
+			professorName: sub.professorName || '',
+			roomId: sub.roomId || '',
+			deptName: sub.deptName || '',
+			type: sub.type || '전공',
+			subYear: sub.subYear != null ? String(sub.subYear) : '',
+			semester: sub.semester != null ? String(sub.semester) : '',
+			subDay: sub.subDay || '월',
+			startTime: sub.startTime != null ? String(sub.startTime) : '',
+			endTime: sub.endTime != null ? String(sub.endTime) : '',
+			grades: sub.grades != null ? String(sub.grades) : '',
+			capacity: sub.capacity != null ? String(sub.capacity) : '',
+		});
+		setEditingId(sub.id);
+	};
+
+	// 행 삭제 버튼 (표 옆 "삭제" 버튼)
+	const handleDeleteRow = async (row) => {
+		if (!window.confirm('해당 강의를 삭제하시겠습니까?')) return;
+
 		try {
-			const res = await api.get('/admin/subject');
-			const rawData = res.data.subjectList;
-			console.log('강의 원본', rawData);
-
-			const formattedData = rawData.map((sub) => ({
-				id: sub.id,
-				강의명: sub.name,
-				교수: sub.professor ? sub.professor.name : '',
-				강의실: sub.room ? sub.room.id : '',
-				학과: sub.department ? sub.department.name : '',
-				구분: sub.type,
-				연도: sub.subYear,
-				학기: sub.semester,
-				요일: sub.subDay,
-				시간: `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)}`,
-				이수학점: sub.grades,
-				정원: sub.capacity,
-				원본데이터: sub,
-			}));
-
-			setSubjectList(formattedData);
-			console.log('가공된 데이터:', formattedData);
+			await api.delete(`/admin/subject/${row.id}`);
+			alert('강의 삭제가 완료되었습니다.');
+			// 현재 페이지 유지하면서 목록 새로고침
+			await loadSubjectList(currentPage);
+			// 만약 내가 수정 중이던 강의라면 폼도 초기화
+			if (editingId === row.id) {
+				resetForm();
+			}
 		} catch (e) {
-			console.error('강의 목록 로드 실패:', e);
+			console.error('강의 삭제 실패:', e);
+			alert(e.response?.data?.error || e.response?.data?.message || '삭제에 실패했습니다.');
 		}
 	};
 
-	useEffect(() => {
-		loadSubject();
-	}, []);
-
+	// 테이블 헤더 정의
 	const headers = [
 		'id',
 		'강의명',
@@ -181,31 +256,12 @@ export default function Subject() {
 		{ value: '금', label: '금' },
 	];
 
-	// 행 클릭 시 수정 모드로 진입 (이름으로 폼 채우기)
-	const handleRowClick = (row) => {
-		const sub = row.원본데이터;
-
-		setFormData({
-			name: sub.name || '',
-			professorName: sub.professor ? sub.professor.name : '',
-			roomId: sub.room ? sub.room.id : '',
-			deptName: sub.department ? sub.department.name : '',
-			type: sub.type || '전공',
-			subYear: sub.subYear != null ? String(sub.subYear) : '',
-			semester: sub.semester != null ? String(sub.semester) : '',
-			subDay: sub.subDay || '월',
-			startTime: sub.startTime != null ? String(sub.startTime) : '',
-			endTime: sub.endTime != null ? String(sub.endTime) : '',
-			grades: sub.grades != null ? String(sub.grades) : '',
-			capacity: sub.capacity != null ? String(sub.capacity) : '',
-		});
-		setEditingId(sub.id);
-	};
-
 	return (
 		<div className="form-container">
 			<h3>강의 등록</h3>
-			<div className="subject--form">
+
+			{/* ✅ 공통 엔티티 폼 카드 */}
+			<div className="entity-form entity-form-card subject-form">
 				<InputForm
 					label="강의명"
 					name="name"
@@ -238,16 +294,16 @@ export default function Subject() {
 					placeholder="예: 컴퓨터공학과"
 				/>
 
-				{/* 라디오/Select는 InputForm으로 만들기 애매해서 직접 작성 (나중에 이것도 분리 가능) */}
+				{/* 라디오/Select는 InputForm으로 만들기 애매해서 직접 작성 */}
 				<div className="input-group">
-					<label>이수 구분 </label>
+					<label>이수 구분</label>
 					<label>
-						<input type="radio" name="type" value="전공" checked={formData.type === '전공'} onChange={handleChange} />{' '}
-						전공
+						<input type="radio" name="type" value="전공" checked={formData.type === '전공'} onChange={handleChange} />
+						&nbsp;전공
 					</label>
 					<label>
-						<input type="radio" name="type" value="교양" checked={formData.type === '교양'} onChange={handleChange} />{' '}
-						교양
+						<input type="radio" name="type" value="교양" checked={formData.type === '교양'} onChange={handleChange} />
+						&nbsp;교양
 					</label>
 				</div>
 
@@ -296,19 +352,50 @@ export default function Subject() {
 					<button onClick={handleSubmit} className="button">
 						{editingId === null ? '강의 등록' : '강의 수정'}
 					</button>
-					<button onClick={handleDelete} className="button button-danger">
-						강의 삭제
-					</button>
 					<button onClick={resetForm} className="button button-secondary">
 						새로 입력
 					</button>
+					{editingId !== null && (
+						<button onClick={handleDelete} className="button button--outline button--outline-red">
+							선택 강의 삭제
+						</button>
+					)}
 				</div>
 			</div>
 
 			<h3>강의 목록</h3>
+
 			<div>
-				<DataTable headers={headers} data={subjectList} onRowClick={handleRowClick} />
+				<DataTable
+					headers={headers}
+					data={subjectList}
+					renderActions={(row) => (
+						<div>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-green"
+								onClick={() => handleEditRow(row)}
+							>
+								수정
+							</button>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-red"
+								onClick={() => handleDeleteRow(row)}
+							>
+								삭제
+							</button>
+						</div>
+					)}
+				/>
 			</div>
+
+			<PaginationForm
+				currentPage={currentPage}
+				totalPages={totalPages}
+				blockSize={20}
+				onPageChange={handlePageChange}
+			/>
 		</div>
 	);
 }

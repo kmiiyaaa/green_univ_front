@@ -110,18 +110,18 @@ const CollTuit = () => {
 		<div className="form-container">
 			<h3>단대별 등록금 등록 / 수정</h3>
 
-			<div className="room--form">
+			<div className="entity-form entity-form-card colltuit-form">
 				<InputForm label="단과대 이름" name="name" placeholder="입력" value={formData.name} onChange={handleChange} />
 				<InputForm label="등록금" name="amount" placeholder="입력" value={formData.amount} onChange={handleChange} />
 
-				<div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+				<div className="button-row">
 					<button type="button" className="button" onClick={handleSubmit}>
 						{selectedCollegeId ? '등록금 수정' : '등록금 등록'}
 					</button>
 					{selectedCollegeId && (
 						<button
 							type="button"
-							className="button button--ghost"
+							className="button button-secondary"
 							onClick={() => {
 								setSelectedCollegeId(null);
 								setFormData({ name: '', amount: '' });
@@ -140,10 +140,18 @@ const CollTuit = () => {
 					data={collTuit}
 					renderActions={(row) => (
 						<div>
-							<button type="button"  onClick={() => handleEditRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-green"
+								onClick={() => handleEditRow(row)}
+							>
 								수정
 							</button>
-							<button type="button"  onClick={() => handleDeleteRow(row)}>
+							<button
+								type="button"
+								className="button button--sm button--outline button--outline-red"
+								onClick={() => handleDeleteRow(row)}
+							>
 								삭제
 							</button>
 						</div>
