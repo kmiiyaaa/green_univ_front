@@ -1,13 +1,13 @@
 /* ===========================
-   색상 토큰 (전역이랑 톤 맞추기)
+   마이페이지 색상 토큰
    =========================== */
 :root {
-	--mypage-green: #15803d;
-	--mypage-green-soft: rgba(22, 163, 74, 0.06);
-	--mypage-green-border: rgba(22, 163, 74, 0.32);
-	--mypage-border-soft: #e5e7eb;
-	--mypage-text-main: #111827;
-	--mypage-text-sub: #6b7280;
+	/* 프로젝트에 이미 있으면 그 값 우선 사용 */
+	--mypage-green: var(--primary-green, #15803d);
+	--mypage-green-dark: var(--primary-green-dark, #0f6b3a);
+	--mypage-border-soft: var(--border-soft, #e5e7eb);
+	--mypage-text-main: var(--text-main, #111827);
+	--mypage-text-sub: var(--text-sub, #6b7280);
 }
 
 /* ===========================
@@ -15,62 +15,48 @@
    =========================== */
 
 .mypage-shell {
-	max-width: 1100px;
-	margin: 0 auto 28px;
-	padding: 6px 8px 24px;
+	max-width: 960px;
+	margin: 32px auto 40px; /* 상단 네비와 거리 확보 */
+	padding: 0 16px;
 }
 
 /* ===========================
-   카드 기본
+   카드 레이아웃
    =========================== */
 
 .mypage-card {
 	background: #ffffff;
 	border-radius: 18px;
 	border: 1px solid var(--mypage-border-soft);
-	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-	padding: 20px 22px 24px;
-}
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 
-/* 수정 카드일 때 살짝 다른 느낌 */
-.mypage-card--edit {
-	border-color: var(--mypage-green-border);
-	box-shadow: 0 20px 44px rgba(22, 163, 74, 0.16);
+	padding: 20px 24px 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
 }
 
 /* ===========================
-   헤더 영역
+   제목 영역
    =========================== */
 
-.mypage-header {
-	border-bottom: 1px solid #e5e7eb;
-	padding-bottom: 14px;
-	margin-bottom: 18px;
-}
-
-.mypage-header--compact {
-	margin-bottom: 14px;
-	padding-bottom: 10px;
-}
-
 .mypage-title {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin-bottom: 4px;
-}
+	margin: 0;
+	padding-bottom: 10px;
 
-.mypage-title h2 {
 	font-size: 20px;
 	font-weight: 800;
 	color: var(--mypage-text-main);
+
 	display: flex;
 	align-items: center;
 	gap: 8px;
+
+	border-bottom: 1px solid #e5e7eb;
 }
 
-/* 제목 앞 초록 점 */
-.mypage-title h2::before {
+/* 초록 불빛 아이콘 */
+.mypage-title::before {
 	content: '';
 	width: 9px;
 	height: 9px;
@@ -78,87 +64,74 @@
 	background: var(--mypage-green);
 }
 
-.mypage-role-chip {
-	padding: 4px 10px;
-	border-radius: 999px;
-	font-size: 11px;
-	font-weight: 700;
-	color: var(--mypage-green);
-	background: rgba(21, 128, 61, 0.06);
-	border: 1px solid rgba(21, 128, 61, 0.18);
-}
-
-.mypage-subtext {
-	margin: 0;
-	font-size: 12px;
-	color: var(--mypage-text-sub);
-}
-
 /* ===========================
-   섹션 공통
+   내용 영역 기본 정리
    =========================== */
 
-.mypage-section + .mypage-section {
-	margin-top: 18px;
-	padding-top: 16px;
-	border-top: 1px dashed #e5e7eb;
+/* StudentInfoTable / ProfessorInfoTable / StaffInfoTable 안의
+   텍스트들이 너무 달라붙지 않도록 여백만 공통으로 줌 */
+.mypage-card > *:not(:first-child):not(.mypage-edit-btn) {
+	margin-top: 4px;
 }
 
-.mypage-section-title {
-	margin: 0 0 10px;
-	font-size: 15px;
-	font-weight: 700;
+/* 테이블 기반이면 살짝 정갈하게 보이게 */
+.mypage-card table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
 	color: var(--mypage-text-main);
-	display: flex;
-	align-items: center;
-	gap: 6px;
 }
 
-.mypage-section-title::before {
-	content: '';
-	width: 4px;
-	height: 16px;
-	border-radius: 999px;
-	background: var(--mypage-green);
+.mypage-card table th,
+.mypage-card table td {
+	padding: 6px 4px;
 }
 
-.mypage-section-body {
-	padding: 10px 0 4px;
-}
-
-/* 테이블이나 안내 박스에 배경 줄 때 */
-.mypage-section-body--flat {
-	background: #f9fafb;
-	border-radius: 14px;
-	border: 1px solid #eef2f7;
-	padding: 10px 14px;
-}
-
-.mypage-hint-text {
-	margin: 0;
-	font-size: 12px;
+.mypage-card table th {
+	font-weight: 600;
 	color: var(--mypage-text-sub);
 }
 
-/* ===========================
-   하단 버튼 영역
-   =========================== */
-
-.mypage-actions {
-	margin-top: 18px;
-	padding-top: 14px;
-	border-top: 1px solid #e5e7eb;
-
-	display: flex;
-	justify-content: flex-end;
+/* 단순 p/div 구조일 때 줄간격만 살짝 */
+.mypage-card p {
+	margin: 3px 0;
+	font-size: 14px;
+	color: var(--mypage-text-main);
 }
 
-/* 전역 .button 기반 + 사이즈만 조정 */
+/* ===========================
+   하단 '정보 수정하기' 버튼
+   =========================== */
+
 .mypage-edit-btn {
-	min-width: 130px;
-	border-radius: 999px;
+	align-self: flex-end; /* 카드 오른쪽 정렬 */
+	margin-top: 10px;
+
+	min-width: 140px;
 	padding: 8px 18px;
+	border-radius: 999px;
+
 	font-size: 13px;
+	font-weight: 700;
+
+	background: linear-gradient(90deg, var(--mypage-green), var(--mypage-green-dark));
+	color: #ffffff;
+	border: none;
+	box-shadow: 0 10px 22px rgba(22, 163, 74, 0.22);
+
+	cursor: pointer;
+	transition: transform 0.06s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.mypage-edit-btn:hover {
+	filter: brightness(1.03);
+	transform: translateY(-1px);
+	box-shadow: 0 14px 28px rgba(22, 163, 74, 0.32);
+}
+
+.mypage-edit-btn:active {
+	transform: translateY(0);
+	box-shadow: none;
 }
 
 /* ===========================
@@ -166,19 +139,16 @@
    =========================== */
 
 @media (max-width: 768px) {
-	.mypage-card {
-		padding: 18px 16px 20px;
-	}
-
 	.mypage-shell {
-		padding: 4px 10px 20px;
+		margin-top: 20px;
+		padding: 0 10px;
 	}
 
-	.mypage-title h2 {
+	.mypage-card {
+		padding: 16px 14px 18px;
+	}
+
+	.mypage-title {
 		font-size: 18px;
-	}
-
-	.mypage-subtext {
-		font-size: 11px;
 	}
 }
