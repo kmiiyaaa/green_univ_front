@@ -23,6 +23,7 @@ export default function AllSubList() {
 
 	// 검색 폼
 	const [searchForm, setSearchForm] = useState({
+		type: '', // 강의구분
 		subYear: '', // 연도
 		semester: '', // 학기
 		deptName: '', // 학과명
@@ -40,7 +41,6 @@ export default function AllSubList() {
 			if (currentFilters.name) params.name = currentFilters.name;
 
 			const res = await api.get('/subject/list', { params });
-			console.log('모든 강의: ', res.data);
 			// currentpage현재페이지:0, listCount:총개수, lists:데이터들, totalPages총페이지수:2
 			const rawData = res.data.lists;
 			const formattedData = rawData.map((sub) => ({
@@ -74,8 +74,9 @@ export default function AllSubList() {
 		const semester = searchParams.get('semester') || '';
 		const deptName = searchParams.get('deptName') || '';
 		const name = searchParams.get('name') || '';
-		setSearchForm({ subYear, semester, deptName, name });
-		loadAllSubjectList(page, { subYear, semester, deptName, name });
+		const type = searchParams.get('type') || '';
+		setSearchForm({ subYear, semester, deptName, name, type });
+		loadAllSubjectList(page, { subYear, semester, deptName, name, type });
 	}, [searchParams]);
 
 	// 검색 폼 입력 핸들러
@@ -91,6 +92,7 @@ export default function AllSubList() {
 		if (searchForm.semester) params.semester = searchForm.semester;
 		if (searchForm.deptName) params.deptName = searchForm.deptName;
 		if (searchForm.name) params.name = searchForm.name;
+		if (searchForm.type) params.type = searchForm.type;
 		setSearchParams(params);
 	};
 
@@ -142,7 +144,7 @@ export default function AllSubList() {
 				<OptionForm
 					label="강의 구분"
 					name="type"
-					value={searchForm.subYear}
+					value={searchForm.type}
 					onChange={handleChange}
 					options={SUBJECT_CATEGORY_OPTIONS}
 				/>
