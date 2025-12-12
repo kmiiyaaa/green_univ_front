@@ -5,7 +5,6 @@ import DataTable from '../../components/table/DataTable';
 import '../../assets/css/College.css';
 
 const College = () => {
-
 	// 단과대 전용 상태
 	const [formData, setFormData] = useState({
 		name: '',
@@ -26,7 +25,7 @@ const College = () => {
 			const formattedData = rawData.map((col) => ({
 				id: col.id,
 				단과대이름: col.name,
-				원본데이터: col, 
+				원본데이터: col,
 			}));
 
 			setCollegeList(formattedData);
@@ -40,12 +39,11 @@ const College = () => {
 		loadCollege();
 	}, []);
 
-
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
-			 ...prev, 
-			 [name]: value 
+			...prev,
+			[name]: value,
 		}));
 	};
 
@@ -57,23 +55,22 @@ const College = () => {
 		}
 
 		try {
-			if(!selectedCollegeId){
+			if (!selectedCollegeId) {
 				//등록
 				const res = await api.post('/admin/college', formData);
-				console.log('단과대 등록',res.data);
-				alert("단과대 등록이 완료되었습니다.");
+				console.log('단과대 등록', res.data);
+				alert('단과대 등록이 완료되었습니다.');
 			} else {
 				// 수정
-				const res = await api.patch(`/admin/college/${selectedCollegeId}`,formData);
+				const res = await api.patch(`/admin/college/${selectedCollegeId}`, formData);
 				console.log('단과대 수정', res.data);
-				alert("단과대 수정이 완료되었습니다.");
+				alert('단과대 수정이 완료되었습니다.');
 			}
 
 			// 입력후 초기화 + 선택해제 + 목록 갱신
 			setFormData({ name: '' });
 			setSelectedCollegeId(null);
 			await loadCollege();
-
 		} catch (e) {
 			console.error('단과대 등록 / 수정 실패:', e);
 			alert(e.response?.data?.message || '등록/수정에 실패했습니다.');
@@ -82,20 +79,15 @@ const College = () => {
 
 	// 단과대 삭제
 	const handleDelete = async () => {
-		if (!selectedCollege) {
-			alert('삭제할 단과대를 먼저 선택해주세요.');
-			return;
-		}
-
-		if (!window.confirm(`'${selectedCollege.단과대이름}' 단과대를 삭제하시겠습니까?`)) {
+		if (!window.confirm(`단과대를 삭제하시겠습니까?`)) {
 			return;
 		}
 
 		try {
-			await api.delete(`/admin/college/${selectedCollege.id}`);
+			await api.delete(`/admin/college/${selectedCollegeId}`);
 			alert('단과대 삭제가 완료되었습니다.');
 
-			setSelectedCollege(null); // 선택 해제
+			setSelectedCollegeId(null); // 선택 해제
 			await loadCollege(); // 목록 새로고침
 		} catch (e) {
 			console.error('단과대 삭제 실패:', e);
@@ -107,23 +99,22 @@ const College = () => {
 	const handleEditRow = async (row) => {
 		setSelectedCollegeId(row.id);
 		setFormData({
-			name:row.단과대이름
-		})
+			name: row.단과대이름,
+		});
 	};
 
 	// 행 삭제 버튼
 	const handleDeleteRow = async (row) => {
-		if(!window.confirm('해당 단과대를 삭제하시겠습니까?')) return;
+		if (!window.confirm('해당 단과대를 삭제하시겠습니까?')) return;
 		try {
 			await api.delete(`/admin/college/${row.id}`);
 			alert('단과대 삭제가 완료되었습니다.');
 			await loadCollege();
-
 		} catch (e) {
-			console.error('단과대 삭제',e);
+			console.error('단과대 삭제', e);
 			alert(e.response?.data?.error || '삭제에 실패했습니다.');
 		}
-	}
+	};
 
 	// 테이블 헤더 정의 (데이터의 키값과 글자 하나라도 틀리면 안 나옴!)
 	const headers = ['id', '단과대이름'];
@@ -167,18 +158,10 @@ const College = () => {
 					data={collegeList}
 					renderActions={(row) => (
 						<div>
-							<button
-								type="button"
-								className="button button--sm"
-								onClick={() => handleEditRow(row)}
-							>
+							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
 								수정
 							</button>
-							<button
-								type="button"
-								className="button button--sm button--danger"
-								onClick={() => handleDeleteRow(row)}
-							>
+							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
 								삭제
 							</button>
 						</div>

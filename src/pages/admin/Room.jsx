@@ -99,7 +99,6 @@ export default function Room() {
 			alert(err.response?.data?.message || '강의실 삭제 실패');
 		},
 	});
-	
 
 	// 폼 변경
 	const handleChange = (e) => {
@@ -149,7 +148,7 @@ export default function Room() {
 	const handleEditRow = (row) => {
 		setSelectedRoomId(row.id);
 		setRoomData({
-			id: row.강의실,             // PK는 수정하지 않고 그대로 보여주기만
+			id: row.강의실, // PK는 수정하지 않고 그대로 보여주기만
 			collegeId: String(row.단과대ID),
 		});
 	};
@@ -158,9 +157,8 @@ export default function Room() {
 	const handleDeleteRow = (row) => {
 		if (!window.confirm(`'${row.강의실}' 강의실을 삭제하시겠습니까?`)) return;
 
-		 deleteRoomMutation.mutate(row.id);
+		deleteRoomMutation.mutate(row.id);
 	};
-
 
 	// const handleSubmit = async () => {
 	// 	createRoomMutation.mutate(roomData);
@@ -206,24 +204,12 @@ export default function Room() {
 
 				{/* 로딩 중이면 버튼 비활성화 */}
 				<div>
-					<button
-						onClick={handleSubmit}
-						className="button"
-						disabled={isMutating}
-					>
-						{isMutating
-							? '처리 중...'
-							: selectedRoomId
-							? '강의실 수정'
-							: '강의실 등록'}
+					<button onClick={handleSubmit} className="button" disabled={isMutating}>
+						{isMutating ? '처리 중...' : selectedRoomId ? '강의실 수정' : '강의실 등록'}
 					</button>
 
 					{selectedRoomId && (
-						<button
-							type="button"
-							className="button button--ghost"
-							onClick={handleCancelEdit}
-						>
+						<button type="button" className="button button--ghost" onClick={handleCancelEdit}>
 							취소
 						</button>
 					)}
@@ -237,18 +223,10 @@ export default function Room() {
 					data={roomList}
 					renderActions={(row) => (
 						<div>
-							<button
-								type="button"
-								className="button button--sm"
-								onClick={() => handleEditRow(row)}
-							>
+							<button type="button" className="button button--sm" onClick={() => handleEditRow(row)}>
 								수정
 							</button>
-							<button
-								type="button"
-								className="button button--sm button--danger"
-								onClick={() => handleDeleteRow(row)}
-							>
+							<button type="button" className="button button--sm button--danger" onClick={() => handleDeleteRow(row)}>
 								삭제
 							</button>
 						</div>
