@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import api from '../../../api/httpClient';
 import CommonUserFields from '../../user/create/CommonUserFields';
+import InputForm from '../../../components/form/InputForm';
 
 export default function ProfessorCreatePage() {
 	const [formData, setFormData] = useState({
 		name: '',
 		birthDate: '',
-		gender: '남성',
+		gender: '여성',
 		address: '',
 		tel: '',
 		email: '',
 		deptId: '',
+		hireDate: '',
 	});
 
 	const handleChange = (e) => {
@@ -30,11 +32,12 @@ export default function ProfessorCreatePage() {
 			setFormData({
 				name: '',
 				birthDate: '',
-				gender: '남성',
+				gender: '여성',
 				address: '',
 				tel: '',
 				email: '',
 				deptId: '',
+				hireDate: '',
 			});
 		} catch (err) {
 			console.error(err);
@@ -45,34 +48,15 @@ export default function ProfessorCreatePage() {
 	return (
 		<>
 			<div>
-				<h1> 교수 등록</h1>
+				<h1>교수 등록</h1>
 			</div>
 			<form>
-				<table className="table--container">
-					<tbody>
-						{/* 공통 필드 */}
-						<CommonUserFields formData={formData} onChange={handleChange} />
-
-						{/* 교수 전용 필드 */}
-						<tr>
-							<td>
-								<label htmlFor="deptId">과 ID</label>
-							</td>
-							<td>
-								<input
-									label="과 ID"
-									type="text"
-									name="deptId"
-									id="deptId"
-									className="input--box"
-									value={formData.deptId}
-									onChange={handleChange}
-								/>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<button onSubmit={handleSubmit}>등록</button>
+				{/* 공통 필드 */}
+				<CommonUserFields formData={formData} onChange={handleChange} />
+				{/* 교수 전용 필드 */}
+				<InputForm label="과 ID" name="deptId" value={formData.deptId} onChange={handleChange} />
+				<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
+				<button onClick={handleSubmit}>등록</button>
 			</form>
 		</>
 	);
