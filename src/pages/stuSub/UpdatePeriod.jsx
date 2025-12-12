@@ -33,11 +33,16 @@ export default function UpdatePeriod() {
 
 			// 2. 예비→수강(0→1) 전환일 경우 배치 실행
 			if (sugangState === 0 && newStatus === 1) {
-				console.log('🔥 배치 실행 중...');
+				console.log('🔥 배치1 실행 중...');
 				// StuSubService.movePreToStuSubBatch() 호출용 엔드포인트 필요
 				await api.post('/sugang/batch/move-pre-to-regular');
 			}
-			alert('수강신청 기간이 변경되었습니다!');
+			// 수강→종료(1→2) 전환일 경우 (detail에 값 넣기, pre 지우기)
+			if (sugangState === 1 && newStatus === 2) {
+				console.log('🔥 배치2 실행 중...');
+				await api.post('sugang/batch/move-regular-to-detail');
+			}
+			alert('기간이 변경되었습니다.');
 			loadSugangState();
 		} catch (err) {
 			console.error('상태 변경 실패:', err);
