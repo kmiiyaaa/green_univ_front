@@ -1,3 +1,6 @@
 export function comma(m) {
-    return m.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	if (m == null) return '0'; // null 또는 undefined
+	const n = Number(m);
+	if (isNaN(n)) return '0';
+	return n.toLocaleString();
 }

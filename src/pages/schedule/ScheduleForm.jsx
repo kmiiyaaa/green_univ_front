@@ -39,6 +39,7 @@ const ScheduleForm = ({
 						name="startDay"
 						className="input--box schedule-date-input"
 						value={startDay}
+						onKeyDown={(e) => e.preventDefault()}
 						onChange={(e) => setStartDay(e.target.value)}
 					/>
 				</div>
@@ -50,6 +51,7 @@ const ScheduleForm = ({
 						name="endDay"
 						className="input--box schedule-date-input"
 						value={endDay}
+						onKeyDown={(e) => e.preventDefault()}
 						onChange={(e) => setEndDay(e.target.value)}
 					/>
 				</div>

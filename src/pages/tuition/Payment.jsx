@@ -32,7 +32,6 @@ export default function Payment() {
 					setCollName(res.data.collName);
 					setTuition(res.data.tuition);
 				}
-				console.log(tuition);
 			} catch (e) {
 				console.error('tuition/payment 불러오기 실패' + e);
 			}
@@ -88,7 +87,7 @@ export default function Payment() {
 
 								<tr>
 									<th>장학유형</th>
-									<td colSpan="3">{tuition?.schType?.type ?? "장학금 지급 대상 아님"}</td>
+									<td colSpan="3">{tuition?.schType?.type ?? '장학금 지급 대상 아님'}</td>
 								</tr>
 
 								{/* 금액 format 필요 */}

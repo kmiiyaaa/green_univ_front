@@ -4,7 +4,14 @@ export default function CommonUserFields({ formData, onChange }) {
 	return (
 		<>
 			<InputForm label="이름" name="name" value={formData.name} onChange={onChange} />
-			<InputForm label="생년월일" type="data" name="name" value={formData.name} onChange={onChange} />
+			<InputForm
+				label="생년월일"
+				name="birthDate"
+				type="date"
+				value={formData.birthDate}
+				onKeyDown={(e) => e.preventDefault()}
+				onChange={onChange}
+			/>
 			<tr>
 				<td>
 					<label>성별</label>
