@@ -6,6 +6,7 @@ import api from '../api/httpClient';
 export function UserProvider({ children }) {
 	const [user, setUser] = useState(null); // 학번, 이름 등
 	const [userRole, setUserRole] = useState(null); // 권한: student, admin 등
+	const [name, SetName] = useState(null);
 	const [token, setToken] = useState(localStorage.getItem('token')); // JWT
 	const [loading, setLoading] = useState(true);
 
@@ -14,10 +15,10 @@ export function UserProvider({ children }) {
 			if (token) {
 				try {
 					const res = await api.get('/auth/me');
-					console.log('provider: ', res.data);
-					// 백엔드에서 id, username, role 이렇게 보내줬는데 id = username임 (이름 통일 시킬 것)
+					console.log('provider me: ', res.data);
 					setUser(res.data.id);
 					setUserRole(res.data.role);
+					SetName(res?.data.name);
 				} catch (err) {
 					console.error('토큰 만료됨', err);
 					localStorage.removeItem('token');
@@ -26,7 +27,7 @@ export function UserProvider({ children }) {
 			setLoading(false);
 		};
 		checkUser();
-	}, []);
+	}, [token]);
 
 	const value = {
 		user,
@@ -35,6 +36,7 @@ export function UserProvider({ children }) {
 		setUserRole,
 		token,
 		setToken,
+		name,
 	};
 
 	if (loading) return <div>Loading...</div>;
