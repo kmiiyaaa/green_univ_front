@@ -73,7 +73,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'TUI_BILL', label: '등록금 고지서 발송', path: '/tuition/bill' },
 			{ key: 'BREAK_STAFF', label: '휴학 처리', path: '/break/list/staff' },
 
-			{ key: 'SUGANG_SET', label: '수강신청 기간 설정', path: '/sugang/update' },
+			{ key: 'SUGANG_SET', label: '수강신청 기간 설정', path: '/sugang/period' },
 		],
 
 		REGISTER: [
