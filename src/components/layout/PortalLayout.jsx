@@ -6,6 +6,7 @@ import Footer from './Footer';
 import Navigation from './Navigation';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
+import Chat from '../../pages/chatbot/Chat';
 
 function PortalLayout() {
 	const navigate = useNavigate();
@@ -27,6 +28,7 @@ function PortalLayout() {
 				<Navigation /> {/* 역할별 사이드바 */}
 				<main className="content">
 					<Outlet />
+					<Chat />
 				</main>
 			</div>
 			<Footer />
