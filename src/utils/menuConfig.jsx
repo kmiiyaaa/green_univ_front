@@ -60,6 +60,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
 			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/counseling/schedule' },
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약', path: '/counseling/reserve' },
+			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},
 
@@ -118,6 +119,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/professor/counseling/schedule' },
 			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/reserve' },
 			{ key: 'STUDENT_MANAGEMENT', label: '위험 학생 관리', path: '/professor/risk' },
+			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},
 };

@@ -137,11 +137,10 @@ function App() {
 							<Route path="/counseling/schedule" element={<MyCounselingSchedule />} /> {/* 내 상담 일정 조회 */}
 							<Route path="/counseling/reserve" element={<CounselingReserve />} />{' '}
 							{/* 상담 예약 (교수가 열어둔 상담만 가능) */}
-							{/* 상담 폼 */}
+							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
 						</Route>
 						{/* 화상 비디오 */}
-						{/* <Route path="/video" element={<VideoRoom />} /> */}
 						<Route path="/videotest" element={<VideoRoomTest />} />
 						{/* 팝업들 */}
 						<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} /> {/* 강의계획서 조회 팝업 */}
