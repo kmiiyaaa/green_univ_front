@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../assets/css/Chat.css';
+import api from '../../api/httpClient';
 
 import mascotFace from '../../assets/images/gu_mascot_face.png';
 import mascotFull from '../../assets/images/mascot.png';
@@ -88,14 +89,29 @@ export default function Chat({ variant = 'mono' }) {
 	// reply(안내 문구) + links(바로가기 버튼들) 메시지로 채팅에 쌓음
 	const handleQuick = (a) => {
 		pushBot(a.reply);
-		pushLinks(a.links);
+
+		// ✅ QUICK_ACTIONS도 path/href 키가 섞여있을 수 있어서 통일
+		const normalized = (a.links ?? [])
+			.map((l) => {
+				const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
+				const label = l?.label ?? l?.title ?? l?.name ?? '바로가기';
+				if (!to) return null;
+
+				// ChatContentList가 path로 읽든 href로 읽든 안전하게 둘 다 제공
+				return { label, path: to, href: to };
+			})
+			.filter(Boolean);
+
+		if (normalized.length > 0) pushLinks(normalized);
 	};
 
 	// 링크 버튼 클릭시 이동
-	const openLink = (href) => navigate(href);
+	const openLink = (href) => {
+		if (!href) return;
+		navigate(href);
+	};
 
 	// 메세지 전송 - 백엔드 ai 호출
-	// 응답에서 answer, sources 받아 메세지 출력
 	const send = async () => {
 		const text = input.trim();
 		if (!text || loading) return;
@@ -106,16 +122,33 @@ export default function Chat({ variant = 'mono' }) {
 		setLoading(true);
 
 		try {
-			const res = await fetch('/api/ai/chat', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ message: text }),
-			});
-
-			const data = await res.json();
+			const res = await api.post('/ai/chat', { message: text });
+			const data = res.data;
 
 			// 봇 답변
-			pushBot(data?.answer ?? '답변을 생성하지 못했어요. 다시 시도해 주세요.');
+			const answer = data?.answer ?? '답변을 생성하지 못했어요. 다시 시도해 주세요.';
+
+			// ✅ references가 안 뜨는 이유: messages에 추가를 안 해서였음 → 답변 텍스트에 붙여서 무조건 표시
+			const refs = Array.isArray(data?.references) ? data.references : [];
+			const refText = refs.length ? `\n\n📌 참고 경로\n- ${refs.join('\n- ')}` : '';
+
+			pushBot(answer + refText);
+
+			// 링크 이동
+			if (Array.isArray(data?.links) && data.links.length > 0) {
+				// ✅ 백엔드가 {label, path}로 주든, 프론트가 href를 기대하든 둘 다 맞춰서 내려보냄
+				const normalized = data.links
+					.map((l) => {
+						const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
+						const label = l?.label ?? l?.title ?? l?.name ?? '바로가기';
+						if (!to) return null;
+
+						return { label, path: to, href: to };
+					})
+					.filter(Boolean);
+
+				if (normalized.length > 0) pushLinks(normalized);
+			}
 		} catch (e) {
 			console.error(e);
 			pushBot('지금은 응답이 어려워요 😥 잠시 후 다시 시도해 주세요.');
