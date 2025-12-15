@@ -127,8 +127,6 @@ export default function Chat({ variant = 'mono' }) {
 
 			// 봇 답변
 			const answer = data?.answer ?? '답변을 생성하지 못했어요. 다시 시도해 주세요.';
-
-			// ✅ references가 안 뜨는 이유: messages에 추가를 안 해서였음 → 답변 텍스트에 붙여서 무조건 표시
 			const refs = Array.isArray(data?.references) ? data.references : [];
 			const refText = refs.length ? `\n\n📌 참고 경로\n- ${refs.join('\n- ')}` : '';
 
@@ -136,7 +134,7 @@ export default function Chat({ variant = 'mono' }) {
 
 			// 링크 이동
 			if (Array.isArray(data?.links) && data.links.length > 0) {
-				// ✅ 백엔드가 {label, path}로 주든, 프론트가 href를 기대하든 둘 다 맞춰서 내려보냄
+				// {label, path}로 주든, 프론트가 href를 기대하든 둘 다 맞춰서 내려보냄
 				const normalized = data.links
 					.map((l) => {
 						const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
