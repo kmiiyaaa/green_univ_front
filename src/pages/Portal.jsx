@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import api from '../api/httpClient';
 import '../assets/css/Portal.css';
+import { formatDateLocal } from '../utils/DateTimeUtil';
 
 import portal1 from '../assets/images/portal1.png';
 import portal2 from '../assets/images/portal2.png';
@@ -52,33 +53,20 @@ export default function Portal() {
 	const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? bannerImages.length - 1 : prev - 1));
 
 	// 학사일정 유틸 (이번달 필터)
-	const toDate = (v) => {
-		if (!v) return null;
-		const d = new Date(v);
-		return Number.isNaN(d.getTime()) ? null : d;
-	};
-
-	const formatYMD = (v) => {
-		const d = toDate(v);
-		if (!d) return String(v || '');
-		const yyyy = d.getFullYear();
-		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		const dd = String(d.getDate()).padStart(2, '0');
-		return `${yyyy}.${mm}.${dd}`;
-	};
-
-	const getThisMonthRange = () => {
-		const now = new Date();
-		const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-		const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-		return { start, end };
+	const toTime = (v) => {
+		const t = new Date(v).getTime();
+		return Number.isNaN(t) ? null : t;
 	};
 
 	// 일정(start~end)이 이번달과 "겹치면" 포함
 	const isInThisMonth = (s) => {
-		const { start: mStart, end: mEnd } = getThisMonthRange();
-		const sStart = toDate(s.startDay);
-		const sEnd = toDate(s.endDay) || sStart;
+		const now = new Date();
+		const mStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
+		const mEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
+
+		const sStart = toTime(s.startDay);
+		const sEnd = toTime(s.endDay || s.startDay);
+
 		if (!sStart) return false;
 		return sStart <= mEnd && sEnd >= mStart;
 	};
@@ -98,9 +86,6 @@ export default function Portal() {
 					const res = await api.get(url);
 					// userRole 키값으로 데이터 추출 (예: res.data.student)
 					setMiniUserInfo(res.data[userRole] || {});
-
-					// (선택사항) 만약 Staff라면 처리할 업무 개수도 여기서 API로 가져오면 좋습니다.
-					// if(userRole === 'staff') { const countRes = await api.get('/staff/work/count'); setPendingCount(countRes.data); }
 				}
 			} catch (e) {
 				console.error('홈페이지 정보 로드 실패', e);
@@ -124,7 +109,7 @@ export default function Portal() {
 
 				const filtered = scheduleList
 					.filter(isInThisMonth)
-					.sort((a, b) => (toDate(a.startDay)?.getTime() || 0) - (toDate(b.startDay)?.getTime() || 0))
+					.sort((a, b) => (toTime(a.startDay) || 0) - (toTime(b.startDay) || 0))
 					.slice(0, 5);
 
 				setLatestSchedules(filtered);
@@ -138,28 +123,28 @@ export default function Portal() {
 
 	// staff 업무처리
 	useEffect(() => {
-  // staff가 아니거나 토큰 없으면 업무알림 필요 없음
-  if (!token || userRole !== 'staff') return;
+		// staff가 아니거나 토큰 없으면 업무알림 필요 없음
+		if (!token || userRole !== 'staff') return;
 
-  const loadPendingBreakCount = async () => {
-    try {
-      const res = await api.get('/break/list/staff');
-      const raw = res.data.breakAppList || [];
+		const loadPendingBreakCount = async () => {
+			try {
+				const res = await api.get('/break/list/staff');
+				const raw = res.data.breakAppList || [];
 
-      const count = raw.length;
+				const count = raw.length;
 
-      // 예: status가 있다면 이렇게
-      // const count = raw.filter(b => b.status === 'PENDING').length;
+				// 예: status가 있다면 이렇게
+				// const count = raw.filter(b => b.status === 'PENDING').length;
 
-      setPendingCount(count);
-    } catch (e) {
-      console.error('휴학 대기건수 로드 실패:', e);
-      setPendingCount(0);
-    }
-  };
+				setPendingCount(count);
+			} catch (e) {
+				console.error('휴학 대기건수 로드 실패:', e);
+				setPendingCount(0);
+			}
+		};
 
-  loadPendingBreakCount();
-}, [token, userRole]);
+		loadPendingBreakCount();
+	}, [token, userRole]);
 
 	// 로그아웃 핸들러
 	const handleLogout = () => {
@@ -230,21 +215,28 @@ export default function Portal() {
 								</div>
 							</div>
 						) : (
-							latestSchedules.map((s) => (
-								<div key={s.id} className="schedule-row">
-									<div className="schedule-badge">
-										<span className="badge-month">{toDate(s.startDay)?.toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
-										<span className="badge-day">{String(toDate(s.startDay)?.getDate() || '').padStart(2, '0')}</span>
-									</div>
+							latestSchedules.map((s) => {
+								const d = new Date(s.startDay);
+								const invalid = Number.isNaN(d.getTime());
 
-									<div className="schedule-body">
-										<div className="schedule-title">{s.information}</div>
-										<div className="schedule-range">
-											{formatYMD(s.startDay)} ~ {formatYMD(s.endDay || s.startDay)}
+								return (
+									<div key={s.id} className="schedule-row">
+										<div className="schedule-badge">
+											<span className="badge-month">
+												{invalid ? '-' : d.toLocaleString('en-US', { month: 'short' }).toUpperCase()}
+											</span>
+											<span className="badge-day">{invalid ? '-' : String(d.getDate()).padStart(2, '0')}</span>
+										</div>
+
+										<div className="schedule-body">
+											<div className="schedule-title">{s.information}</div>
+											<div className="schedule-range">
+												{formatDateLocal(s.startDay)} ~ {formatDateLocal(s.endDay || s.startDay)}
+											</div>
 										</div>
 									</div>
-								</div>
-							))
+								);
+							})
 						)}
 					</div>
 
@@ -296,40 +288,40 @@ export default function Portal() {
 								{userRole === 'staff' && (
 									<>
 										{pendingCount > 0 ? (
-										<div className="main--page--info">
-											<ul className="d-flex align-items-start">
-											<li>
-												<span className="material-symbols-rounded">notifications_active</span>
-											</li>
-											<li>업무 알림</li>
-											</ul>
+											<div className="main--page--info">
+												<ul className="d-flex align-items-start">
+													<li>
+														<span className="material-symbols-rounded">notifications_active</span>
+													</li>
+													<li>업무 알림</li>
+												</ul>
 
-											<p>
-											<a
-												href="/break/list/staff"
-												onClick={(e) => {
-												e.preventDefault();
-												navigate('/break/list/staff'); // ✅ 휴학 처리 목록으로 이동
-												}}
-											>
-												처리되지 않은 휴학 신청이 {pendingCount}건 존재합니다.
-											</a>
-											</p>
-										</div>
+												<p>
+													<a
+														href="/break/list/staff"
+														onClick={(e) => {
+															e.preventDefault();
+															navigate('/break/list/staff');
+														}}
+													>
+														처리되지 않은 휴학 신청이 {pendingCount}건 존재합니다.
+													</a>
+												</p>
+											</div>
 										) : (
-										<div className="main--page--info empty">
-											<ul className="d-flex align-items-start">
-											<li>
-												<span className="material-symbols-rounded">notifications</span>
-											</li>
-											<li>업무 알림</li>
-											</ul>
-											<p>처리해야 할 업무가 없습니다.</p>
-										</div>
+											<div className="main--page--info empty">
+												<ul className="d-flex align-items-start">
+													<li>
+														<span className="material-symbols-rounded">notifications</span>
+													</li>
+													<li>업무 알림</li>
+												</ul>
+												<p>처리해야 할 업무가 없습니다.</p>
+											</div>
 										)}
 									</>
-									)}
-								</div>
+								)}
+							</div>
 
 							{/* 하단: 버튼들 */}
 							<div className="info-actions">
@@ -345,10 +337,7 @@ export default function Portal() {
 						// 로그인 안 된 상태
 						<div className="login-guide">
 							<p style={{ marginBottom: '15px' }}>로그인이 필요한 서비스입니다.</p>
-							<button
-								className="action-btn"
-								onClick={() => navigate('/login')}
-							>
+							<button className="action-btn" onClick={() => navigate('/login')}>
 								로그인 하러가기
 							</button>
 						</div>
