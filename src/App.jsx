@@ -51,6 +51,11 @@ import Timetable from './pages/stuSub/Timetable';
 import VideoRoomTest from './pages/video/VideoRoomTest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
+import MyStatus from './pages/counseling_student/MyStatus';
+import CounselingSchedule from './pages/counseling_student/CounselingSchedule';
+import CounselingReserve from './pages/counseling_student/Counselingreserve';
+import MyCounseling from './pages/counseling_professor/MyCounseling';
+import MyRiskStudent from './pages/counseling_professor/MyRiskStudent';
 
 function App() {
 	// React Query 라이브러리
@@ -115,12 +120,19 @@ function App() {
 							{/* 교수 */}
 							<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 							<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
-							<Route path="/professor/evaluation" element={<MyEvaluation />} />
-							{/* 내 강의 평가 */}
+							<Route path="/professor/evaluation" element={<MyEvaluation />} /> {/* 내 강의 평가 */}
+							{/* 교수 - 학생 관리 */}
+							<Route path="/professor/counseling/schedule" element={<MyCounseling />} /> {/* 내 상담 일정 보기 */}
+							<Route path="/professor/counseling/reserve" element={<CounselingSchedule />} /> {/* 상담 일정 열어두기, 일별 승인, 취소 관리 */}
+							<Route path="/professor/risk" element={<MyRiskStudent />} /> {/* 내 담당 과목 위험학생 보기 */}
 							{/* 학생 - 성적 */}
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 							<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 							<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
+							{/* 학생 - 학생 지원 (상담)*/}
+							<Route path="/status" element={<MyStatus />} /> {/* 내 학업 상태 조회 (위험여부) */}
+							<Route path="/counseling/schedule" element={<CounselingSchedule />} /> {/* 내 상담 일정 조회 */}
+							<Route path="/counseling/reserve" element={<CounselingReserve />} /> {/* 내 상담 일정 조회 */}
 						</Route>
 						{/* 화상 비디오 */}
 						{/* <Route path="/video" element={<VideoRoom />} /> */}

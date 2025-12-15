@@ -7,6 +7,7 @@ const HEADER_ORDER = {
 		{ key: 'ENROLL', label: '수강신청' },
 		{ key: 'GRADE', label: '성적' },
 		{ key: 'INFO', label: '학사 정보' },
+		{ key: 'COUNSELING', label: '학생 지원' },
 	],
 	staff: [
 		{ key: 'HOME', label: '홈' },
@@ -20,6 +21,7 @@ const HEADER_ORDER = {
 		{ key: 'MY', label: 'MY' },
 		{ key: 'COURSE', label: '수업' },
 		{ key: 'INFO', label: '학사 정보' },
+		{ key: 'COUNSELING_MANAGEMENT', label: '학생 관리' },
 	],
 };
 
@@ -53,6 +55,11 @@ export const SIDEBAR_BY_HEADER = {
 		INFO: [
 			{ key: 'NOTICE', label: '공지사항', path: '/notice' },
 			{ key: 'SCHEDULE', label: '학사일정', path: '/schedule' },
+		],
+		COUNSELING: [
+			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
+			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/counseling/schedule' },
+			{ key: 'COUNSELING_RESERVE', label: '상담 예약', path: '/counseling/reserve' },
 		],
 	},
 
@@ -106,6 +113,11 @@ export const SIDEBAR_BY_HEADER = {
 		INFO: [
 			{ key: 'NOTICE', label: '공지사항', path: '/notice' },
 			{ key: 'SCHEDULE', label: '학사일정', path: '/schedule' },
+		],
+		COUNSELING_MANAGEMENT: [
+			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/professor/counseling/schedule' },
+			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/reserve' },
+			{ key: 'STUDENT_MANAGEMENT', label: '위험 학생 관리', path: '/professor/risk' },
 		],
 	},
 };
