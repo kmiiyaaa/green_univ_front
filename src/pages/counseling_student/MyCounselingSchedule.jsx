@@ -3,16 +3,16 @@ import api from "../../api/httpClient";
 
 export default function MyCounselingSchedule() {
 
-	// 이번 학기 수강 강의 목록 조회
-	useEffect(() => {
-		const loadSubjects = async() => {
-			try {
-				const res = await api.get("")
-			} catch {
-				
-			}
-		}
-	},[])
+	// // 이번 학기 수강 강의 목록 조회
+	// useEffect(() => {
+	// 	const loadSubjects = async() => {
+	// 		try {
+	// 			const res = await api.get("")
+	// 		} catch {
+
+	// 		}
+	// 	}
+	// },[])
 
 
 	// 예시 데이터
