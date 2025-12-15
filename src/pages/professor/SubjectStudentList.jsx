@@ -44,6 +44,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 			try {
 				await api.patch(`/professor/relativeGrade/${subjectId}`);
 				alert('등급 산출이 완료되었습니다!');
+				await loadStudentList(); // 추가
 			} catch (e) {
 				alert(e.response.data.message);
 				console.error('전체 학생 등급 산출 에러 : ', e);
@@ -84,6 +85,115 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		}));
 	}, [studentList, handleOpenGrade]);
 
+	// 최종 확정/AI 상태
+	const [finalizeLoading, setFinalizeLoading] = useState(false);
+	const [analysisStatus, setAnalysisStatus] = useState('IDLE');
+	// IDLE | RUNNING | SUCCESS | FAIL
+	const [analysisMessage, setAnalysisMessage] = useState('');
+
+	// 1) 확정 버튼 클릭
+	const finalizeGradeAndAi = async () => {
+		if (!window.confirm('최종 성적을 확정할까요? 확정 후에는 수정이 제한될 수 있어요.')) return;
+
+		setFinalizeLoading(true);
+		try {
+			// URL은 백엔드랑 통일해줘 (예: /professor/subjects/{id}/finalize)
+			await api.post(`/professor/subjects/${subjectId}/finalize`);
+			setAnalysisStatus('RUNNING');
+			setAnalysisMessage('AI 분석중...');
+			await loadStudentList(); // 확정 후 화면 갱신(최종확정 컬럼 보여줄 거면)
+		} catch (e) {
+			console.error('성적 확정 실패 : ', e);
+			setAnalysisStatus('FAIL');
+			setAnalysisMessage(e.response?.data?.message ?? '성적 확정 실패');
+		} finally {
+			setFinalizeLoading(false);
+		}
+	};
+
+	// 2) 분석 상태 폴링 (RUNNING일 때만)
+	useEffect(() => {
+		if (analysisStatus !== 'RUNNING') return;
+
+		const intervalId = setInterval(async () => {
+			try {
+				// 백엔드 필요: AI 배치 상태 조회 API
+				const res = await api.get(`/professor/subjects/${subjectId}/ai-status`);
+				// 예: { status: "RUNNING"|"SUCCESS"|"FAIL", message: "...", done: 12, total: 40 }
+				const { status, message } = res.data;
+
+				if (status === 'RUNNING') {
+					setAnalysisMessage(message ?? 'AI 분석중...');
+					return;
+				}
+
+				if (status === 'SUCCESS') {
+					setAnalysisStatus('SUCCESS');
+					setAnalysisMessage(message ?? 'AI 분석 완료');
+					clearInterval(intervalId);
+					await loadDropoutRisks(); // 결과 테이블 추가
+					return;
+				}
+
+				if (status === 'FAIL') {
+					setAnalysisStatus('FAIL');
+					setAnalysisMessage(message ?? 'AI 분석 실패');
+					clearInterval(intervalId);
+					await loadDropoutRisks(); // 결과 테이블 추가 (부분 성공 표시용)
+				}
+			} catch (e) {
+				// 폴링은 잠깐 네트워크 흔들려도 계속 돌게 두는 게 보통 좋아
+				console.warn('AI 상태 조회 실패(폴링): ', e?.message);
+			}
+		}, 3000);
+
+		// cleanup 중요 (컴포넌트 닫히거나 subjectId 바뀌면 interval 중지) [web:92]
+		return () => clearInterval(intervalId);
+	}, [analysisStatus, subjectId]);
+
+	const [riskList, setRiskList] = useState([]);
+
+	const loadDropoutRisks = async () => {
+		try {
+			const res = await api.get(`/professor/subjects/${subjectId}/dropout-risks`);
+			setRiskList(res.data);
+		} catch (e) {
+			console.error('DropoutRisk 조회 실패: ', e);
+		}
+	};
+
+	useEffect(() => {
+		loadDropoutRisks();
+	}, [subjectId]);
+
+	const riskHeaders = [
+		'학번',
+		'이름',
+		'위험타입',
+		'위험레벨',
+		'상태',
+		'AI요약',
+		'교수권장',
+		'학생메시지',
+		'태그',
+		'업데이트',
+	];
+
+	const riskTableData = useMemo(() => {
+		return riskList.map((r) => ({
+			학번: r.studentId ?? '',
+			이름: r.studentName ?? '',
+			위험타입: r.riskType ?? '',
+			위험레벨: r.riskLevel ?? '',
+			상태: r.status ?? '',
+			AI요약: r.aiSummary ?? '',
+			교수권장: r.aiRecommendation ?? '',
+			학생메시지: r.aiStudentMessage ?? '',
+			태그: r.aiReasonTags ?? '',
+			업데이트: r.updatedAt ?? '',
+		}));
+	}, [riskList]);
+
 	return (
 		<div>
 			{!openGrade && (
@@ -91,6 +201,28 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 				<div>
 					<h2>[{subName}] 학생 리스트 조회</h2>
 					<hr />
+
+					<div style={{ marginBottom: '12px' }}>
+						<h3>최종 성적 확정</h3>
+						<button onClick={finalizeGradeAndAi} disabled={finalizeLoading || analysisStatus === 'RUNNING'}>
+							{finalizeLoading ? '확정 중...' : '확정하고 AI 돌리기'}
+						</button>
+
+						<span style={{ marginLeft: '10px' }}>
+							{analysisStatus === 'RUNNING' && '분석중'}
+							{analysisStatus === 'SUCCESS' && '완료'}
+							{analysisStatus === 'FAIL' && '실패'}
+						</span>
+
+						{analysisMessage && <div style={{ marginTop: '6px' }}>{analysisMessage}</div>}
+					</div>
+
+					<h3 style={{ marginTop: '24px' }}>AI 위험 분석 결과</h3>
+					{riskList.length > 0 ? (
+						<DataTable headers={riskHeaders} data={riskTableData} />
+					) : (
+						<div>아직 AI 분석 결과가 없습니다.</div>
+					)}
 
 					{studentList.length > 0 ? (
 						<div>
