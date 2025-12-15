@@ -354,6 +354,15 @@
 	border-bottom: 1px solid #e5e7eb;
 }
 
+.public-notice-list li.empty-row {
+  grid-template-columns: 170px 1fr; /* schedule과 동일 */
+}
+
+/* (선택) 3번째 칸은 필요 없으니 숨기기 */
+.public-notice-list li.empty-row .public-notice-date {
+  display: none;
+}
+
 .public-notice-list li:last-child {
 	border-bottom: none;
 }
