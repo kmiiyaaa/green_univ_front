@@ -4,6 +4,9 @@ import { UserContext } from '../context/UserContext';
 import api from '../api/httpClient';
 import '../assets/css/Portal.css';
 
+import portal1 from '../assets/images/portal1.png';
+import portal2 from '../assets/images/portal2.png';
+
 // 배너 이미지 데이터
 const bannerImages = [
 	{
@@ -13,12 +16,12 @@ const bannerImages = [
 	},
 	{
 		id: 2,
-		src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
-		text: '2024학년도 신입생 모집 요강',
+		src: portal2,
+		text: '2025학년도 신입생 모집 요강',
 	},
 	{
 		id: 3,
-		src: 'https://images.unsplash.com/photo-1541339907198-e021fc9d13f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
+		src: portal1,
 		text: '글로벌 리더를 양성하는 교육의 산실',
 	},
 ];
