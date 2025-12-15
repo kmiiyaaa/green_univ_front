@@ -1,16 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../assets/css/CounselingReserve.css';
+import api from '../../api/httpClient';
 
 export default function CounselingReserve() {
 	const [selectedSlot, setSelectedSlot] = useState(null);
-
-    
 
 	const schedules = {
 		'2025-12-15': [15, 17],
 		'2025-12-16': [16],
 		'2025-12-17': [],
 	};
+
+		// 초기 화면
+	useEffect(() => {
+		const fetchInit = async () => {
+			try {
+				const res = await api.get('/grade/semester');
+				const data = res.data;
+				setYearList(data.yearList ?? []);
+				setType('전체');
+			} catch (e) {
+				console.error(e);
+				setYearList([]);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchInit();
+	}, []);
+
 
 	return (
 		<div className="reserve-wrap">
