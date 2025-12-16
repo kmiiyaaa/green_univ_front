@@ -1,6 +1,6 @@
-import OptionForm from '../form/OptionForm';
-
 // 과목 선택 공통 컴포넌트
+import OptionForm from "../../components/form/OptionForm";
+
 // subjects: [{ id, name }]
 export default function SubjectSelect({
 	label = '과목',
@@ -12,7 +12,7 @@ export default function SubjectSelect({
 	const options = [];
 
 	if (includeAll) {
-		options.push({ value: '', label: '전체' });
+		options.push({ value: '', label: '과목 선택' });
 	}
 
 	subjects.forEach((s) => {
@@ -32,3 +32,4 @@ export default function SubjectSelect({
 		/>
 	);
 }
+

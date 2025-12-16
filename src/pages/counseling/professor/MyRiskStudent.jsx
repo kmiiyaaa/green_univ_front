@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/table/DataTable';
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
 
+// 유림 님이 수정중임
 export default function MyRiskStudent() {
 	const [students, setStudents] = useState([]);
 

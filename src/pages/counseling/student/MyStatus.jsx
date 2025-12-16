@@ -6,7 +6,7 @@ import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
 import { useNavigate } from 'react-router-dom';
 
-export default function MyStatusPage() {
+export default function MyStatus() {
 	const [list, setList] = useState([]);
 	const [subjectId, setSubjectId] = useState('');
 	const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function MyStatusPage() {
 		});
 	}, []);
 
-	// 과목 목록 추출
+	// 과목 목록
 	const subjects = useMemo(() => {
 		const map = new Map();
 		list.forEach((r) => map.set(r.subjectId, r.subjectName));

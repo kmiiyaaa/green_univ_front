@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import RiskInfoPanel from '../RiskInfoPanel';
 
-export default function CounselingInfoPage() {
+export default function CounselingInfoPop() {
 	const [data, setData] = useState(null);
 
 	// 상담 상세 정보 로드
@@ -23,6 +23,7 @@ export default function CounselingInfoPage() {
 
 	// 승인 / 반려 처리
 	const decide = async (decision) => {
+		if(!window.confirm(`정말 ${decision} 하시겠습니까? ${decision} 후 철회는 불가능합니다.`)) return;
 		await api.post('/reserve/decision', null, {
 			params: { reserveId: data.id, decision },
 		});

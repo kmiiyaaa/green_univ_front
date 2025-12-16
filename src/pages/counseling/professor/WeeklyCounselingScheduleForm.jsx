@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getMonday, getWeekDates } from '../../utils/DateTimeUtil';
-import api from '../../api/httpClient';
-import '../../assets/css/WeeklyCounselingScheduleForm.css';
+import { getMonday, getWeekDates } from '../../../utils/DateTimeUtil';
+import api from '../../../api/httpClient';
+import '../../../assets/css/WeeklyCounselingScheduleForm.css';
 
 const TIMES = [15, 16, 17, 18, 19]; // 가능한 시간 15시 ~ 19시까지만 (고정)
 

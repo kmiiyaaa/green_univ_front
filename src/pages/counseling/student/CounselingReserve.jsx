@@ -1,24 +1,15 @@
-// [학생 상담 예약 메인 페이지]
 // 과목 선택 - 해당 과목의 상담 일정 로드
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
-import CounselingScheduleDetailPage from './CounselingScheduleDetail';
+import CounselingScheduleDetailPage from './CounselingReserveDetail';
 
 export default function CounselingReserve() {
-	// 수강 중인 과목 목록
 	const [subjects, setSubjects] = useState([]);
-
-	// 선택된 과목 ID
 	const [selectedSubjectId, setSelectedSubjectId] = useState(null);
-
-	// 선택된 과목의 상담 일정 목록
 	const [schedules, setSchedules] = useState([]);
-
-	// 과목명 표시용
 	const [subName, setSubName] = useState('');
-
 	const [searchParams] = useSearchParams();
 
 	// 로그인 학생의 수강 과목 조회
@@ -28,7 +19,7 @@ export default function CounselingReserve() {
 		});
 	}, []);
 
-	// 위험 학생 페이지에서 넘어온 subjectId 처리
+	// 위험 학생 페이지에서 넘어온 subjectId
 	useEffect(() => {
 		const sid = searchParams.get('subjectId');
 		if (sid) setSelectedSubjectId(Number(sid));
