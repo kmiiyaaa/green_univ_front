@@ -174,7 +174,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		'상태',
 		'AI요약',
 		'교수권장',
-		'학생메시지',
+		// '학생메시지',
 		'태그',
 		'업데이트',
 	];
@@ -188,7 +188,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 			상태: r.status ?? '',
 			AI요약: r.aiSummary ?? '',
 			교수권장: r.aiRecommendation ?? '',
-			학생메시지: r.aiStudentMessage ?? '',
+			// 학생메시지: r.aiStudentMessage ?? '',
 			태그: r.aiReasonTags ?? '',
 			업데이트: r.updatedAt ?? '',
 		}));

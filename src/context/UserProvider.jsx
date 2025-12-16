@@ -22,6 +22,7 @@ export function UserProvider({ children }) {
 				} catch (err) {
 					console.error('토큰 만료됨', err);
 					localStorage.removeItem('token');
+					setToken(null);
 				}
 			}
 			setLoading(false);
@@ -37,6 +38,7 @@ export function UserProvider({ children }) {
 		token,
 		setToken,
 		name,
+		loading,
 	};
 
 	if (loading) return <div>Loading...</div>;
