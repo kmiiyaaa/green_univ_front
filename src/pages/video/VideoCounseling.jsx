@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useMemo, useRef, useState }, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
-import { UserContext } from '../../context/UserContext';
 import '../../assets/css/VideoCounseling.css';
 
 export default function VideoCounseling() {
@@ -10,22 +9,53 @@ export default function VideoCounseling() {
 	// 안붙이려면 이 파일은 없어도 됨
 
 	const { user, name, userRole } = useContext(UserContext);
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	// ✅ sessionId 없어도 됨: roomCode로 메모 묶기
-	const room = searchParams.get('room'); // 예: /videotest?room=1234
+	// ✅ 메모/상담 식별용 코드 (DB roomCode)
+	const code = searchParams.get('code') || '';
+
+	// ✅ 레거시에서 postMessage로 들어오는 코드도 반영
+	const [roomCode, setRoomCode] = useState(code);
+
+	useEffect(() => {
+		setRoomCode(code);
+	}, [code]);
+
+	// ✅ 레거시(iframe)에서 "입장" 완료되면 부모로 코드 보내기 → 여기서 수신
+	useEffect(() => {
+		const onMessage = (event) => {
+			// same-origin만 허용(로컬/배포 모두 안전)
+			if (event.origin !== window.location.origin) return;
+
+			const data = event.data;
+			if (!data || data.type !== 'COUNSEL_ROOMCODE') return;
+
+			const next = (data.roomCode || '').toString().trim();
+			if (!next) return;
+
+			// state 반영
+			setRoomCode(next);
+
+			// URL에도 반영(새로고침/공유 가능)
+			setSearchParams({ code: next }, { replace: true });
+		};
+
+		window.addEventListener('message', onMessage);
+		return () => window.removeEventListener('message', onMessage);
+	}, [setSearchParams]);
 
 	const displayName = useMemo(() => {
 		return name || user?.name || '';
 	}, [user, name]);
 
-	// 레거시 페이지로 닉네임 + room 넘기기
+	// ✅ iframe에는 display + (있으면) code만 넘김
+	// - Janus join(room=1234)은 레거시 JS에서 고정 처리할 거라 React가 관여 X
 	const iframeSrc = useMemo(() => {
 		const params = new URLSearchParams();
 		params.set('display', displayName);
-		if (room) params.set('room', room);
+		if (roomCode) params.set('code', roomCode); // 레거시 입력칸에 "미리 채우기" 용도
 		return `/legacy-videoroom/videoroomtest.html?${params.toString()}`;
-	}, [displayName, room]);
+	}, [displayName, roomCode]);
 
 	// ============================================================
 	// 공유 메모
@@ -44,30 +74,29 @@ export default function VideoCounseling() {
 	const otherRole = myRole === 'professor' ? 'student' : 'professor';
 
 	// 내/상대 메모 계산(표시용)
-	const myServerNote = myRole === 'professor' ? professorNote : studentNote;
 	const otherServerNote = myRole === 'professor' ? studentNote : professorNote;
 
 	useEffect(() => {
-		if (!room) return;
+		if (!roomCode) return;
 
 		// 최초 1회 로드
 		loadNotes(true);
 
-		// 10마다 자동 새로고침(폴링)
+		// 10초마다 자동 새로고침(폴링)
 		const t = setInterval(() => {
-			loadNotes(false); // 편집 중이면 내 draft는 안 덮고, 상대 메모만 최신화 느낌으로
+			loadNotes(false);
 		}, 10000);
 
 		return () => clearInterval(t);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [room, myRole]);
+	}, [roomCode, myRole]);
 
 	const loadNotes = async (isFirstLoad) => {
 		try {
 			setLoading(true);
 
-			// 컨트롤러가 roomCode로 받으니까 params 이름도 roomCode로!
-			const res = await api.get(`/counsel/note`, { params: { roomCode: room } });
+			// ✅ 컨트롤러가 roomCode로 받으니까 params 이름도 roomCode로
+			const res = await api.get(`/counsel/note`, { params: { roomCode } });
 
 			const p = res.data?.professorNote ?? '';
 			const s = res.data?.studentNote ?? '';
@@ -75,12 +104,9 @@ export default function VideoCounseling() {
 			setProfessorNote(p);
 			setStudentNote(s);
 
-			// - 첫 로드 때는 서버값으로 채우기
-			// - 폴링 중에는 "내가 편집 중이면" 덮지 않기
 			if (isFirstLoad) {
 				setMyDraft(myRole === 'professor' ? p : s);
 			} else {
-				// 편집 중 아니면 서버값으로 동기화
 				if (!isEditingRef.current) {
 					setMyDraft(myRole === 'professor' ? p : s);
 				}
@@ -93,42 +119,17 @@ export default function VideoCounseling() {
 	};
 
 	const saveMyNote = async () => {
-		if (!room) return;
+		if (!roomCode) return;
 
 		try {
-			// 컨트롤러가 PostMapping("/note") 이니까 POST로!
-			// DTO가 content 받는 구조면 { content: myDraft } 로 보내면 됨
-			await api.post(
-				`/counsel/note`,
-				{ content: myDraft },
-				{ params: { roomCode: room } } // roomCode로 보내기
-			);
-
-			// 저장 후 최신화
+			await api.post(`/counsel/note`, { content: myDraft }, { params: { roomCode } });
 			await loadNotes(true);
-
 			alert('메모 저장 완료!');
 		} catch (e) {
 			console.error(e);
 			alert('메모 저장 실패');
 		}
 	};
-
-	// 헤더 , 푸터 통일로 넣기위한 jsx 파일
-	// 안붙이려면 이 파일은 없어도 됨
-
-	const { user, name } = useContext(UserContext);
-
-	const displayName = useMemo(() => {
-		return name || user.name || '';
-	}, [user, name]);
-
-	// 레거시 페이지로 닉네임 넘기기
-	const iframeSrc = useMemo(() => {
-		const params = new URLSearchParams();
-		params.set('display', displayName);
-		return `/legacy-videoroom/videoroomtest.html?${params.toString()}`;
-	}, [displayName]);
 
 	return (
 		<div className="video-counsel-page">
@@ -157,7 +158,11 @@ export default function VideoCounseling() {
 					<div className="panel-head">
 						<div className="panel-title">상담 메모</div>
 						<div className="panel-sub">
-							{loading ? '불러오는 중...' : room ? `room: ${room}` : 'room 없음(저장 비활성)'}
+							{loading
+								? '불러오는 중...'
+								: roomCode
+								? `상담 코드: ${roomCode}`
+								: '상담 시작 → (레거시 화면에서) 상담 코드 입력 후 입장하면 메모가 활성화됩니다.'}
 						</div>
 					</div>
 
@@ -165,7 +170,7 @@ export default function VideoCounseling() {
 						<div className="note-card">
 							<div className="note-card-head">
 								<div className="note-card-title">내 메모 ({myRole || 'role 없음'})</div>
-								<button className="note-btn" onClick={saveMyNote} disabled={!room}>
+								<button className="note-btn" onClick={saveMyNote} disabled={!roomCode}>
 									저장
 								</button>
 							</div>
@@ -181,14 +186,14 @@ export default function VideoCounseling() {
 									isEditingRef.current = false;
 								}}
 								placeholder="상담 중 핵심 내용을 적어두세요. (저장 버튼으로 저장)"
-								disabled={!room}
+								disabled={!roomCode}
 							/>
 						</div>
 
 						<div className="note-card">
 							<div className="note-card-head">
 								<div className="note-card-title">상대 메모 ({otherRole})</div>
-								<button className="note-btn ghost" onClick={() => loadNotes(false)} disabled={!room}>
+								<button className="note-btn ghost" onClick={() => loadNotes(false)} disabled={!roomCode}>
 									새로고침
 								</button>
 							</div>

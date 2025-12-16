@@ -6,9 +6,27 @@ server = 'https://janus.jsflux.co.kr/janus'; //jsflux janus server url
 var janus = null;
 var sfutest = null;
 var opaqueId = 'videoroomtest-' + Janus.randomString(12);
+var myroomCodeRaw = null;
 
-var myroom = 1234; // Demo room
-if (getQueryStringValue('room') !== '') myroom = parseInt(getQueryStringValue('room'));
+//if (getQueryStringValue('room') !== '') myroom = parseInt(getQueryStringValue('room'));
+
+//5자 입장코드 허용
+function roomCodeToRoomId(roomCode) {
+	var raw = (roomCode || '').trim().toUpperCase();
+
+	// 숫자 방번호 그대로 허용
+	if (/^\d+$/.test(raw)) return Number(raw);
+
+	// 5자 영문+숫자 코드 허용 (예: A1B2C)
+	if (/^[A-Z0-9]{5}$/.test(raw)) return parseInt(raw, 36);
+
+	return null;
+}
+
+if (getQueryStringValue('room') !== '') {
+	var rid = roomCodeToRoomId(getQueryStringValue('room'));
+	if (rid != null) myroom = rid;
+}
 var myusername = null;
 var myid = null;
 var mystream = null;
@@ -125,8 +143,9 @@ $(document).ready(function () {
 								Janus.debug('Event: ' + event);
 								if (event) {
 									if (event === 'joined') {
-										// Publisher/manager created, negotiate WebRTC and attach to existing feeds, if any
-										myid = msg['id'];
+										if (getQueryStringValue('room') !== '')
+											// Publisher/manager created, negotiate WebRTC and attach to existing feeds, if any
+											myid = msg['id'];
 										mypvtid = msg['private_id'];
 										Janus.log('Successfully joined room ' + msg['room'] + ' with ID ' + myid);
 										if (subscriber_mode) {
@@ -134,6 +153,21 @@ $(document).ready(function () {
 											$('#videos').removeClass('hide').show();
 										} else {
 											publishOwnFeed(true);
+										}
+
+										try {
+											if (window.parent && window.parent !== window) {
+												window.parent.postMessage(
+													{
+														type: 'COUNSEL_ROOMCODE',
+														roomCode: myroomCodeRaw, // 부모는 이걸로 메모 묶음
+														roomId: myroom, // 참고용
+													},
+													window.location.origin
+												);
+											}
+										} catch (e) {
+											console.warn('postMessage failed', e);
 										}
 										// Any new feed to attach to?
 										if (msg['publishers']) {
@@ -373,14 +407,25 @@ function registerUsername() {
 		$('#register').attr('disabled', true).unbind('click');
 
 		var roomname = $('#roomname').val();
+
 		if (roomname === '') {
-			$('#room').removeClass().addClass('label label-warning').html('채팅방 아이디(번호)를 넣으세요. ex) 1234');
+			$('#room')
+				.removeClass()
+				.addClass('label label-warning')
+				.html('입장코드(숫자 또는 영문+숫자 5자)를 넣으세요. ex) 1234 / A1B2C');
 			$('#roomname').removeAttr('disabled');
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
-		if (/[^0-9]/.test(roomname)) {
-			$('#room').removeClass().addClass('label label-warning').html('채팅방 아이디는 숫자만 가능합니다.');
+
+		// 5자 입장코드(영문+숫자)도 허용 (Janus room은 숫자라서 변환 필요)
+		var roomId = roomCodeToRoomId(roomname);
+
+		if (roomId == null) {
+			$('#room')
+				.removeClass()
+				.addClass('label label-warning')
+				.html('입장코드는 숫자 또는 영문+숫자 5자만 가능합니다. ex) 1234 / A1B2C');
 			$('#roomname').removeAttr('disabled').val('');
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
@@ -404,7 +449,10 @@ function registerUsername() {
 		}
 
 		//alert("room id:" + roomname);
-		myroom = Number(roomname); //사용자 입력 방 아이디
+		//myroom = Number(roomname); //사용자 입력 방 아이디
+
+		myroomCodeRaw = roomname; // ✅ 원본 코드 저장
+		myroom = roomId; //사용자 입력 방 아이디 (숫자 or 5자코드 변환)
 		myusername = username;
 
 		var register = {

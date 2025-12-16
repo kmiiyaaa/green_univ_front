@@ -23,18 +23,20 @@ export default function CounselingInfo() {
 		if (!window.confirm(`처리 후 변경할 수 없습니다. ${decision}하시겠습니까?`)) return;
 
 		try {
-			await api.post(`/reserve`, {
+			const res = await api.post(`/reserve`, {
 				preReserveId: data.id, // 예비 예약 ID
 				decision: decision, // '승인' | '반려'
 				studentId: data.student.id, // 학생 아이디
 				subjectId: data.subject.id, // 요청한 과목 아이디
 			});
+
+			const roomCode = res.data.roomCode;
 			alert(decision === '승인' ? '승인 완료' : '반려 완료');
 			localStorage.removeItem('counselingDetail');
 			window.close();
 		} catch (e) {
-			alert('처리 중 오류 발생  :', e);
 			console.error(e);
+			alert('처리 중 오류 발생');
 		}
 	};
 
