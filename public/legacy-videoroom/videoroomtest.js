@@ -6,6 +6,11 @@ server = 'https://janus.jsflux.co.kr/janus'; //jsflux janus server url
 var janus = null;
 var sfutest = null;
 var opaqueId = 'videoroomtest-' + Janus.randomString(12);
+
+// 실제 Janus 방은 데모 안정성을 위해 고정
+var myroom = 1234; // Demo room (고정)
+
+// 사용자가 입력한 "상담방 코드(DB roomCode)"는 이 값으로만 저장(메모 식별용)
 var myroomCodeRaw = null;
 
 //if (getQueryStringValue('room') !== '') myroom = parseInt(getQueryStringValue('room'));
@@ -391,7 +396,6 @@ function checkEnter(field, event) {
 	}
 }
 
-// [jsflux] 방생성 및 조인
 function registerUsername() {
 	if ($('#roomname').length === 0) {
 		// Create fields to register
@@ -406,35 +410,31 @@ function registerUsername() {
 		$('#username').attr('disabled', true);
 		$('#register').attr('disabled', true).unbind('click');
 
-		var roomname = $('#roomname').val();
+		// ✅ 사용자가 입력하는 값 = DB roomCode (상담 식별용)
+		var roomname = ($('#roomname').val() || '').trim();
 
 		if (roomname === '') {
 			$('#room')
 				.removeClass()
 				.addClass('label label-warning')
-				.html('입장코드(숫자 또는 영문+숫자 5자)를 넣으세요. ex) 1234 / A1B2C');
-			$('#roomname').removeAttr('disabled');
+				.html('상담방 코드를 입력하세요. (상담 확정 시 받은 코드)');
+			$('#roomname').removeAttr('disabled').focus();
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
 
-		// 5자 입장코드(영문+숫자)도 허용 (Janus room은 숫자라서 변환 필요)
-		var roomId = roomCodeToRoomId(roomname);
-
-		if (roomId == null) {
-			$('#room')
-				.removeClass()
-				.addClass('label label-warning')
-				.html('입장코드는 숫자 또는 영문+숫자 5자만 가능합니다. ex) 1234 / A1B2C');
-			$('#roomname').removeAttr('disabled').val('');
+		// (선택) 코드 길이 제한 정도만 — 너무 빡세게 막지 말기
+		if (roomname.length > 50) {
+			$('#room').removeClass().addClass('label label-warning').html('상담방 코드는 50자 이하로 입력해주세요.');
+			$('#roomname').removeAttr('disabled').focus();
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
 
-		var username = $('#username').val();
+		var username = ($('#username').val() || '').trim();
 		if (username === '') {
 			$('#you').removeClass().addClass('label label-warning').html('채팅방에서 사용할 닉네임을 입력해주세요.');
-			$('#username').removeAttr('disabled');
+			$('#username').removeAttr('disabled').focus();
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
@@ -443,63 +443,29 @@ function registerUsername() {
 				.removeClass()
 				.addClass('label label-warning')
 				.html('닉네임은 한글/영문/숫자(공백 가능)로 2~20자만 가능합니다.');
-			$('#username').removeAttr('disabled').val('');
+			$('#username').removeAttr('disabled').val('').focus();
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
 
-		//alert("room id:" + roomname);
-		//myroom = Number(roomname); //사용자 입력 방 아이디
+		// ✅ "상담방 코드"는 저장만(메모 식별용)
+		myroomCodeRaw = roomname;
 
-		myroomCodeRaw = roomname; // ✅ 원본 코드 저장
-		myroom = roomId; //사용자 입력 방 아이디 (숫자 or 5자코드 변환)
+		// ✅ 실제 Janus join은 1234로 고정 (사용자에게는 안 보임)
+		myroom = 1234;
+
 		myusername = username;
 
 		var register = {
 			request: 'join',
-			room: myroom,
+			room: myroom, // ✅ 항상 1234
 			ptype: 'publisher',
 			display: username,
 		};
 		sfutest.send({ message: register });
 
-		// var createRoom = {
-		//   request: "create",
-		//   room: myroom,
-		//   permanent: false,
-		//   record: false,
-		//   publishers: 6,
-		//   bitrate: 128000,
-		//   fir_freq: 10,
-		//   ptype: "publisher",
-		//   description: "test",
-		//   is_private: false,
-		// };
-
-		sfutest.send({
-			message: createRoom,
-			success: function (result) {
-				var event = result['videoroom'];
-				Janus.debug('Event: ' + event);
-				if (event != undefined && event != null) {
-					// Our own screen sharing session has been created, join it
-					console.log('Room Create Result: ' + result);
-					console.log('error: ' + result['error']);
-					room = result['room'];
-					console.log('Screen sharing session created: ' + room);
-
-					var username = $('#username').val(); //myusername = randomString(12);
-					var register = {
-						request: 'join',
-						room: myroom,
-						ptype: 'publisher',
-						display: username,
-					};
-					myusername = username;
-					sfutest.send({ message: register });
-				}
-			},
-		});
+		// (중요) createRoom 관련 코드는 제거/비활성: createRoom이 정의 안 되어있으면 에러남
+		// sfutest.send({ message: createRoom, success: ... })  <-- 이 블록은 삭제하거나 주석 처리해줘
 	}
 }
 
