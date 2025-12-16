@@ -30,7 +30,7 @@ export default function CreatePayment() {
 	//	}
 	// };
 
-		const submitTuition = async () => {
+	const submitTuition = async () => {
 		if (submitting) return;
 
 		try {
@@ -45,7 +45,7 @@ export default function CreatePayment() {
 		}
 	};
 
-		return (
+	return (
 		<div className="payment-container">
 			<h2 className="payment-title">등록금 고지서 발송</h2>
 

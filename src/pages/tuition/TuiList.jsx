@@ -50,7 +50,7 @@ export default function TuiList() {
 	return (
 		<div>
 			<h2>등록금 내역 조회</h2>
-			<hr />
+			<div className="split--div"></div>
 
 			{tuiList.length > 0 ? <DataTable headers={headers} data={tableData} /> : '등록금 납부 내역이 없습니다!'}
 		</div>
