@@ -97,7 +97,6 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 
 		setFinalizeLoading(true);
 		try {
-			// URL은 백엔드랑 통일해줘 (예: /professor/subjects/{id}/finalize)
 			await api.post(`/professor/subjects/${subjectId}/finalize`);
 			setAnalysisStatus('RUNNING');
 			setAnalysisMessage('AI 분석중...');
@@ -155,7 +154,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 
 	const loadDropoutRisks = async () => {
 		try {
-			const res = await api.get(`/professor/subjects/${subjectId}/dropout-risks`);
+			const res = await api.get(`/risk/${subjectId}/dropout-risks`);
 			setRiskList(res.data);
 		} catch (e) {
 			console.error('DropoutRisk 조회 실패: ', e);

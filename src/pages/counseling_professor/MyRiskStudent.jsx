@@ -3,13 +3,13 @@ import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 
 export default function MyRiskStudent() {
-	const [students, setStudents] = useState([]);
+	const [riskList, setRiskList] = useState([]);
 
 	const loadRiskStudents = async () => {
 		try {
-			const res = await api.get('/counseling/riskStu');
+			const res = await api.get(`/risk/list`);
 			console.log(res.data);
-			setStudents(res.data.riskStuList);
+			setRiskList(res.data);
 		} catch (e) {
 			alert(e.response.default.message);
 		}
@@ -27,14 +27,13 @@ export default function MyRiskStudent() {
 		'상태',
 		'AI요약',
 		'교수권장',
-		'학생메시지',
 		'태그',
 		'업데이트',
 		'상담요청',
 	];
 
 	const riskTableData = useMemo(() => {
-		return students.map((r) => ({
+		return riskList.map((r) => ({
 			학번: r.studentId ?? '',
 			이름: r.studentName ?? '',
 			위험타입: r.riskType ?? '',
@@ -42,12 +41,11 @@ export default function MyRiskStudent() {
 			상태: r.status ?? '',
 			AI요약: r.aiSummary ?? '',
 			교수권장: r.aiRecommendation ?? '',
-			학생메시지: r.aiStudentMessage ?? '',
 			태그: r.aiReasonTags ?? '',
 			업데이트: r.updatedAt ?? '',
 			상담요청: <button>상담 요청</button>,
 		}));
-	}, [students]);
+	}, [riskList]);
 
 	return (
 		<div className="risk-wrap">
