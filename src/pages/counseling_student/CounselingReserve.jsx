@@ -76,7 +76,7 @@ export default function CounselingReserve() {
 
 			{subId ? (
 				<div>
-					<LoadCounselingSchedule counselingSchedule={counselingSchedule} subName={subName} />
+					<LoadCounselingSchedule counselingSchedule={counselingSchedule} subName={subName} subId={subId} />
 				</div>
 			) : (
 				'아직 선택된 과목이 없습니다.'
