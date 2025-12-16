@@ -14,23 +14,25 @@ export default function PreSugang() {
 
 	const [myPreList, setMyPreList] = useState([]); // 내가 신청한 예비 목록
 	const [totalGrades, setTotalGrades] = useState(0); // 총 학점
+	const [period, setPeriod] = useState(null);
 
 	// 학생이 신청한 예비 강의 목록 조회
 	const loadMyPreList = async () => {
 		try {
 			const res = await api.get('/sugang/stusublist');
 			// period, preStuSubList, totalGrades
-			if (res.data.period !== 0) {
-				alert('현재 예비 수강 신청 기간이 아닙니다.');
+			const currentPeriod = res.data.period;
+			setPeriod(currentPeriod);
+			// 예비 수강 신청 기간(0)이 아니면 접근 차단
+			if (currentPeriod !== 0) {
 				setError('현재 예비 수강 신청 기간이 아닙니다.');
-				// navigate(-1); // 이전 페이지로 튕겨내고 싶으면 주석 해제
-				return; // ⭐️ 중요: 여기서 함수를 끝내서 밑에 데이터 세팅을 막음
+				return;
 			}
 			const preRaw = res.data.preStuSubList || [];
 			setMyPreList(preRaw.map(mapRow));
 			setTotalGrades(res.data.totalGrades || 0);
 		} catch (e) {
-			setError(e.response?.data?.message);
+			setError(e.response?.data?.message || '예비 목록 조회 실패');
 			console.error('예비 목록 조회 실패:', e);
 		}
 	};
@@ -98,13 +100,36 @@ export default function PreSugang() {
 		'정원',
 		// '예비신청'
 	];
+	console.log('예비period', period);
 
+	// 에러 화면 (기간 아닐 때)
 	if (error) {
 		return (
-			<div style={{ padding: '50px', textAlign: 'center', color: 'red' }}>
+			<div style={{ padding: '50px', textAlign: 'center' }}>
 				<h2>🚫 알림</h2>
-				<h3>{error}</h3>
-				<button onClick={() => navigate(-1)}>뒤로 가기</button>
+				<h3 style={{ color: 'red', marginTop: '20px' }}>
+					{period === 1 && '현재 수강 신청 기간입니다.'}
+					{period === 2 && '수강 신청이 종료되었습니다.'}
+					{period === null && '학사 일정을 불러올 수 없습니다.'}
+				</h3>
+				<p style={{ marginTop: '10px', fontSize: '16px' }}>
+					{period === 1 && '수강 신청 페이지를 이용해주세요.'}
+					{period === null && '관리자에게 문의하세요.'}
+				</p>
+				<button
+					onClick={() => navigate('/portal')}
+					style={{
+						padding: '10px 20px',
+						cursor: 'pointer',
+						marginTop: '20px',
+						backgroundColor: '#2b492eff',
+						color: 'white',
+						border: 'none',
+						borderRadius: '4px',
+					}}
+				>
+					메인으로 돌아가기
+				</button>
 			</div>
 		);
 	}
@@ -128,7 +153,7 @@ export default function PreSugang() {
 					<hr style={{ margin: '30px 0' }} />
 				</>
 			)}
-			{/* SugangApplication 컴포넌트 불러오기 */}
+
 			<SugangApplication
 				apiEndpoint="/sugang/presubjectlist"
 				actionHeaderLabel="예비신청"
