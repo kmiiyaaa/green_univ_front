@@ -6,11 +6,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>그린 상담실</title>
 
-		<!-- 폰트(선택) -->
+		<!-- 폰트 -->
 		<link rel="preconnect" href="https://cdn.jsdelivr.net" />
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/pretendard.min.css" />
 
-		<!-- ✅ (레거시 유지) webrtc-adapter / jQuery / blockUI / bootstrap / bootbox / spin / toastr -->
+		<!-- (레거시 유지) webrtc-adapter / jQuery / blockUI / bootstrap / bootbox / spin / toastr -->
 		<script
 			type="text/javascript"
 			src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.4.0/adapter.min.js"
@@ -43,11 +43,10 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" />
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
-		<!-- ✅ Janus + 너 JS (경로 유지: 같은 폴더에 있음) -->
+		<!-- Janus + 너 JS (경로 유지: 같은 폴더에 있음) -->
 		<script type="text/javascript" src="janus.js"></script>
 		<script type="text/javascript" src="videoroomtest.js?ver=12"></script>
 
-		<!-- ✅ 새 스타일 -->
 		<link rel="stylesheet" href="css/consult.css" type="text/css" />
 	</head>
 
@@ -61,9 +60,34 @@
 						<div class="brand-title">그린 상담실</div>
 						<div class="brand-sub">교수 · 학생 화상상담</div>
 					</div>
+
+					<!-- 채팅방 입장 이름 고정 -->
+					<script>
+						document.addEventListener('DOMContentLoaded', () => {
+							const p = new URLSearchParams(location.search);
+							const display = p.get('display');
+							const room = p.get('room');
+
+							if (display) {
+								const username = document.getElementById('username');
+								if (username) {
+									username.value = display;
+									username.readOnly = true; // 수정 못하게(원하면 제거)
+								}
+							}
+
+							if (room) {
+								const roomname = document.getElementById('roomname');
+								if (roomname) {
+									roomname.value = room;
+								}
+							}
+						});
+					</script>
 				</div>
 
 				<!-- JS가 #start를 one("click")으로 잡음: id 유지 필수 -->
+				<p class="perm-hint">상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. <b>허용</b>을 눌러주세요.</p>
 				<button class="btn btn-primary" autocomplete="off" id="start">상담 시작</button>
 			</header>
 
@@ -73,9 +97,7 @@
 					<!-- JS가 #details를 remove() 하기도 함 -->
 					<div class="card" id="details">
 						<h2 class="card-title">상담을 시작해볼까요?</h2>
-						<p class="card-desc">
-							<b>상담 시작</b>을 누른 뒤, <b>상담방 코드</b>와 <b>닉네임</b>을 입력하면 입장합니다.
-						</p>
+						<p class="card-desc"><b>상담 시작</b>을 누른 뒤, <b>상담방 코드</b>를 입력하면 입장합니다.</p>
 						<ul class="card-list">
 							<li>같은 상담방 코드로 접속하면 서로 연결됩니다.</li>
 							<li>카메라/마이크 권한 허용이 필요합니다.</li>
@@ -84,7 +106,7 @@
 
 						<div class="tip">
 							<span class="tip-dot"></span>
-							<span class="tip-text">팁: 상담 예약번호를 상담방 코드로 사용하면 관리하기 쉬워요.</span>
+							<span class="tip-text"> 상담방 코드는 교수와 상담 예약 시 받을 수 있습니다.</span>
 						</div>
 					</div>
 
@@ -120,9 +142,7 @@
 									</span>
 								</div>
 
-								<div class="mini-help">
-									* 닉네임/방 코드는 JS 제약(영문/숫자)이 있을 수 있어요. (너가 필요하면 한글 허용도 바꿔줄게)
-								</div>
+								<!-- <div class="mini-help">* 상담방 코드는 교수와 상담 확정시 받을 수 있습니다.</div> -->
 							</div>
 						</div>
 					</div>
@@ -207,14 +227,37 @@
 						</div>
 					</div>
 
-					<!-- videos가 hide일 때도 우측이 비어보이지 않게 -->
-					<div class="empty-state" id="emptyState">
-						<div class="empty-card">
-							<div class="empty-title">상담 시작 후 입장하면</div>
-							<div class="empty-desc">이곳에 화상 화면이 표시됩니다.</div>
-							<div class="empty-chip">카메라/마이크 권한을 허용해주세요</div>
+					<!-- videos가 hide일 때(입장 전) 보여줄 프리뷰 -->
+					<div class="prejoin" id="prejoin">
+						<div class="prejoin-inner">
+							<div class="prejoin-title">상담 시작 전 안내</div>
+							<div class="prejoin-desc">
+								좌측에서 <b>상담 시작</b> → <b>상담방 코드</b> 입력 후 입장하면<br />
+								이곳에 <b>내 화면 / 상대 화면</b>이 표시됩니다.
+							</div>
+
+							<div class="prejoin-box">
+								<div class="prejoin-chip">카메라/마이크 권한을 허용해주세요</div>
+								<div class="prejoin-skeleton"></div>
+							</div>
 						</div>
 					</div>
+
+					<script>
+						(function () {
+							const setMode = () => {
+								const videos = document.getElementById('videos');
+								if (!videos) return;
+								const inCall = !videos.classList.contains('hide') && videos.style.display !== 'none';
+								document.body.classList.toggle('in-call', inCall);
+							};
+
+							const obs = new MutationObserver(setMode);
+							obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
+
+							setMode();
+						})();
+					</script>
 				</section>
 			</main>
 		</div>

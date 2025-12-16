@@ -47,6 +47,14 @@
 	filter: brightness(1.05);
 }
 
+/* ✅ 영상 + 메모 패널 레이아웃 */
+.video-counsel-layout {
+	display: grid;
+	grid-template-columns: 1fr 380px;
+	gap: 12px;
+	align-items: stretch;
+}
+
 /* 핵심: 헤더/푸터 제외한 영역에서 꽉 차게 */
 .video-counsel-frameWrap {
 	width: 100%;
@@ -55,7 +63,6 @@
 	border: 1px solid #e5e7eb;
 	background: #ffffff;
 
-	/* 여기 높이만 네 레이아웃에 맞춰 조절하면 끝 */
 	height: calc(100vh - 240px);
 	min-height: 680px;
 }
@@ -66,4 +73,205 @@
 	border: 0;
 	display: block;
 	background: #ffffff;
+}
+
+/* ✅ 메모 패널 */
+.counsel-note-panel {
+	border-radius: 18px;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	overflow: hidden;
+
+	height: calc(100vh - 240px);
+	min-height: 680px;
+
+	display: flex;
+	flex-direction: column;
+}
+
+.panel-head {
+	padding: 14px 16px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-title {
+	font-weight: 900;
+	color: #111827;
+	font-size: 14px;
+}
+
+.panel-sub {
+	margin-top: 4px;
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.panel-body {
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	overflow: auto;
+}
+
+/* 카드 */
+.note-card {
+	border: 1px solid #e5e7eb;
+	border-radius: 16px;
+	background: #ffffff;
+	padding: 12px;
+}
+
+.note-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+
+.note-card-title {
+	font-size: 13px;
+	font-weight: 900;
+	color: #111827;
+}
+
+.note-btn {
+	height: 34px;
+	padding: 0 12px;
+	border-radius: 12px;
+	border: 1px solid #111827;
+	background: #111827;
+	color: #ffffff;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.note-btn:hover {
+	filter: brightness(1.05);
+}
+
+.note-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.note-btn.ghost {
+	background: #ffffff;
+	color: #111827;
+}
+
+.note-textarea {
+	width: 100%;
+	min-height: 140px;
+	border: 1px solid #e5e7eb;
+	border-radius: 14px;
+	padding: 10px 12px;
+	font-size: 13px;
+	line-height: 1.55;
+	color: #111827;
+	resize: vertical;
+	outline: none;
+}
+
+.note-textarea:focus {
+	border-color: #111827;
+	box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.12);
+}
+
+.note-textarea.readOnly {
+	background: #f9fafb;
+}
+
+/* 체크리스트 */
+.check-add {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.check-input {
+	flex: 1;
+	height: 40px;
+	border-radius: 14px;
+	border: 1px solid #e5e7eb;
+	padding: 0 12px;
+	outline: none;
+	font-size: 13px;
+}
+
+.check-input:focus {
+	border-color: #111827;
+	box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.12);
+}
+
+.check-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.check-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px 10px;
+	border: 1px solid #e5e7eb;
+	border-radius: 14px;
+	background: #ffffff;
+}
+
+.check-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.check-text {
+	font-size: 13px;
+	color: #111827;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.check-text.done {
+	text-decoration: line-through;
+	color: #6b7280;
+}
+
+.icon-btn {
+	height: 32px;
+	padding: 0 10px;
+	border-radius: 12px;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	color: #111827;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.icon-btn:hover {
+	background: #f9fafb;
+}
+
+.check-empty {
+	font-size: 12px;
+	color: #6b7280;
+	padding: 8px 2px;
+}
+
+/* 반응형: 화면 좁으면 아래로 */
+@media (max-width: 1100px) {
+	.video-counsel-layout {
+		grid-template-columns: 1fr;
+	}
+	.counsel-note-panel,
+	.video-counsel-frameWrap {
+		height: auto;
+		min-height: 520px;
+	}
 }
