@@ -60,6 +60,8 @@ import MyCounselingSchedule from './pages/counseling_student/MyCounselingSchedul
 import WeeklyCounselingScheduleForm from './pages/counseling_professor/WeeklyCounselingScheduleForm';
 import VideoCounseling from './pages/video/VideoCounseling';
 import CounselingRequestList from './pages/counseling_student/CounselingRequestList';
+import PreCounselingRequest from './pages/counseling_professor/PreCounselingRequest';
+import CounselingInfo from './pages/counseling_professor/CounselingInfo';
 
 function App() {
 	// React Query 라이브러리
@@ -127,8 +129,10 @@ function App() {
 							<Route path="/professor/evaluation" element={<MyEvaluation />} /> {/* 내 강의 평가 */}
 							{/* 교수 - 학생 관리 */}
 							<Route path="/professor/counseling/reserve" element={<MyCounseling />} /> {/* 내 상담 일정 보기 */}
-							<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />{' '}
-							{/* 상담 일정 열어두기, 일별 승인, 취소 관리 */}
+							<Route path="/professor/counseling/pre" element={<PreCounselingRequest />} />{' '}
+							{/* 내 예비 상담 일정 요청 보기 */}
+							<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
+							{/* 상담 일정 열어주기 */}
 							<Route path="/professor/risk" element={<MyRiskStudent />} /> {/* 내 담당 과목 위험학생 보기 */}
 							{/* 학생 - 성적 */}
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
@@ -137,9 +141,9 @@ function App() {
 							{/* 학생 - 학생 지원 (상담)*/}
 							<Route path="/status" element={<MyStatus />} /> {/* 내 학업 상태 조회 (위험여부) */}
 							<Route path="/counseling/schedule" element={<MyCounselingSchedule />} /> {/* 내 상담 일정 조회 */}
-							<Route path="/counseling/reserve" element={<CounselingReserve />} />{' '}
-							<Route path="/counseling/reqAndRes" element={<CounselingRequestList />} />{' '}
+							<Route path="/counseling/reserve" element={<CounselingReserve />} />
 							{/* 상담 신청, 들어온 요청 조회 */}
+							<Route path="/counseling/reqAndRes" element={<CounselingRequestList />} />{' '}
 							{/* 상담 예약 (교수가 열어둔 상담만 가능) */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
@@ -149,7 +153,7 @@ function App() {
 						{/* <Route path="/videotest" element={<VideoRoomTest />} /> */}
 						{/* 팝업들 */}
 						<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} /> {/* 강의계획서 조회 팝업 */}
-						{/* 강의계획서 조회 팝업 */}
+						<Route path="/counseling/info" element={<CounselingInfo />} />
 						<Route path="/evaluation" element={<Evaluation />} /> {/* 학생 강의 평가 팝업 */}
 						<Route path="/findAccount/:type" element={<FindAccountPop />} /> {/* 아이디/ 비밀번호 찾기 (비로그인) */}
 						{/* 잘못된 경로 → 로그인 페이지로 */}
