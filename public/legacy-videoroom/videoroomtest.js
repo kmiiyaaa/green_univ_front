@@ -393,8 +393,11 @@ function registerUsername() {
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;
 		}
-		if (/[^a-zA-Z0-9]/.test(username)) {
-			$('#you').removeClass().addClass('label label-warning').html('닉네임은 영문만 가능합니다.');
+		if (!/^[가-힣a-zA-Z0-9 ]{2,20}$/.test(username)) {
+			$('#you')
+				.removeClass()
+				.addClass('label label-warning')
+				.html('닉네임은 한글/영문/숫자(공백 가능)로 2~20자만 가능합니다.');
 			$('#username').removeAttr('disabled').val('');
 			$('#register').removeAttr('disabled').click(registerUsername);
 			return;

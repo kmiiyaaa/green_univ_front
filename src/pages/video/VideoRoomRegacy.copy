@@ -8,7 +8,7 @@ export default function VideoRoomLegacy() {
 			<div id="videojoin" className="hide">
 				<div id="registernow" className="hide">
 					<input id="roomname" placeholder="room id (숫자)" />
-					<input id="username" placeholder="nickname (영문/숫자)" />
+					<input id="username" placeholder="nickname (본인 이름)" />
 					<button id="register">Register</button>
 
 					<div>
@@ -23,7 +23,7 @@ export default function VideoRoomLegacy() {
 			<div id="videos" className="hide">
 				<div id="publisher" className="hide"></div>
 
-				<div id="videolocal" style={{ width: 480, height: 360, background: '#111' }} />
+				<div id="videolocal" />
 
 				<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
 					{[1, 2, 3, 4, 5].map((i) => (
