@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState }, { useContext, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
+import { UserContext } from '../../context/UserContext';
 import '../../assets/css/VideoCounseling.css';
 
 export default function VideoCounseling() {
@@ -112,6 +113,22 @@ export default function VideoCounseling() {
 			alert('메모 저장 실패');
 		}
 	};
+
+	// 헤더 , 푸터 통일로 넣기위한 jsx 파일
+	// 안붙이려면 이 파일은 없어도 됨
+
+	const { user, name } = useContext(UserContext);
+
+	const displayName = useMemo(() => {
+		return name || user.name || '';
+	}, [user, name]);
+
+	// 레거시 페이지로 닉네임 넘기기
+	const iframeSrc = useMemo(() => {
+		const params = new URLSearchParams();
+		params.set('display', displayName);
+		return `/legacy-videoroom/videoroomtest.html?${params.toString()}`;
+	}, [displayName]);
 
 	return (
 		<div className="video-counsel-page">

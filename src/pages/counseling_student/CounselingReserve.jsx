@@ -1,35 +1,63 @@
 import { useEffect, useState } from 'react';
 import '../../assets/css/CounselingReserve.css';
 import api from '../../api/httpClient';
+import OptionForm from '../../components/form/OptionForm';
+import { getMonday, getWeekDates } from '../../utils/DateTimeUtil';
+import LoadCounselingSchedule from './LoadCounselingSchedule';
+import { useSearchParams } from 'react-router-dom';
 
 export default function CounselingReserve() {
-	const [selectedSlot, setSelectedSlot] = useState(null);
+	const [searchParams] = useSearchParams(); // 내 성적 조회에서 넘어왔는지
+	const [subList, setSubList] = useState([]); // 이번 학기에 내가 듣는 과목
+	const [subId, setSubId] = useState(null); // 선택한 과목의 아이디
+	const [subName, setSubName] = useState('');
+	const [counselingSchedule, setCounselingSchedule] = useState([]);
 
-	const schedules = {
-		'2025-12-15': [15, 17],
-		'2025-12-16': [16],
-		'2025-12-17': [],
-	};
-
-		// 초기 화면
 	useEffect(() => {
-		const fetchInit = async () => {
-			try {
-				const res = await api.get('/grade/semester');
-				const data = res.data;
-				setYearList(data.yearList ?? []);
-				setType('전체');
-			} catch (e) {
-				console.error(e);
-				setYearList([]);
-			} finally {
-				setLoading(false);
-			}
+		const loadSubjectList = async () => {
+			const res = await api.get('/subject/semester'); // 학생 기준 수강 과목
+			setSubList(res.data.subjectList);
 		};
-
-		fetchInit();
+		loadSubjectList();
 	}, []);
 
+	const subjectOptions = subList.map((s) => ({
+		value: s.id,
+		label: s.name,
+	}));
+
+	// 과목 검색 후, 가능한 교수의 예약 목록 조회
+	const loadSchedules = async () => {
+		const monday = getMonday(); // 이번 주 월요일 기준
+		const weekDates = getWeekDates(monday);
+		console.log(subId);
+		try {
+			const res = await api.get('/preReserve/byProfessorId', {
+				params: {
+					subId: subId,
+					weekStartDate: weekDates[0],
+				},
+			});
+			setCounselingSchedule(res.data.counselingScheduleList);
+			setSubName(res.data.subName);
+			console.log(res.data.counselingScheduleList);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	// 내 성적 창에서 넘어옴 (파라미터로)
+	useEffect(() => {
+		const param = searchParams.get('subjectId');
+
+		if (param) {
+			setSubId(Number(param)); // 파라미터 있으면 세팅
+		}
+	}, [searchParams]);
+
+	useEffect(() => {
+		loadSchedules();
+	}, [subId]);
 
 	return (
 		<div className="reserve-wrap">
@@ -37,64 +65,22 @@ export default function CounselingReserve() {
 
 			{/* 과목 선택 */}
 			<div className="section">
-				<label>수강 과목</label>
-				<select>
-					<option>과목 선택</option>
-					<option>자료구조 (김교수)</option>
-					<option>운영체제 (이교수)</option>
-				</select>
+				<OptionForm
+					label="수강 과목"
+					name="subject"
+					value={subId ?? ''}
+					onChange={(e) => setSubId(Number(e.target.value))}
+					options={subjectOptions}
+				/>
 			</div>
 
-			{/* 교수 정보 */}
-			<div className="section professor-card">
-				<p>
-					<strong>교수명</strong> 김OO
-				</p>
-				<p>
-					<strong>학과</strong> 컴퓨터공학과
-				</p>
-				<p>
-					<strong>이메일</strong> kim@univ.ac.kr
-				</p>
-			</div>
-
-			{/* 상담 가능 시간 */}
-			<div className="section">
-				<label>상담 가능 시간</label>
-
-				{Object.keys(schedules).map((date) => (
-					<div key={date} className="date-block">
-						<p className="date">{date}</p>
-
-						{schedules[date].length === 0 ? (
-							<span className="no-slot">예약 불가</span>
-						) : (
-							<div className="slot-group">
-								{schedules[date].map((t) => (
-									<button
-										key={t}
-										className={selectedSlot?.date === date && selectedSlot?.time === t ? 'slot selected' : 'slot'}
-										onClick={() => setSelectedSlot({ date, time: t })}
-									>
-										{t}:00 ~ {t}:50
-									</button>
-								))}
-							</div>
-						)}
-					</div>
-				))}
-			</div>
-
-			{/* 상담 사유 */}
-			<div className="section">
-				<label>상담 사유 (선택)</label>
-				<textarea placeholder="상담 사유를 입력하세요 (최대 200자)" />
-			</div>
-
-			{/* 예약 버튼 */}
-			<button className="submit-btn" disabled={!selectedSlot}>
-				상담 예약
-			</button>
+			{subId ? (
+				<div>
+					<LoadCounselingSchedule counselingSchedule={counselingSchedule} subName={subName} subId={subId} />
+				</div>
+			) : (
+				'아직 선택된 과목이 없습니다.'
+			)}
 		</div>
 	);
 }

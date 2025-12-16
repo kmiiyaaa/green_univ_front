@@ -198,6 +198,7 @@ body.in-call #prejoin {
 	grid-template-columns: 420px 1fr;
 	gap: 14px;
 	align-items: stretch;
+	align-items: stretch; /* ✅ 좌/우 높이 맞추기 */
 }
 
 .consult-left,
@@ -337,46 +338,9 @@ body.in-call #prejoin {
 	position: relative;
 }
 
-.empty-state {
-	margin-top: 0;
-}
-.empty-card {
-	background: var(--card);
-	border: 1px dashed rgba(17, 24, 39, 0.22);
-	border-radius: 18px;
-	padding: 22px;
-	box-shadow: var(--shadow);
-}
-.empty-title {
-	font-weight: 900;
-	font-size: 16px;
-}
-.empty-desc {
-	color: var(--muted);
-	margin-top: 6px;
-}
-.empty-chip {
-	display: inline-block;
-	margin-top: 12px;
-	padding: 8px 10px;
-	border-radius: 999px;
-	background: #f9fafb;
-	border: 1px solid var(--border);
-	font-weight: 800;
-	font-size: 12px;
-	color: var(--text);
-}
-
 /* JS가 쓰는 hide 유지 */
 .hide {
 	display: none !important;
-}
-
-/* video grid */
-.video-grid {
-	display: grid;
-	grid-template-columns: 1.25fr 1fr;
-	gap: 14px;
 }
 
 /* bootstrap panel 재스킨 */
@@ -402,19 +366,18 @@ body.in-call #prejoin {
 	gap: 12px;
 }
 .panel-body {
+	position: relative; /* ✅ Janus overlay/absolute UI 기준 */
 	background: #0b1220;
 	padding: 12px !important;
-	min-height: 260px;
+	min-height: 420px; /* ✅ 입장 후 화면 높이(원하는 값으로 조절) */
 }
 
-/* local은 크게 */
-.video-local {
-	grid-row: span 2;
-}
-
-/* small 카드들은 높이 줄이기 */
-.video-small .panel-body {
-	min-height: 190px;
+/* ✅ 1:1 레이아웃(중복 정의 제거) */
+.video-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px;
+	align-items: stretch;
 }
 
 /* video element */
@@ -425,6 +388,25 @@ body.in-call #prejoin {
 	border-radius: 14px;
 	background: #111;
 	object-fit: cover;
+}
+
+/* ✅ unpublish/mute가 상대 화면으로 “튀는” 현상 방지: #videolocal을 기준으로 고정 */
+#videolocal {
+	position: relative; /* ✅ 버튼 absolute 기준 */
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	overflow: hidden;
+}
+#videolocal #mute,
+#videolocal #unpublish {
+	z-index: 10;
+}
+
+/* (안전장치) 혹시라도 remote쪽에 들어가면 숨김 */
+#videoremote1 #mute,
+#videoremote1 #unpublish {
+	display: none !important;
 }
 
 /* 1:1 전용: Remote #2~#5 숨김 */
@@ -439,14 +421,88 @@ body.in-call #prejoin {
 	display: none !important;
 }
 
-/* 레이아웃도 2개(내/상대)만 보이게 */
-.video-grid {
-	grid-template-columns: 1fr 1fr !important;
+/* ✅ 입장 전 안내(prejoin) - “CSS 안 먹음” 해결: 스타일 실제로 정의 */
+.prejoin {
+	height: 100%;
+	min-height: 0; /* ✅ grid 안에서 overflow 이슈 방지 */
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 14px;
+	border: 1px dashed rgba(17, 24, 39, 0.22);
+	border-radius: 18px;
+	background: var(--card);
 }
-.video-local {
-	grid-row: auto !important;
+.prejoin-inner {
+	width: 100%;
+	height: 100%;
+	background: var(--card);
+	border-radius: 18px;
+	box-shadow: var(--shadow);
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
-.video-small {
+.prejoin-title {
+	font-weight: 900;
+	font-size: 16px;
+	color: var(--text);
+}
+.prejoin-desc {
+	color: var(--muted);
+	font-size: 13px;
+	line-height: 1.6;
+}
+.prejoin-box {
+	border-radius: 16px;
+	border: 1px solid var(--border);
+	background: #f9fafb;
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	height: 100%;
+}
+.prejoin-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	width: fit-content;
+	padding: 8px 10px;
+	border-radius: 999px;
+	background: #ecfdf5;
+	border: 1px solid rgba(21, 128, 61, 0.18);
+	color: #065f46;
+	font-weight: 800;
+	font-size: 12px;
+}
+.prejoin-skeleton {
+	flex: 1;
+	border-radius: 14px;
+	background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 40%, #e5e7eb 100%);
+	background-size: 200% 100%;
+	animation: prejoinShimmer 1.35s infinite linear;
+}
+@keyframes prejoinShimmer {
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: -200% 0%;
+	}
+}
+
+/* ✅ 통화(입장) 후: 좌측(입장/안내) 숨기고 영상만 크게 */
+body.in-call .consult-main {
+	grid-template-columns: 1fr !important;
+}
+body.in-call .consult-left {
+	display: none !important;
+}
+
+/* ✅ 입장 후 “상담 시작 전 안내”가 떠있음 방지(강제) */
+body.in-call #prejoin {
 	display: none !important;
 }
 
@@ -458,8 +514,8 @@ body.in-call #prejoin {
 	.video-grid {
 		grid-template-columns: 1fr;
 	}
-	.video-local {
-		grid-row: auto;
+	.panel-body {
+		min-height: 360px;
 	}
 }
 
