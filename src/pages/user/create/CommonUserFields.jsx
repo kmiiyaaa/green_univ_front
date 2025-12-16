@@ -20,32 +20,9 @@ export default function CommonUserFields({ formData, onChange }) {
 				onKeyDown={(e) => e.preventDefault()}
 				onChange={onChange}
 			/>
-			<tr>
-				<td>
-					<label>성별</label>
-				</td>
-				<td>
-					<label htmlFor="male">남성</label>
-					<input
-						type="radio"
-						name="gender"
-						id="male"
-						value="남성"
-						checked={formData.gender === '남성'}
-						onChange={onChange}
-					/>
-					&nbsp;
-					<label htmlFor="female">여성</label>
-					<input
-						type="radio"
-						name="gender"
-						id="female"
-						value="여성"
-						checked={formData.gender === '여성'}
-						onChange={onChange}
-					/>
-				</td>
-			</tr>
+
+			<RadioForm label="성별" name="gender" value={formData.gender} onChange={onChange} options={genderOptions} />
+
 			<InputForm label="주소" name="address" value={formData.address} onChange={onChange} />
 			<InputForm
 				label="전화번호"

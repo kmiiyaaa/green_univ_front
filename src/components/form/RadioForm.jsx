@@ -1,4 +1,4 @@
-// raido 컴포넌트
+import '../../assets/css/RadioForm.css';
 
 const RadioForm = ({ label, name, value, onChange, options = [] }) => {
 	return (
