@@ -6,7 +6,6 @@ import TuiList from './pages/tuition/TuiList';
 import Payment from './pages/tuition/Payment';
 import CreatePayment from './pages/tuition/CreatePayment';
 import UserInfo from './pages/user/info/UserInfo';
-import Index from './pages/';
 
 import NoticeList from './pages/board/NoticeList';
 import NoticeUpdate from './pages/board/NoticeUpdate';
@@ -59,6 +58,7 @@ import CounselingEntry from './pages/CounselingEntry';
 import MyCounselingSchedule from './pages/counseling_student/MyCounselingSchedule';
 import WeeklyCounselingScheduleForm from './pages/counseling_professor/WeeklyCounselingScheduleForm';
 import VideoCounseling from './pages/video/VideoCounseling';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 	// React Query 라이브러리
@@ -74,28 +74,84 @@ function App() {
 							<Route path="/" element={<PublicHome />} />
 						</Route>
 						{/* ========== 로그인 후 (Private) ========== */}
-						{/* <Route element={<PrivateRoute />}> */}
-						<Route element={<PortalLayout />}>
-							{/* 로그인 후 메인 대시보드 */}
-							<Route path="/index" element={<Index />} />
+						<Route
+							element={
+								<ProtectedRoute>
+									<PortalLayout />
+								</ProtectedRoute>
+							}
+						>
+							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
-							<Route path="/tuition/bill" element={<CreatePayment />} /> {/* 등록금 고지서 생성 (관리자) */}
+							{/* 등록금 고지서 생성 (관리자) */}
+							<Route
+								path="/tuition/bill"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreatePayment />
+									</ProtectedRoute>
+								}
+							/>
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
-							{/* 교수 직원 학생 등록 */}
-							<Route path="/user/create/professor" element={<CreateProfessor />} /> {/* 교수 등록 */}
-							<Route path="/user/create/staff" element={<CreateStaff />} /> {/* 교직원 등록 */}
-							<Route path="/user/create/student" element={<CreateStudent />} /> {/* 학생 등록 */}
-							<Route path="/index" element={<Index />} />
+							{/* 교수, 직원, 학생 등록 - staff 권한 */}
+							<Route
+								path="/user/create/professor"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreateProfessor />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/user/create/staff"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreateStaff />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/user/create/student"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreateStudent />
+									</ProtectedRoute>
+								}
+							/>
 							{/* 수강신청 */}
 							<Route path="/sugang/list" element={<SubList />} /> {/* 학생이 확인하는 강의 시간표 목록 */}
-							<Route path="/sugang/pre" element={<PreSugang />} /> {/* 예비 수강 신청 */}
-							<Route path="/sugang" element={<Sugang />} /> {/* 수강 신청 */}
-							<Route path="/sugang/timetable" element={<Timetable />} /> {/* 학생의 최종 강의 시간표 */}
+							{/* 예비 수강 신청 */}
+							<Route
+								path="/sugang/pre"
+								element={
+									<ProtectedRoute allowedRoles={['student']}>
+										<PreSugang />
+									</ProtectedRoute>
+								}
+							/>
+							{/* 수강 신청 */}
+							<Route
+								path="/sugang"
+								element={
+									<ProtectedRoute allowedRoles={['student']}>
+										<Sugang />{' '}
+									</ProtectedRoute>
+								}
+							/>
+							{/* 학생의 최종 강의 시간표 */}
+							<Route
+								path="/sugang/timetable"
+								element={
+									<ProtectedRoute allowedRoles={['student']}>
+										<Timetable />{' '}
+									</ProtectedRoute>
+								}
+							/>
 							<Route path="/sugang/period" element={<UpdatePeriod />} /> {/* 수강 신청 변경 (관리자) */}
 							{/* 관리자 */}
 							<Route path="/admin/room" element={<Room />} /> {/* 강의실 등록 */}
