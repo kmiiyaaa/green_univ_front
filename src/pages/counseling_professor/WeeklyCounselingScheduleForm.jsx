@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getMonday, getWeekDates } from '../../utils/DateTimeUtil';
 import api from '../../api/httpClient';
+import '../../assets/css/WeeklyCounselingScheduleForm.css';
 
 const TIMES = [15, 16, 17, 18, 19]; // 가능한 시간 15시 ~ 19시까지만 (고정)
 
@@ -93,14 +94,14 @@ export default function WeeklyCounselingScheduleForm() {
 	if (!dates.length) return null;
 
 	return (
-		<div style={{ padding: 20 }}>
-			<h2>주간 상담 일정 등록 / 수정</h2>
+		<div className="weekly-wrap">
+			<h2 className="weekly-title">주간 상담 일정 관리</h2>
 
-			<p style={{ fontWeight: 'bold' }}>
+			<p className="weekly-range">
 				{dates[0]} ~ {dates[4]}
 			</p>
 
-			<table border="1" cellPadding="8">
+			<table className="weekly-table">
 				<thead>
 					<tr>
 						<th>날짜</th>
@@ -114,11 +115,12 @@ export default function WeeklyCounselingScheduleForm() {
 				<tbody>
 					{dates.map((date) => (
 						<tr key={date}>
-							<td>{date}</td>
+							<td className="weekly-date">{date}</td>
 							{TIMES.map((t) => (
-								<td key={t} style={{ textAlign: 'center' }}>
+								<td key={t} className="weekly-slot">
 									<input
 										type="checkbox"
+										className="weekly-checkbox"
 										checked={slots[date]?.includes(t) || false}
 										onChange={() => toggleSlot(date, t)}
 									/>
@@ -129,7 +131,7 @@ export default function WeeklyCounselingScheduleForm() {
 				</tbody>
 			</table>
 
-			<button style={{ marginTop: 20 }} onClick={handleSubmit}>
+			<button className="weekly-save-btn" onClick={handleSubmit}>
 				상담 일정 저장
 			</button>
 		</div>
