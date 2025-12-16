@@ -59,6 +59,7 @@ import CounselingEntry from './pages/CounselingEntry';
 import MyCounselingSchedule from './pages/counseling_student/MyCounselingSchedule';
 import WeeklyCounselingScheduleForm from './pages/counseling_professor/WeeklyCounselingScheduleForm';
 import VideoCounseling from './pages/video/VideoCounseling';
+import CounselingRequestList from './pages/counseling_student/CounselingRequestList';
 
 function App() {
 	// React Query 라이브러리
@@ -137,6 +138,8 @@ function App() {
 							<Route path="/status" element={<MyStatus />} /> {/* 내 학업 상태 조회 (위험여부) */}
 							<Route path="/counseling/schedule" element={<MyCounselingSchedule />} /> {/* 내 상담 일정 조회 */}
 							<Route path="/counseling/reserve" element={<CounselingReserve />} />{' '}
+							<Route path="/counseling/reqAndRes" element={<CounselingRequestList />} />{' '}
+							{/* 상담 신청, 들어온 요청 조회 */}
 							{/* 상담 예약 (교수가 열어둔 상담만 가능) */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}

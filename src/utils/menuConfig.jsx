@@ -60,6 +60,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
 			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/counseling/schedule' },
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약', path: '/counseling/reserve' },
+			{ key: 'COUNSELING_REQANDRES', label: '상담 신청 및 요청 조회', path: '/counseling/reqAndRes' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},
