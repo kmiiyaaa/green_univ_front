@@ -76,6 +76,38 @@ body {
 	margin-top: 2px;
 }
 
+.prejoin {
+	height: 100%;
+	min-height: 0; /* ✅ grid 안에서 overflow 이슈 방지 */
+}
+
+/* ✅ 통화(입장) 후: 좌측(입장/안내) 숨기고 영상만 크게 */
+body.in-call .consult-main {
+	grid-template-columns: 1fr !important;
+}
+
+body.in-call .consult-left {
+	display: none !important;
+}
+
+/* ✅ 1:1은 딱 두 칸 */
+.video-grid {
+	grid-template-columns: 1fr 1fr !important;
+	gap: 14px;
+	align-items: stretch;
+}
+
+.video-body {
+	position: relative; /* ✅ 이게 핵심: mute/unpublish가 내 화면 안으로 들어옴 */
+	flex: 1;
+	background: #0b1220;
+}
+
+/* panel-body 높이 균일하게 */
+.panel-body {
+	min-height: 420px; /* 원하는 높이로 조절 */
+}
+
 /* start 버튼 */
 #start.btn {
 	border-radius: 12px;
@@ -96,11 +128,13 @@ body {
 	display: grid;
 	grid-template-columns: 420px 1fr;
 	gap: 14px;
+	align-items: stretch;
 }
 
 .consult-left,
 .consult-right {
 	min-width: 0;
+	height: 100%;
 }
 
 .card {

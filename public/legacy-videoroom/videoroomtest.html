@@ -87,9 +87,7 @@
 				</div>
 
 				<!-- JS가 #start를 one("click")으로 잡음: id 유지 필수 -->
-				<p class="perm-hint">
-					상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. 팝업에서 <b>허용</b>을 눌러주세요.
-				</p>
+				<p class="perm-hint">상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. <b>허용</b>을 눌러주세요.</p>
 				<button class="btn btn-primary" autocomplete="off" id="start">상담 시작</button>
 			</header>
 
@@ -108,7 +106,7 @@
 
 						<div class="tip">
 							<span class="tip-dot"></span>
-							<span class="tip-text"> 상담방 코드는 교수와 상담 확정시 받을 수 있습니다.</span>
+							<span class="tip-text"> 상담방 코드는 교수와 상담 예약 시 받을 수 있습니다.</span>
 						</div>
 					</div>
 
@@ -229,14 +227,37 @@
 						</div>
 					</div>
 
-					<!-- videos가 hide일 때도 우측이 비어보이지 않게 -->
-					<div class="empty-state" id="emptyState">
-						<div class="empty-card">
-							<div class="empty-title">상담 시작 후 입장하면</div>
-							<div class="empty-desc">이곳에 화상 화면이 표시됩니다.</div>
-							<div class="empty-chip">카메라/마이크 권한을 허용해주세요</div>
+					<!-- videos가 hide일 때(입장 전) 보여줄 프리뷰 -->
+					<div class="prejoin" id="prejoin">
+						<div class="prejoin-inner">
+							<div class="prejoin-title">상담 시작 전 안내</div>
+							<div class="prejoin-desc">
+								좌측에서 <b>상담 시작</b> → <b>상담방 코드</b> 입력 후 입장하면<br />
+								이곳에 <b>내 화면 / 상대 화면</b>이 표시됩니다.
+							</div>
+
+							<div class="prejoin-box">
+								<div class="prejoin-chip">카메라/마이크 권한을 허용해주세요</div>
+								<div class="prejoin-skeleton"></div>
+							</div>
 						</div>
 					</div>
+
+					<script>
+						(function () {
+							const setMode = () => {
+								const videos = document.getElementById('videos');
+								if (!videos) return;
+								const inCall = !videos.classList.contains('hide') && videos.style.display !== 'none';
+								document.body.classList.toggle('in-call', inCall);
+							};
+
+							const obs = new MutationObserver(setMode);
+							obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
+
+							setMode();
+						})();
+					</script>
 				</section>
 			</main>
 		</div>
