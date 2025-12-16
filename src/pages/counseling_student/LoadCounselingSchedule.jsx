@@ -31,6 +31,7 @@ export default function CounselingScheduleDetail({ counselingSchedule, subName, 
 		console.log(payload);
 		try {
 			await api.post('/preReserve', payload);
+			alert('상담 신청이 완료되었습니다.');
 		} catch (e) {
 			console.log(e);
 		}

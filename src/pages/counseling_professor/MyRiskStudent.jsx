@@ -8,7 +8,6 @@ export default function MyRiskStudent() {
 	const loadRiskStudents = async () => {
 		try {
 			const res = await api.get('/counseling/riskStu');
-			console.log(res.data);
 			setStudents(res.data.riskStuList);
 		} catch (e) {
 			alert(e.response.default.message);
@@ -17,6 +16,7 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadRiskStudents();
+		console.log(students);
 	}, []);
 
 	const riskHeaders = [

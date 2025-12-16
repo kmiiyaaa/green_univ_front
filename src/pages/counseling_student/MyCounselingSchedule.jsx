@@ -1,62 +1,47 @@
-import { useEffect } from "react";
-import api from "../../api/httpClient";
+import { useEffect, useState } from 'react';
+import api from '../../api/httpClient';
+import { toHHMM } from '../../utils/DateTimeUtil';
+import DataTable from '../../components/table/DataTable';
 
 export default function MyCounselingSchedule() {
+	const [reservationList, setReservationList] = useState([]);
 
-	// // 이번 학기 수강 강의 목록 조회
-	// useEffect(() => {
-	// 	const loadSubjects = async() => {
-	// 		try {
-	// 			const res = await api.get("")
-	// 		} catch {
+	useEffect(() => {
+		const loadReserveList = async () => {
+			try {
+				const res = await api.get('/reserve/list');
+				setReservationList(res.data.reservationList);
+				console.log(res.data);
+			} catch (e) {
+				console.error('목록 불러오기 실패', e);
+			}
+		};
+		loadReserveList();
+	}, []);
 
-	// 		}
-	// 	}
-	// },[])
+	const tableData = reservationList.map((r, idx) => ({
+		번호: idx + 1,
+		'신청 과목': r.subject.name,
+		'담당 교수': r.counselingSchedule.professor.name,
+		'상담 사유': r.reason,
+		'상담 일자': r.counselingSchedule.counselingDate,
+		'상담 시간': `${toHHMM(r.counselingSchedule.startTime)} ~ ${toHHMM(r.counselingSchedule.endTime)}`,
+	}));
 
-
-	// 예시 데이터
-	const schedules = [
-		{
-			id: 1,
-			date: '2025-12-15',
-			time: '15:00 ~ 15:50',
-			professor: '김OO 교수',
-			status: 'RESERVED',
-		},
-		{
-			id: 2,
-			date: '2025-12-10',
-			time: '16:00 ~ 16:50',
-			professor: '이OO 교수',
-			status: 'DONE',
-		},
-	];
+	const headers = ['번호', '신청 과목', '담당 교수', '상담 사유', '상담 일자', '상담 시간'];
 
 	return (
-		<div className="my-schedule-wrap">
-			<h2>내 상담 일정</h2>
+		<div>
+			<h3>확정된 상담 일정</h3>
+			<hr></hr>
 
-			<div className="schedule-list">
-				{schedules.length === 0 ? (
-					<p className="empty">예약된 상담이 없습니다.</p>
-				) : (
-					schedules.map((s) => (
-						<div key={s.id} className="schedule-card">
-							<div className="info">
-								<p className="date">{s.date}</p>
-								<p className="time">{s.time}</p>
-								<p className="prof">{s.professor}</p>
-							</div>
-
-							<div className="action">
-								{s.status === 'RESERVED' && <button className="join">화상 상담 입장</button>}
-								{s.status === 'DONE' && <span className="done">상담 완료</span>}
-							</div>
-						</div>
-					))
-				)}
-			</div>
+			{reservationList?.length > 0 ? (
+				<div>
+					<DataTable headers={headers} data={tableData} />
+				</div>
+			) : (
+				'아직 확정된 상담 일정이 없습니다.'
+			)}
 		</div>
 	);
 }
