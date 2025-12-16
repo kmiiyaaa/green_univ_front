@@ -179,7 +179,7 @@ function App() {
 							{/* 교수 */}
 							<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 							<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
-							<Route path="/professor/evaluation" element={<MyEvaluation />} /> {/* 내 강의 평가 */}
+							<Route path="/professor/evaluation" element={<MyEvaluation />} /> {/* 교수 강의 평가 */}
 							{/* 교수 - 학생 관리 */}
 							<Route path="/professor/counseling/reserve" element={<MyCounseling />} /> {/* 내 상담 일정 보기 */}
 							<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />{' '}
