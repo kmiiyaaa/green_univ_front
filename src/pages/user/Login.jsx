@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
@@ -12,6 +12,18 @@ export default function Login() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+	// ID 저장 체크 상태
+	const [rememberId, setRememberId] = useState(false);
+
+	// 페이지 들어올 때 저장된 ID 불러오기
+	useEffect(() => {
+		const saved = localStorage.getItem('savedLoginId');
+		if (saved) {
+			setLoginId(saved);
+			setRememberId(true);
+		}
+	}, []);
+
 	// 로그인
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -23,6 +35,11 @@ export default function Login() {
 		}
 		try {
 			setLoading(true);
+
+			// ID 저장 체크 시 localStorage 저장 / 아니면 삭제
+			if (rememberId) localStorage.setItem('savedLoginId', loginId);
+			else localStorage.removeItem('savedLoginId');
+
 			const res = await api.post('/auth/login', {
 				id: loginId,
 				password: password,
@@ -87,7 +104,13 @@ export default function Login() {
 
 				<div className="public-login-options">
 					<label className="public-checkbox-label">
-						<input type="checkbox" className="public-checkbox" />
+						{/* 체크 상태 연결 */}
+						<input
+							type="checkbox"
+							className="public-checkbox"
+							checked={rememberId}
+							onChange={(e) => setRememberId(e.target.checked)}
+						/>
 						<span>ID 저장</span>
 					</label>
 				</div>

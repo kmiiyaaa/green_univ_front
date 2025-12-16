@@ -119,7 +119,7 @@ function PublicHome() {
 
 								<ul className="public-notice-list">
 									{latestNotices.length === 0 && (
-										<li>
+										<li className="empty-row">
 											<span className="public-notice-category">-</span>
 											<span className="public-notice-title">등록된 공지사항이 없습니다.</span>
 											<span className="public-notice-date"></span>

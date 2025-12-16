@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import api from '../api/httpClient';
 import '../assets/css/Portal.css';
+import { formatDateLocal } from '../utils/DateTimeUtil';
 
 import portal1 from '../assets/images/portal1.png';
 import portal2 from '../assets/images/portal2.png';
@@ -33,25 +34,12 @@ export default function Portal() {
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [miniUserInfo, setMiniUserInfo] = useState({});
 
-	// 업무 알림용 상태 (Staff 전용)
-	// 실제로는 API로 받아와야 하지만, 일단 1로 설정하여 UI 확인
-	const [pendingCount, setPendingCount] = useState(1);
+	// 업무 알림용 상태 (Staff)
+	const [pendingCount, setPendingCount] = useState(0);
 
-	// 공지사항 데이터
-	const notices = [
-		'[학사] 2024학년도 1학기 수강신청 안내',
-		'[장학] 국가장학금 2차 신청 기간 안내',
-		'[일반] 도서관 이용 시간 변경 안내',
-		'[취업] 하반기 대기업 공채 대비 특강',
-		'[행사] 개교 70주년 기념 행사 안내',
-	];
-	// 학사일정 데이터
-	const calendars = [
-		{ date: '05. 05', desc: '어린이날 (공휴일)' },
-		{ date: '05. 15', desc: '개교기념일' },
-		{ date: '05. 20', desc: '중간고사 성적 공시' },
-		{ date: '05. 29', desc: '대동제 (축제) 시작' },
-	];
+	// 공지/학사일정
+	const [latestNotices, setLatestNotices] = useState([]);
+	const [latestSchedules, setLatestSchedules] = useState([]);
 
 	// 1. 배너 자동 슬라이드
 	useEffect(() => {
@@ -63,6 +51,25 @@ export default function Portal() {
 
 	const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
 	const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? bannerImages.length - 1 : prev - 1));
+
+	// 학사일정 유틸 (이번달 필터)
+	const toTime = (v) => {
+		const t = new Date(v).getTime();
+		return Number.isNaN(t) ? null : t;
+	};
+
+	// 일정(start~end)이 이번달과 "겹치면" 포함
+	const isInThisMonth = (s) => {
+		const now = new Date();
+		const mStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
+		const mEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
+
+		const sStart = toTime(s.startDay);
+		const sEnd = toTime(s.endDay || s.startDay);
+
+		if (!sStart) return false;
+		return sStart <= mEnd && sEnd >= mStart;
+	};
 
 	// 2. 사용자 정보 불러오기
 	useEffect(() => {
@@ -79,9 +86,6 @@ export default function Portal() {
 					const res = await api.get(url);
 					// userRole 키값으로 데이터 추출 (예: res.data.student)
 					setMiniUserInfo(res.data[userRole] || {});
-
-					// (선택사항) 만약 Staff라면 처리할 업무 개수도 여기서 API로 가져오면 좋습니다.
-					// if(userRole === 'staff') { const countRes = await api.get('/staff/work/count'); setPendingCount(countRes.data); }
 				}
 			} catch (e) {
 				console.error('홈페이지 정보 로드 실패', e);
@@ -89,6 +93,58 @@ export default function Portal() {
 		};
 		loadMiniInfo();
 	}, [userRole, token]);
+
+	// 공지/학사일정 로드
+	useEffect(() => {
+		const loadHomeData = async () => {
+			try {
+				// 공지사항: 5개
+				const noticeRes = await api.get('/notice/list/0');
+				const noticeList = noticeRes.data.noticeList || [];
+				setLatestNotices(noticeList.slice(0, 5));
+
+				// 학사일정: 이번달 일정만 + 5개
+				const scheduleRes = await api.get('/schedule');
+				const scheduleList = scheduleRes.data.schedules || [];
+
+				const filtered = scheduleList
+					.filter(isInThisMonth)
+					.sort((a, b) => (toTime(a.startDay) || 0) - (toTime(b.startDay) || 0))
+					.slice(0, 5);
+
+				setLatestSchedules(filtered);
+			} catch (e) {
+				console.error('Portal 공지/학사일정 로드 실패:', e);
+			}
+		};
+
+		loadHomeData();
+	}, []);
+
+	// staff 업무처리
+	useEffect(() => {
+		// staff가 아니거나 토큰 없으면 업무알림 필요 없음
+		if (!token || userRole !== 'staff') return;
+
+		const loadPendingBreakCount = async () => {
+			try {
+				const res = await api.get('/break/list/staff');
+				const raw = res.data.breakAppList || [];
+
+				const count = raw.length;
+
+				// 예: status가 있다면 이렇게
+				// const count = raw.filter(b => b.status === 'PENDING').length;
+
+				setPendingCount(count);
+			} catch (e) {
+				console.error('휴학 대기건수 로드 실패:', e);
+				setPendingCount(0);
+			}
+		};
+
+		loadPendingBreakCount();
+	}, [token, userRole]);
 
 	// 로그아웃 핸들러
 	const handleLogout = () => {
@@ -121,24 +177,73 @@ export default function Portal() {
 				{/* 2-1. 공지사항 */}
 				<div className="section-card">
 					<div className="section-title">공지사항</div>
+
 					<ul className="notice-list">
-						{notices.map((notice, idx) => (
-							<li key={idx}>• {notice}</li>
-						))}
+						{latestNotices.length === 0 ? (
+							<li>• 등록된 공지사항이 없습니다.</li>
+						) : (
+							latestNotices.map((n) => (
+								<li key={n.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${n.id}`)}>
+									• {(n.category || '').replace('[', '').replace(']', '')} {n.title}
+								</li>
+							))
+						)}
 					</ul>
+
+					{/* 오른쪽 하단 VIEW MORE */}
+					<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+						<button type="button" className="view-more-btn" onClick={() => navigate('/notice')}>
+							VIEW MORE &gt;
+						</button>
+					</div>
 				</div>
 
 				{/* 2-2. 학사일정 */}
 				<div className="section-card">
-					<div className="section-title">5월 학사일정</div>
-					<div className="calendar-list">
-						{calendars.map((cal, idx) => (
-							<div key={idx} className="cal-item">
-								<span className="cal-date">{cal.date}</span>
-								<span className="cal-desc">{cal.desc}</span>
+					<div className="section-title">이번달 학사일정</div>
+
+					<div className="schedule-list-card">
+						{latestSchedules.length === 0 ? (
+							<div className="schedule-empty">
+								<span className="schedule-badge">
+									<span className="badge-month">-</span>
+									<span className="badge-day">-</span>
+								</span>
+								<div className="schedule-body">
+									<div className="schedule-title">이번 달 학사 일정이 없습니다.</div>
+									<div className="schedule-range"></div>
+								</div>
 							</div>
-						))}
+						) : (
+							latestSchedules.map((s) => {
+								const d = new Date(s.startDay);
+								const invalid = Number.isNaN(d.getTime());
+
+								return (
+									<div key={s.id} className="schedule-row">
+										<div className="schedule-badge">
+											<span className="badge-month">
+												{invalid ? '-' : d.toLocaleString('en-US', { month: 'short' }).toUpperCase()}
+											</span>
+											<span className="badge-day">{invalid ? '-' : String(d.getDate()).padStart(2, '0')}</span>
+										</div>
+
+										<div className="schedule-body">
+											<div className="schedule-title">{s.information}</div>
+											<div className="schedule-range">
+												{formatDateLocal(s.startDay)} ~ {formatDateLocal(s.endDay || s.startDay)}
+											</div>
+										</div>
+									</div>
+								);
+							})
+						)}
 					</div>
+
+					{/* 오른쪽 하단 VIEW MORE */}
+					<button type="button" className="view-more-btn" onClick={() => navigate('/schedule')}>
+						VIEW MORE &gt;
+					</button>
 				</div>
 
 				{/* 2-3. 내 정보 (로그인 시) */}
@@ -190,6 +295,7 @@ export default function Portal() {
 													</li>
 													<li>업무 알림</li>
 												</ul>
+
 												<p>
 													<a
 														href="/break/list/staff"
@@ -231,11 +337,7 @@ export default function Portal() {
 						// 로그인 안 된 상태
 						<div className="login-guide">
 							<p style={{ marginBottom: '15px' }}>로그인이 필요한 서비스입니다.</p>
-							<button
-								className="action-btn"
-								onClick={() => navigate('/login')}
-								style={{ width: '100%', backgroundColor: 'var(--green-primary)' }}
-							>
+							<button className="action-btn" onClick={() => navigate('/login')}>
 								로그인 하러가기
 							</button>
 						</div>

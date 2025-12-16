@@ -48,7 +48,7 @@ import TotalGrade from './pages/grade/TotalGrade';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
-import VideoRoomTest from './pages/video/VideoRoomTest';
+// import VideoRoomTest from './pages/video/VideoRoomTest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
 import MyStatus from './pages/counseling_student/MyStatus';
@@ -58,6 +58,7 @@ import MyRiskStudent from './pages/counseling_professor/MyRiskStudent';
 import CounselingEntry from './pages/CounselingEntry';
 import MyCounselingSchedule from './pages/counseling_student/MyCounselingSchedule';
 import WeeklyCounselingScheduleForm from './pages/counseling_professor/WeeklyCounselingScheduleForm';
+import VideoCounseling from './pages/video/VideoCounseling';
 
 function App() {
 	// React Query 라이브러리
@@ -139,9 +140,10 @@ function App() {
 							{/* 상담 예약 (교수가 열어둔 상담만 가능) */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
+							<Route path="/videotest" element={<VideoCounseling />} /> {/* 화상 상담 페이지 */}
 						</Route>
 						{/* 화상 비디오 */}
-						<Route path="/videotest" element={<VideoRoomTest />} />
+						{/* <Route path="/videotest" element={<VideoRoomTest />} /> */}
 						{/* 팝업들 */}
 						<Route path="/professor/syllabus/:subjectId" element={<ReadSyllabusPopup />} /> {/* 강의계획서 조회 팝업 */}
 						{/* 강의계획서 조회 팝업 */}
