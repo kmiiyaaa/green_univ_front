@@ -66,7 +66,7 @@
 						document.addEventListener('DOMContentLoaded', () => {
 							const p = new URLSearchParams(location.search);
 							const display = p.get('display');
-							const room = p.get('room');
+							const code = p.get('code'); // ✅ room이 아니라 code
 
 							if (display) {
 								const username = document.getElementById('username');
@@ -76,42 +76,18 @@
 								}
 							}
 
-							if (room) {
+							// ✅ 상담방 코드 입력칸에 code 미리 채우기(선택)
+							if (code) {
 								const roomname = document.getElementById('roomname');
 								if (roomname) {
-									roomname.value = room;
+									roomname.value = code;
 								}
 							}
 						});
 					</script>
 
-					<!-- 채팅방 입장 이름 고정 -->
-					<script>
-						document.addEventListener('DOMContentLoaded', () => {
-							const p = new URLSearchParams(location.search);
-							const display = p.get('display');
-							const room = p.get('room');
-
-							if (display) {
-								const username = document.getElementById('username');
-								if (username) {
-									username.value = display;
-									username.readOnly = true; // 수정 못하게(원하면 제거)
-								}
-							}
-
-							if (room) {
-								const roomname = document.getElementById('roomname');
-								if (roomname) {
-									roomname.value = room;
-								}
-							}
-						});
-					</script>
-				</div>
 
 				<!-- JS가 #start를 one("click")으로 잡음: id 유지 필수 -->
-				<p class="perm-hint">상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. <b>허용</b>을 눌러주세요.</p>
 				<p class="perm-hint">상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. <b>허용</b>을 눌러주세요.</p>
 				<button class="btn btn-primary" autocomplete="off" id="start">상담 시작</button>
 			</header>
@@ -131,7 +107,6 @@
 
 						<div class="tip">
 							<span class="tip-dot"></span>
-							<span class="tip-text"> 상담방 코드는 교수와 상담 예약 시 받을 수 있습니다.</span>
 							<span class="tip-text"> 상담방 코드는 교수와 상담 예약 시 받을 수 있습니다.</span>
 						</div>
 					</div>
