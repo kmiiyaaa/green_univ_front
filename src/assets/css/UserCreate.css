@@ -1,0 +1,174 @@
+/* fallback vars (전역에 이미 있으면 이 블록은 무시돼도 OK) */
+:root {
+	--border-soft: #e5e7eb;
+	--text-main: #111827;
+	--text-sub: #6b7280;
+	--bg: #ffffff;
+	--radius: 18px;
+}
+
+/* 페이지 래퍼 */
+.user-create-page {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	padding: 26px 16px;
+}
+
+/* 카드 (너무 넓지 않게 컴팩트하게) */
+.user-create-card {
+	width: 100%;
+	max-width: 700px; /* 860 -> 640 */
+	background: var(--bg);
+	border: 1px solid var(--border-soft);
+	border-radius: var(--radius);
+	padding: 22px 24px;
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* 제목 */
+.user-create-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 18px;
+}
+
+/* h1에 class 안 줘도 예쁘게 */
+.user-create-header h1 {
+	font-size: 22px;
+	font-weight: 800;
+	color: var(--text-main);
+	letter-spacing: -0.2px;
+	margin: 0;
+}
+
+/* 폼 */
+.user-create-form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+/*
+InputForm이 <tr>을 반환하거나 CommonUserFields에서 <tr>을 쓰고 있으니까
+폼 내부를 table처럼 스타일링
+*/
+.user-form-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed; /* ✅ column 안정적으로 */
+}
+
+/* 행 간격 */
+.user-form-table tr + tr td {
+	padding-top: 12px;
+}
+
+/* 라벨 칸 */
+.user-form-table td:first-child {
+	width: 90px; /* 160 -> 120 */
+	vertical-align: middle;
+}
+
+/* 라벨(왼쪽만) */
+.user-form-table td:first-child label {
+	font-weight: 700;
+	color: var(--text-main);
+}
+
+/* 입력칸 칸은 남은 너비를 다 씀 */
+.user-form-table td:last-child {
+	width: calc(100% - 120px);
+}
+
+/* ✅ Input/Select 공통 느낌 */
+.user-create-card input[type='text'],
+.user-create-card input[type='email'],
+.user-create-card input[type='date'],
+.user-create-card input[type='number'],
+.user-create-card select,
+.user-create-card textarea {
+	width: 100% !important; /* ✅ InputForm에서 width 고정해도 강제 */
+	box-sizing: border-box;
+	min-width: 0;
+
+	height: 44px;
+	padding: 0 12px;
+	border: 1px solid var(--border-soft);
+	border-radius: 12px;
+	outline: none;
+	color: var(--text-main);
+	background: #fff;
+}
+
+.user-create-card textarea {
+	height: auto;
+	padding: 10px 12px;
+}
+
+/* focus */
+.user-create-card input:focus,
+.user-create-card select:focus,
+.user-create-card textarea:focus {
+	border-color: rgba(17, 24, 39, 0.5);
+	box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.08);
+}
+
+/* ✅ 성별 라디오 영역 (가로 정렬) */
+.user-radio-row td:last-child {
+	padding-top: 6px; /* 글/라디오 높이감 살짝 */
+}
+
+.user-radio-group {
+	display: flex; /* ✅ 가로로 */
+	gap: 18px; /* 남/여 간격 */
+	flex-wrap: wrap; /* 화면 좁으면 자연스럽게 줄바꿈 */
+}
+
+.user-radio-option {
+	display: inline-flex; /* ✅ 라벨+라디오 한 덩어리 */
+	gap: 8px;
+	font-weight: 600;
+	color: var(--text-main);
+	line-height: 1;
+	margin: 0;
+}
+
+.user-radio-option input[type='radio'] {
+	margin: 0;
+	transform: translateY(1px);
+	accent-color: var(--text-main);
+}
+
+/* 버튼 */
+.user-form-actions {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 12px;
+}
+
+.user-submit-btn {
+	height: 44px;
+	padding: 0 16px;
+	border-radius: 12px;
+	border: 1px solid var(--text-main);
+	background: var(--text-main);
+	color: #fff;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.user-submit-btn:hover {
+	filter: brightness(0.95);
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+	.user-form-table td:first-child {
+		width: 110px;
+	}
+	.user-form-table td:last-child {
+		width: calc(100% - 110px);
+	}
+}

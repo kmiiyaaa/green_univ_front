@@ -1,5 +1,6 @@
 import InputForm from '../../../components/form/InputForm';
 import RadioForm from '../../../components/form/RadioForm';
+import '../../../assets/css/UserCreate.css';
 
 export default function CommonUserFields({ formData, onChange }) {
 	// 성별 옵션 정의
@@ -20,30 +21,22 @@ export default function CommonUserFields({ formData, onChange }) {
 				onKeyDown={(e) => e.preventDefault()}
 				onChange={onChange}
 			/>
-			<tr>
-				<td>
-					<label>성별</label>
+			<tr className="user-radio-row">
+				<td className="gender-td">
+					<label className="gender-label">성별</label>
 				</td>
 				<td>
-					<label htmlFor="male">남성</label>
-					<input
-						type="radio"
-						name="gender"
-						id="male"
-						value="남성"
-						checked={formData.gender === '남성'}
-						onChange={onChange}
-					/>
-					&nbsp;
-					<label htmlFor="female">여성</label>
-					<input
-						type="radio"
-						name="gender"
-						id="female"
-						value="여성"
-						checked={formData.gender === '여성'}
-						onChange={onChange}
-					/>
+					<div className="user-radio-group">
+						<label className="user-radio-option">
+							<input type="radio" name="gender" value="남성" checked={formData.gender === '남성'} onChange={onChange} />
+							남성
+						</label>
+
+						<label className="user-radio-option">
+							<input type="radio" name="gender" value="여성" checked={formData.gender === '여성'} onChange={onChange} />
+							여성
+						</label>
+					</div>
 				</td>
 			</tr>
 			<InputForm label="주소" name="address" value={formData.address} onChange={onChange} />

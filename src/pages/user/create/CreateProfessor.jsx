@@ -2,6 +2,7 @@ import { useState } from 'react';
 import api from '../../../api/httpClient';
 import CommonUserFields from '../../user/create/CommonUserFields';
 import InputForm from '../../../components/form/InputForm';
+import '../../../assets/css/UserCreate.css';
 
 export default function ProfessorCreatePage() {
 	const [formData, setFormData] = useState({
@@ -46,18 +47,31 @@ export default function ProfessorCreatePage() {
 	};
 
 	return (
-		<>
-			<div>
-				<h1>교수 등록</h1>
+		<div className="user-create-page">
+			<div className="user-create-card">
+				<div className="user-create-header">
+					<h1>교수 등록</h1>
+				</div>
+
+				<form className="user-create-form" onSubmit={handleSubmit}>
+					<table className="user-form-table">
+						<tbody>
+							{/* 공통 필드 */}
+							<CommonUserFields formData={formData} onChange={handleChange} />
+
+							{/* 교수 전용 필드 */}
+							<InputForm label="과 ID" name="deptId" value={formData.deptId} onChange={handleChange} />
+							<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
+						</tbody>
+					</table>
+
+					<div className="user-form-actions">
+						<button className="user-submit-btn" type="submit">
+							등록
+						</button>
+					</div>
+				</form>
 			</div>
-			<form>
-				{/* 공통 필드 */}
-				<CommonUserFields formData={formData} onChange={handleChange} />
-				{/* 교수 전용 필드 */}
-				<InputForm label="과 ID" name="deptId" value={formData.deptId} onChange={handleChange} />
-				<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
-				<button onClick={handleSubmit}>등록</button>
-			</form>
-		</>
+		</div>
 	);
 }
