@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
 	// 로그인 안 했으면 로그인 페이지로
 	if (!token || !user) {
-		alert('로그인이 필요합니다.');
+		// alert('로그인이 필요합니다.');
 		return <Navigate to="/" replace />;
 	}
 
