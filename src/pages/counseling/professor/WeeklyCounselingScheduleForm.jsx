@@ -107,7 +107,7 @@ export default function WeeklyCounselingScheduleForm() {
 						<th>날짜</th>
 						{TIMES.map((t) => (
 							<th key={t}>
-								{t}:00 ~ {t}:50
+								{t}:00 ~ {t}:00
 							</th>
 						))}
 					</tr>
