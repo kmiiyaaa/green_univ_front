@@ -19,7 +19,6 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadRiskStudents();
-		console.log(students);
 	}, []);
 
 	const riskHeaders = [
@@ -63,12 +62,16 @@ export default function MyRiskStudent() {
 
 	const value = 'value는뭘넣어야할까';
 
+	const handleChange = () => {
+		return;
+	};
+
 	return (
 		<div className="risk-wrap">
 			<h2>(이번 학기)내 담당 위험학생</h2>
 
-			<OptionForm label="과목" name="subject" value={value} options={subjectOptions} />
-			<OptionForm label="위험레벨" name="subject" value={value} options={riskLevelOptions} />
+			<OptionForm label="과목" name="subject" value={value} onChange={handleChange} options={subjectOptions} />
+			<OptionForm label="위험레벨" name="subject" value={value} onChange={handleChange} options={riskLevelOptions} />
 
 			{/* 상담이 필요한 학생 목록 */}
 			<DataTable headers={riskHeaders} data={riskTableData} />
