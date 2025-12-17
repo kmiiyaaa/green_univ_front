@@ -48,7 +48,6 @@ export default function ProfessorSubjectList() {
 				},
 			});
 			setSubjectList(res.data.subjectList);
-			console.log('검색 결과 :', subjectList);
 		} catch (e) {
 			console.log('교수 - 내 강의 검색 실패 : ', e);
 		}
@@ -66,7 +65,7 @@ export default function ProfessorSubjectList() {
 	};
 
 	// 테이블 데이터
-	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록',];
+	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록'];
 
 	const subjectTable = useMemo(() => {
 		return subjectList.map((s) => ({

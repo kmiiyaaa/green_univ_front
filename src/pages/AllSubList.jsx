@@ -52,7 +52,7 @@ export default function AllSubList() {
 				강의구분: sub.type,
 				강의명: sub.name,
 				담당교수: sub.professorName,
-				학점: sub.grades,
+				학점: sub.credits,
 				수강인원: sub.numOfStudent,
 				정원: sub.capacity,
 				강의계획서: sub.syllabus ? '없음' : '조회', // 강의 계획서 이 부분 수정해야함

@@ -97,7 +97,7 @@ const Semester = () => {
 			과목번호: g.subjectId ?? '',
 			과목명: g.name ?? '',
 			강의구분: g.type ?? '',
-			학점: g.grade ?? '',
+			학점: g.letterGrade ?? '',
 		}));
 	}, [gradeList]);
 
