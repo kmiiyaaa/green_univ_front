@@ -58,9 +58,8 @@ export const SIDEBAR_BY_HEADER = {
 		],
 		COUNSELING: [
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
-			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/counseling/schedule' },
+			{ key: 'MY_COUNSELING', label: '상담 신청 내역', path: '/counseling/schedule' },
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약', path: '/counseling/reserve' },
-			{ key: 'COUNSELING_REQANDRES', label: '상담 신청 및 요청 조회', path: '/counseling/reqAndRes' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},
@@ -118,9 +117,9 @@ export const SIDEBAR_BY_HEADER = {
 		],
 		COUNSELING_MANAGEMENT: [
 			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/professor/counseling/schedule' },
-			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/reserve' },
-			{ key: 'COUNSELING_PRE', label: '상담 요청 관리', path: '/professor/counseling/pre' },
-			{ key: 'STUDENT_MANAGEMENT', label: '위험 학생 관리', path: '/professor/risk' },
+			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/approved' },
+			{ key: 'COUNSELING_PRE', label: '상담 요청 관리', path: '/professor/counseling/request' },
+			{ key: 'STUDENT_MANAGEMENT', label: '위험 학생 관리', path: '/professor/counseling/risk' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},

@@ -146,6 +146,26 @@ export default function Portal() {
 		loadPendingBreakCount();
 	}, [token, userRole]);
 
+	// professor 상담신청
+	useEffect(() => {
+		if (!token || userRole !== 'professor') return;
+
+		const loadPendingBreakCount = async () => {
+			try {
+				const res = await api.get('/preReserve/preList');
+				const raw = res.data.preList || [];
+
+				const count = raw.length;
+
+				setPendingCount(count);
+			} catch (e) {
+				console.error('상담 신청 로드 실패"', e);
+				setPendingCount(0);
+			}
+		};
+		loadPendingBreakCount();
+	}, [token, userRole]);
+
 	// 로그아웃 핸들러
 	const handleLogout = () => {
 		if (logout) logout();
@@ -290,10 +310,7 @@ export default function Portal() {
 										{pendingCount > 0 ? (
 											<div className="main--page--info">
 												<ul className="d-flex align-items-start">
-													<li>
-														<span className="material-symbols-rounded">notifications_active</span>
-													</li>
-													<li>업무 알림</li>
+													<li>📢 업무 알림</li>
 												</ul>
 
 												<p>
@@ -310,13 +327,36 @@ export default function Portal() {
 											</div>
 										) : (
 											<div className="main--page--info empty">
-												<ul className="d-flex align-items-start">
-													<li>
-														<span className="material-symbols-rounded">notifications</span>
-													</li>
-													<li>업무 알림</li>
-												</ul>
 												<p>처리해야 할 업무가 없습니다.</p>
+											</div>
+										)}
+									</>
+								)}
+
+								{/* [professor 전용] 상담요청 알림 영역 */}
+								{userRole === 'professor' && (
+									<>
+										{pendingCount > 0 ? (
+											<div className="main--page--info">
+												<ul className="d-flex align-items-start">
+													<li>📢 상담 요청 알림</li>
+												</ul>
+
+												<p>
+													<a
+														href="/preReserve/preList"
+														onClick={(e) => {
+															e.preventDefault();
+															navigate('/professor/counseling/pre');
+														}}
+													>
+														학생 상담 신청이 {pendingCount}건 존재합니다.
+													</a>
+												</p>
+											</div>
+										) : (
+											<div className="main--page--info empty">
+												<p>상담 신청이 없습니다.</p>
 											</div>
 										)}
 									</>

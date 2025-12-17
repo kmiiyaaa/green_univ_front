@@ -5,23 +5,23 @@ import api from '../../api/httpClient';
 import '../../assets/css/VideoCounseling.css';
 
 export default function VideoCounseling() {
-	// 헤더 , 푸터 통일로 넣기위한 jsx 파일
-	// 안붙이려면 이 파일은 없어도 됨
-
 	const { user, name, userRole } = useContext(UserContext);
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	// ✅ 메모/상담 식별용 코드 (DB roomCode)
+	// 메모/상담 식별용 코드 (DB roomCode)
 	const code = searchParams.get('code') || '';
 
-	// ✅ 레거시에서 postMessage로 들어오는 코드도 반영
+	// iframe에 한번만 넘길 code -> 없으면 입력코드 두번받음
+	const codeSeedRef = useRef(code);
+
+	// 레거시에서 postMessage로 들어오는 코드도 반영
 	const [roomCode, setRoomCode] = useState(code);
 
 	useEffect(() => {
 		setRoomCode(code);
 	}, [code]);
 
-	// ✅ 레거시(iframe)에서 "입장" 완료되면 부모로 코드 보내기 → 여기서 수신
+	// 레거시(iframe)에서 "입장" 완료되면 부모로 code 보내기 → 여기서 수신
 	useEffect(() => {
 		const onMessage = (event) => {
 			// same-origin만 허용(로컬/배포 모두 안전)
@@ -48,14 +48,17 @@ export default function VideoCounseling() {
 		return name || user?.name || '';
 	}, [user, name]);
 
-	// ✅ iframe에는 display + (있으면) code만 넘김
+	//  iframe에는 display + (있으면) code만 넘김
 	// - Janus join(room=1234)은 레거시 JS에서 고정 처리할 거라 React가 관여 X
 	const iframeSrc = useMemo(() => {
 		const params = new URLSearchParams();
 		params.set('display', displayName);
-		if (roomCode) params.set('code', roomCode); // 레거시 입력칸에 "미리 채우기" 용도
+
+		// roomCode(state) 말고 seed만 사용 (postMessage로 roomCode 바뀌어도 iframe src 안 바뀜)
+		if (codeSeedRef.current) params.set('code', codeSeedRef.current);
+
 		return `/legacy-videoroom/videoroomtest.html?${params.toString()}`;
-	}, [displayName, roomCode]);
+	}, [displayName]);
 
 	// ============================================================
 	// 공유 메모
@@ -65,7 +68,7 @@ export default function VideoCounseling() {
 	const [professorNote, setProfessorNote] = useState('');
 	const [studentNote, setStudentNote] = useState('');
 
-	// 내가 지금 편집 중인 “임시 메모(draft)”는 서버 갱신으로 덮지 않기
+	// 내가 지금 편집 중인 임시 메모는 서버 갱신으로 덮지 않기
 	const [myDraft, setMyDraft] = useState('');
 	const isEditingRef = useRef(false);
 
@@ -95,7 +98,7 @@ export default function VideoCounseling() {
 		try {
 			setLoading(true);
 
-			// ✅ 컨트롤러가 roomCode로 받으니까 params 이름도 roomCode로
+			// 컨트롤러가 roomCode로 받으니까 params 이름도 roomCode로
 			const res = await api.get(`/counsel/note`, { params: { roomCode } });
 
 			const p = res.data?.professorNote ?? '';

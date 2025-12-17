@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/table/DataTable';
-import OptionForm from '../../components/form/OptionForm';
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
+import OptionForm from '../../../components/form/OptionForm';
 
+// 유림 님이 수정중임
 export default function MyRiskStudent() {
 	const [riskList, setRiskList] = useState([]);
 
@@ -18,6 +19,7 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadRiskStudents();
+		console.log(students);
 	}, []);
 
 	const riskHeaders = [
@@ -45,7 +47,7 @@ export default function MyRiskStudent() {
 			교수권장: r.aiRecommendation ?? '',
 			태그: r.aiReasonTags ?? '',
 			업데이트: r.updatedAt ?? '',
-			상담요청: <button>상담 요청</button>,
+			상담요청: r.status === 'DETECTED' ? <button>상담 요청</button> : '상담 신청 완료',
 		}));
 	}, [riskList]);
 
