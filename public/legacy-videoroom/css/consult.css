@@ -18,6 +18,7 @@ html,
 body {
 	height: 100%;
 }
+
 body {
 	margin: 0;
 	font-family: Pretendard, 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -26,8 +27,13 @@ body {
 		radial-gradient(900px 420px at 90% 10%, rgba(17, 24, 39, 0.1), transparent 55%), var(--bg);
 }
 
-/* bootstrap 기본 navbar는 안 씀 */
+/* bootstrap 기본 navbar 숨김 */
 .navbar.navbar-default.navbar-static-top {
+	display: none !important;
+}
+
+/* 공통 */
+.hide {
 	display: none !important;
 }
 
@@ -36,6 +42,7 @@ body {
 	padding: 18px;
 }
 
+/* 상단바 */
 .consult-topbar {
 	width: min(1180px, calc(100% - 12px));
 	margin: 0 auto 14px auto;
@@ -56,6 +63,7 @@ body {
 	align-items: center;
 	gap: 12px;
 }
+
 .brand-badge {
 	width: 44px;
 	height: 44px;
@@ -66,6 +74,7 @@ body {
 	place-items: center;
 	font-weight: 900;
 }
+
 .brand-title {
 	font-weight: 900;
 	font-size: 16px;
@@ -74,38 +83,6 @@ body {
 	font-size: 12px;
 	color: var(--muted);
 	margin-top: 2px;
-}
-
-.prejoin {
-	height: 100%;
-	min-height: 0; /* ✅ grid 안에서 overflow 이슈 방지 */
-}
-
-/* ✅ 통화(입장) 후: 좌측(입장/안내) 숨기고 영상만 크게 */
-body.in-call .consult-main {
-	grid-template-columns: 1fr !important;
-}
-
-body.in-call .consult-left {
-	display: none !important;
-}
-
-/* ✅ 1:1은 딱 두 칸 */
-.video-grid {
-	grid-template-columns: 1fr 1fr !important;
-	gap: 14px;
-	align-items: stretch;
-}
-
-.video-body {
-	position: relative; /* mute/unpublish가 내 화면 안으로 들어옴 */
-	flex: 1;
-	background: #0b1220;
-}
-
-/* panel-body 높이 균일하게 */
-.panel-body {
-	min-height: 420px; /* 원하는 높이로 조절 */
 }
 
 /* start 버튼 */
@@ -121,76 +98,7 @@ body.in-call .consult-left {
 	filter: brightness(1.06);
 }
 
-/* ✅ 입장 전(오른쪽 안내) 패널 스타일 */
-.prejoin {
-	height: 100%;
-	min-height: 0;
-}
-
-.prejoin-inner {
-	background: var(--card);
-	border: 1px dashed rgba(17, 24, 39, 0.22);
-	border-radius: 18px;
-	padding: 22px;
-	box-shadow: var(--shadow);
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 10px;
-}
-
-.prejoin-title {
-	font-weight: 900;
-	font-size: 16px;
-	color: var(--text);
-}
-
-.prejoin-desc {
-	font-size: 13px;
-	color: var(--muted);
-	line-height: 1.6;
-}
-
-.prejoin-box {
-	margin-top: 10px;
-	padding: 14px;
-	border-radius: 16px;
-	border: 1px solid var(--border);
-	background: #f9fafb;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.prejoin-chip {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: fit-content;
-	padding: 8px 10px;
-	border-radius: 999px;
-	background: #ffffff;
-	border: 1px solid var(--border);
-	font-weight: 800;
-	font-size: 12px;
-	color: var(--text);
-}
-
-@keyframes skeleton {
-	0% {
-		background-position: 200% 0;
-	}
-	100% {
-		background-position: -200% 0;
-	}
-}
-
-/* ✅ 입장(통화) 후에는 오른쪽 안내(prejoin) 숨김 */
-body.in-call #prejoin {
-	display: none !important;
-}
-
-/* layout */
+/* 레이아웃 */
 .consult-main {
 	width: min(1180px, calc(100% - 12px));
 	margin: 0 auto;
@@ -198,7 +106,6 @@ body.in-call #prejoin {
 	grid-template-columns: 420px 1fr;
 	gap: 14px;
 	align-items: stretch;
-	align-items: stretch; /* ✅ 좌/우 높이 맞추기 */
 }
 
 .consult-left,
@@ -212,7 +119,7 @@ body.in-call #prejoin {
 	border: 1px solid var(--border);
 	border-radius: 18px;
 	box-shadow: var(--shadow);
-	padding: 18px 18px;
+	padding: 18px;
 }
 
 .card-title {
@@ -226,7 +133,6 @@ body.in-call #prejoin {
 	font-size: 13px;
 	line-height: 1.55;
 }
-
 .card-list {
 	margin: 0;
 	padding-left: 18px;
@@ -257,6 +163,7 @@ body.in-call #prejoin {
 	font-weight: 700;
 }
 
+/* 입력폼 */
 .field {
 	margin-top: 14px;
 }
@@ -271,7 +178,6 @@ body.in-call #prejoin {
 	font-size: 13px;
 }
 
-/* bootstrap label 재스킨 */
 .label {
 	border-radius: 10px;
 	padding: 6px 10px;
@@ -286,7 +192,6 @@ body.in-call #prejoin {
 	color: #065f46;
 }
 
-/* input */
 .form-control {
 	height: 44px !important;
 	border-radius: 12px !important;
@@ -327,20 +232,9 @@ body.in-call #prejoin {
 	filter: brightness(1.06);
 }
 
-.mini-help {
-	margin-top: 8px;
-	font-size: 12px;
-	color: var(--muted);
-}
-
-/* 우측 영상 영역 */
+/* 오른쪽(영상) */
 .consult-right {
 	position: relative;
-}
-
-/* JS가 쓰는 hide 유지 */
-.hide {
-	display: none !important;
 }
 
 /* bootstrap panel 재스킨 */
@@ -366,13 +260,13 @@ body.in-call #prejoin {
 	gap: 12px;
 }
 .panel-body {
-	position: relative; /* ✅ Janus overlay/absolute UI 기준 */
+	position: relative; /* overlay 기준 */
 	background: #0b1220;
 	padding: 12px !important;
-	min-height: 420px; /* ✅ 입장 후 화면 높이(원하는 값으로 조절) */
+	min-height: 420px;
 }
 
-/* ✅ 1:1 레이아웃(중복 정의 제거) */
+/* 1:1 그리드 */
 .video-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -380,36 +274,37 @@ body.in-call #prejoin {
 	align-items: stretch;
 }
 
-/* video element */
-#videolocal video,
-[id^='videoremote'] video {
-	width: 100% !important;
-	height: 100% !important;
-	border-radius: 14px;
-	background: #111;
-	object-fit: cover;
-}
-
-/* ✅ unpublish/mute가 상대 화면으로 “튀는” 현상 방지: #videolocal을 기준으로 고정 */
+/* videolocal: mute/unpublish 기준 */
 #videolocal {
-	position: relative; /* ✅ 버튼 absolute 기준 */
+	position: relative;
 	width: 100%;
 	height: 100%;
-	min-height: 100%;
 	overflow: hidden;
+	min-height: 320px;
 }
 #videolocal #mute,
 #videolocal #unpublish {
 	z-index: 10;
 }
 
-/* (안전장치) 혹시라도 remote쪽에 들어가면 숨김 */
+/* 영상 꽉 차게 */
+#videolocal video,
+[id^='videoremote'] video {
+	width: 100% !important;
+	height: 100% !important;
+	display: block;
+	border-radius: 14px;
+	background: #111;
+	object-fit: cover;
+}
+
+/* 혹시 remote에 버튼 들어가면 숨김 */
 #videoremote1 #mute,
 #videoremote1 #unpublish {
 	display: none !important;
 }
 
-/* 1:1 전용: Remote #2~#5 숨김 */
+/* Remote 2~5 숨김(1:1용) */
 #remote2,
 #remote3,
 #remote4,
@@ -421,14 +316,15 @@ body.in-call #prejoin {
 	display: none !important;
 }
 
-/* ✅ 입장 전 안내(prejoin) - “CSS 안 먹음” 해결: 스타일 실제로 정의 */
+/* 입장 전 안내(prejoin) */
 .prejoin {
 	height: 100%;
-	min-height: 0; /* ✅ grid 안에서 overflow 이슈 방지 */
+	min-height: 0;
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
 	padding: 14px;
+
 	border: 1px dashed rgba(17, 24, 39, 0.22);
 	border-radius: 18px;
 	background: var(--card);
@@ -493,15 +389,13 @@ body.in-call #prejoin {
 	}
 }
 
-/* ✅ 통화(입장) 후: 좌측(입장/안내) 숨기고 영상만 크게 */
+/* 통화(입장) 후: 좌측 숨기고 영상만 */
 body.in-call .consult-main {
 	grid-template-columns: 1fr !important;
 }
 body.in-call .consult-left {
 	display: none !important;
 }
-
-/* ✅ 입장 후 “상담 시작 전 안내”가 떠있음 방지(강제) */
 body.in-call #prejoin {
 	display: none !important;
 }

@@ -7,6 +7,8 @@ import { formatDateLocal } from '../utils/DateTimeUtil';
 
 import portal1 from '../assets/images/portal1.png';
 import portal2 from '../assets/images/portal2.png';
+import StaffAlert from './user/alert/StaffAlert';
+import StudentAlerts from './user/alert/StudentAlert';
 
 // 배너 이미지 데이터
 const bannerImages = [
@@ -35,13 +37,21 @@ export default function Portal() {
 	const [miniUserInfo, setMiniUserInfo] = useState({});
 
 	// 업무 알림용 상태 (Staff)
-	const [pendingCount, setPendingCount] = useState(0);
+	const [staffPendingCount, setStaffPendingCount] = useState(0);
+
+	// professor 상담신청 알림용 상태
+	const [professorPendingCount, setProfessorPendingCount] = useState(0);
+
+	// 학생 알림용
+	const [riskCount, setRiskCount] = useState(0);
+	const [requestCount, setRequestCount] = useState(0);
+	const [upcomingCount, setUpcomingCount] = useState(0);
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
 	const [latestSchedules, setLatestSchedules] = useState([]);
 
-	// 1. 배너 자동 슬라이드
+	// 배너 자동 슬라이드
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
@@ -124,7 +134,11 @@ export default function Portal() {
 	// staff 업무처리
 	useEffect(() => {
 		// staff가 아니거나 토큰 없으면 업무알림 필요 없음
-		if (!token || userRole !== 'staff') return;
+		if (!token || userRole !== 'staff') {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setStaffPendingCount(0);
+			return;
+		}
 
 		const loadPendingBreakCount = async () => {
 			try {
@@ -136,10 +150,10 @@ export default function Portal() {
 				// 예: status가 있다면 이렇게
 				// const count = raw.filter(b => b.status === 'PENDING').length;
 
-				setPendingCount(count);
+				setStaffPendingCount(count);
 			} catch (e) {
 				console.error('휴학 대기건수 로드 실패:', e);
-				setPendingCount(0);
+				setStaffPendingCount(0);
 			}
 		};
 
@@ -148,7 +162,10 @@ export default function Portal() {
 
 	// professor 상담신청
 	useEffect(() => {
-		if (!token || userRole !== 'professor') return;
+		if (!token || userRole !== 'professor') {
+			setProfessorPendingCount(0);
+			return;
+		}
 
 		const loadPendingBreakCount = async () => {
 			try {
@@ -157,12 +174,49 @@ export default function Portal() {
 
 				const count = raw.length;
 
-				setPendingCount(count);
+				setProfessorPendingCount(count);
 			} catch (e) {
 				console.error('상담 신청 로드 실패"', e);
-				setPendingCount(0);
+				setProfessorPendingCount(0);
 			}
 		};
+		loadPendingBreakCount();
+	}, [token, userRole]);
+
+	// student 알림
+	useEffect(() => {
+		if (!token || userRole !== 'student') {
+			setRiskCount(0);
+			setRequestCount(0);
+			setUpcomingCount(0);
+			return;
+		}
+
+		const loadPendingBreakCount = async () => {
+			try {
+				// 1) 위험과목
+				const riskRes = await api.get('/risk/me');
+				const riskRaw = riskRes.data.riskList || [];
+				setRiskCount(riskRaw.length);
+
+				// 2) 상담요청 / 3) 상담예정
+				// ✅ 아직 API가 없다면 0으로 유지
+				// TODO: 엔드포인트 생기면 아래 주석 해제 후 세팅
+				// const reqRes = await api.get('/counseling/request/me');
+				// setRequestCount((reqRes.data.list || []).length);
+				// const upcomingRes = await api.get('/counseling/upcoming/me');
+				// setUpcomingCount((upcomingRes.data.list || []).length);
+
+				setRequestCount(0);
+				setUpcomingCount(0);
+			} catch (e) {
+				console.error('학생 알림 로드 실패', e);
+				setRiskCount(0);
+				setRequestCount(0);
+				setUpcomingCount(0);
+			}
+		};
+
 		loadPendingBreakCount();
 	}, [token, userRole]);
 
@@ -306,37 +360,13 @@ export default function Portal() {
 
 								{/* [Staff 전용] 업무 알림 영역 */}
 								{userRole === 'staff' && (
-									<>
-										{pendingCount > 0 ? (
-											<div className="main--page--info">
-												<ul className="d-flex align-items-start">
-													<li>📢 업무 알림</li>
-												</ul>
-
-												<p>
-													<a
-														href="/break/list/staff"
-														onClick={(e) => {
-															e.preventDefault();
-															navigate('/break/list/staff');
-														}}
-													>
-														처리되지 않은 휴학 신청이 {pendingCount}건 존재합니다.
-													</a>
-												</p>
-											</div>
-										) : (
-											<div className="main--page--info empty">
-												<p>처리해야 할 업무가 없습니다.</p>
-											</div>
-										)}
-									</>
+									<StaffAlert pendingCount={staffPendingCount} onGoList={() => navigate('/break/list/staff')} />
 								)}
 
 								{/* [professor 전용] 상담요청 알림 영역 */}
 								{userRole === 'professor' && (
 									<>
-										{pendingCount > 0 ? (
+										{professorPendingCount > 0 ? (
 											<div className="main--page--info">
 												<ul className="d-flex align-items-start">
 													<li>📢 상담 요청 알림</li>
@@ -350,7 +380,7 @@ export default function Portal() {
 															navigate('/professor/counseling/pre');
 														}}
 													>
-														학생 상담 신청이 {pendingCount}건 존재합니다.
+														학생 상담 신청이 {professorPendingCount}건 존재합니다.
 													</a>
 												</p>
 											</div>
@@ -360,6 +390,18 @@ export default function Portal() {
 											</div>
 										)}
 									</>
+								)}
+
+								{/* [student 전용] 알림 영역 */}
+								{userRole === 'student' && (
+									<StudentAlerts
+										riskCount={riskCount}
+										requestCount={requestCount}
+										upcomingCount={upcomingCount}
+										onGoRisk={() => navigate('/status')}
+										onGoRequest={() => navigate('/counseling/request')}
+										onGoUpcoming={() => navigate('/counseling/upcoming')}
+									/>
 								)}
 							</div>
 
