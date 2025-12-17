@@ -1,0 +1,130 @@
+.crd-wrap {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 28px;
+	background: #ffffff;
+	border-radius: 14px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.crd-title {
+	font-size: 22px;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+.crd-subject {
+	font-size: 16px;
+	margin-bottom: 16px;
+}
+
+.crd-prof-card {
+	padding: 14px 16px;
+	background: #f5f7fb;
+	border-radius: 10px;
+	margin-bottom: 24px;
+}
+
+.crd-prof-name {
+	font-weight: 600;
+}
+
+.crd-prof-dept {
+	font-size: 14px;
+	color: #666;
+}
+
+.crd-section {
+	margin-bottom: 28px;
+}
+
+.crd-section-title {
+	font-size: 15px;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+/* 날짜 가로 정렬 */
+.crd-date-row {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+}
+
+/* 날짜 컬럼 */
+.crd-date-col {
+	background: #f9fafc;
+	border-radius: 12px;
+	padding: 12px;
+}
+
+/* 날짜 헤더 */
+.crd-date-title {
+	font-weight: 600;
+	text-align: center;
+	margin-bottom: 10px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid #ddd;
+}
+
+/* 시간 세로 정렬 */
+.crd-time-col {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.crd-time-btn {
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+	background: #fff;
+	cursor: pointer;
+	font-size: 14px;
+	transition: all 0.15s ease;
+}
+
+.crd-time-btn:hover {
+	border-color: #5b8def;
+	background: #f6f9ff;
+}
+
+.crd-time-btn.crd-active {
+	border-color: #5b8def;
+	background: #eef4ff;
+	font-weight: 600;
+}
+
+.crd-reason {
+	width: 100%;
+	min-height: 120px;
+	padding: 14px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	resize: none;
+	font-size: 14px;
+}
+
+.crd-submit-btn {
+	width: 100%;
+	height: 48px;
+	border-radius: 12px;
+	border: none;
+	background: #5b8def;
+	color: #fff;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.crd-submit-btn:disabled {
+	background: #ccc;
+	cursor: not-allowed;
+}
+
+.crd-empty {
+	text-align: center;
+	color: #777;
+	padding: 48px;
+}
