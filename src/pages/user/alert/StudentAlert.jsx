@@ -8,57 +8,44 @@ export default function StudentAlerts({
 	onGoRequest,
 	onGoUpcoming,
 }) {
-	const alerts = [
+	const items = [
 		{
 			key: 'risk',
-			title: '📢 상담 권유 알림',
-			text: `위험 과목이 ${riskCount}건 존재합니다.`,
-			href: '/risk/me',
+			title: '● 상담 권유 알림',
+			desc: `위험 과목이 ${riskCount}건 존재합니다.`,
 			onClick: onGoRisk,
 			show: riskCount > 0,
 		},
 		{
-			key: 'request',
-			title: '📢 상담 요청 알림',
-			text: `상담 요청이 ${requestCount}건 존재합니다.`,
-			href: '/counseling/request',
+			key: 'req',
+			title: '● 상담 요청 알림',
+			desc: `상담 요청이 ${requestCount}건 존재합니다.`,
 			onClick: onGoRequest,
 			show: requestCount > 0,
 		},
 		{
-			key: 'upcoming',
-			title: '📢 상담 예정 알림',
-			text: `상담 예정이 ${upcomingCount}건 존재합니다.`,
-			href: '/counseling/upcoming',
+			key: 'up',
+			title: '● 상담 예정 알림',
+			desc: `상담 예정이 ${upcomingCount}건 존재합니다.`,
 			onClick: onGoUpcoming,
 			show: upcomingCount > 0,
 		},
-	].filter((a) => a.show);
+	].filter((x) => x.show);
 
-	// 전부 0이면 아무것도 안 보이게
-	if (alerts.length === 0) return null;
+	if (items.length === 0) return null;
 
 	return (
-		<>
-			{alerts.map((a) => (
-				<div key={a.key} className="main--page--info">
-					<ul className="d-flex align-items-start">
-						<li>{a.title}</li>
-					</ul>
+		<div className="portal-alert-box">
+			<div className="portal-alert-title">📢 학생 알림</div>
 
-					<p>
-						<a
-							href={a.href}
-							onClick={(e) => {
-								e.preventDefault();
-								a.onClick?.();
-							}}
-						>
-							{a.text}
-						</a>
-					</p>
-				</div>
-			))}
-		</>
+			<div className="portal-alert-list">
+				{items.map((it) => (
+					<button key={it.key} type="button" className="portal-alert-item" onClick={it.onClick}>
+						<div className="portal-alert-item-title">{it.title}</div>
+						<div className="portal-alert-item-desc">{it.desc}</div>
+					</button>
+				))}
+			</div>
+		</div>
 	);
 }

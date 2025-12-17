@@ -41,13 +41,13 @@ export default function Portal() {
 
 	// professor 상담신청 알림용 상태
 	const [professorPendingCount, setProfessorPendingCount] = useState(0);
+	const [pendingCount, setPendingCount] = useState(0);
+	const [scheduleCount, setScheduleCount] = useState(0);
 
 	// 학생 알림용
 	const [riskCount, setRiskCount] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
 	const [upcomingCount, setUpcomingCount] = useState(0);
-	const [pendingCount, setPendingCount] = useState(0);
-	const [scheduleCount, setScheduleCount] = useState(0);
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
@@ -83,7 +83,7 @@ export default function Portal() {
 		return sStart <= mEnd && sEnd >= mStart;
 	};
 
-	// 2. 사용자 정보 불러오기
+	// 사용자 정보 불러오기
 	useEffect(() => {
 		if (!token) return;
 
@@ -208,23 +208,15 @@ export default function Portal() {
 			return;
 		}
 
-		const loadPendingBreakCount = async () => {
+		const loadStudentAlerts = async () => {
 			try {
-				// 1) 위험과목
+				// 위험과목
 				const riskRes = await api.get('/risk/me');
-				const riskRaw = riskRes.data.riskList || [];
-				setRiskCount(riskRaw.length);
+				setRiskCount(Array.isArray(riskRes.data) ? riskRes.data.length : 0);
 
-				// 2) 상담요청 / 3) 상담예정
-				// ✅ 아직 API가 없다면 0으로 유지
-				// TODO: 엔드포인트 생기면 아래 주석 해제 후 세팅
-				// const reqRes = await api.get('/counseling/request/me');
-				// setRequestCount((reqRes.data.list || []).length);
-				// const upcomingRes = await api.get('/counseling/upcoming/me');
-				// setUpcomingCount((upcomingRes.data.list || []).length);
-
-				setRequestCount(0);
-				setUpcomingCount(0);
+				// 2) 상담요청/상담예정 (카운트 API)
+				const countRes = await api.get('/reserve/count/student');
+				setUpcomingCount(Number(countRes.data?.approved) || 0); // APPROVED(확정만)
 			} catch (e) {
 				console.error('학생 알림 로드 실패', e);
 				setRiskCount(0);
@@ -233,46 +225,8 @@ export default function Portal() {
 			}
 		};
 
-		loadPendingBreakCount();
+		loadStudentAlerts();
 	}, [token, userRole]);
-
-	// student 알림
-	useEffect(() => {
-		if (!token || userRole !== 'student') {
-			setRiskCount(0);
-			setRequestCount(0);
-			setUpcomingCount(0);
-			return;
-		}
-
-		const loadPendingBreakCount = async () => {
-			try {
-				// 1) 위험과목
-				const riskRes = await api.get('/risk/me');
-				const riskRaw = riskRes.data.riskList || [];
-				setRiskCount(riskRaw.length);
-
-				// 2) 상담요청 / 3) 상담예정
-				// ✅ 아직 API가 없다면 0으로 유지
-				// TODO: 엔드포인트 생기면 아래 주석 해제 후 세팅
-				// const reqRes = await api.get('/counseling/request/me');
-				// setRequestCount((reqRes.data.list || []).length);
-				// const upcomingRes = await api.get('/counseling/upcoming/me');
-				// setUpcomingCount((upcomingRes.data.list || []).length);
-
-				setRequestCount(0);
-				setUpcomingCount(0);
-			} catch (e) {
-				console.error('학생 알림 로드 실패', e);
-				setRiskCount(0);
-				setRequestCount(0);
-				setUpcomingCount(0);
-			}
-		};
-
-		loadPendingBreakCount();
-	}, [token, userRole]);
-
 	// 로그아웃 핸들러
 	const handleLogout = () => {
 		if (logout) logout();
@@ -478,8 +432,8 @@ export default function Portal() {
 										requestCount={requestCount}
 										upcomingCount={upcomingCount}
 										onGoRisk={() => navigate('/status')}
-										onGoRequest={() => navigate('/counseling/request')}
-										onGoUpcoming={() => navigate('/counseling/upcoming')}
+										onGoRequest={() => navigate('/reserve/list')} // 요청 목록 (REQUESTED)
+										onGoUpcoming={() => navigate('/counseling/schedule')} // 예정 목록 (APPROVED)
 									/>
 								)}
 							</div>
