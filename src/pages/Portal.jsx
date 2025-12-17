@@ -36,6 +36,7 @@ export default function Portal() {
 
 	// 업무 알림용 상태 (Staff)
 	const [pendingCount, setPendingCount] = useState(0);
+	const [scheduleCount, setScheduleCount] = useState(0);
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
@@ -146,24 +147,38 @@ export default function Portal() {
 		loadPendingBreakCount();
 	}, [token, userRole]);
 
-	// professor 상담신청
+	// professor 업무처리 -  상담신청 조회
+
+	// 1. 처리안된 상담목록
 	useEffect(() => {
 		if (!token || userRole !== 'professor') return;
 
-		const loadPendingBreakCount = async () => {
+		const loadnotApplicated = async () => {
 			try {
-				const res = await api.get('/preReserve/preList');
-				const raw = res.data.preList || [];
-
-				const count = raw.length;
-
-				setPendingCount(count);
+				const res = await api.get('/reserve/notApplicated'); // int 로 옴
+				setPendingCount(res.data);
 			} catch (e) {
 				console.error('상담 신청 로드 실패"', e);
 				setPendingCount(0);
 			}
 		};
-		loadPendingBreakCount();
+		loadnotApplicated();
+	}, [token, userRole]);
+
+	// 2. 오늘의 상담 건수
+	useEffect(() => {
+		if (!token || userRole !== 'professor') return;
+
+		const loadcounselingByDate = async () => {
+			try {
+				const res = await api.get('/counseling/today'); // int 로 옴
+				setScheduleCount(res.data);
+			} catch (e) {
+				console.error('상담 건수 로드 실패"', e);
+				setScheduleCount(0);
+			}
+		};
+		loadcounselingByDate();
 	}, [token, userRole]);
 
 	// 로그아웃 핸들러
@@ -350,7 +365,33 @@ export default function Portal() {
 															navigate('/professor/counseling/pre');
 														}}
 													>
-														학생 상담 신청이 {pendingCount}건 존재합니다.
+														처리되지 않은 학생 상담 신청이 {pendingCount}건 존재합니다.
+													</a>
+												</p>
+											</div>
+										) : (
+											<div className="main--page--info empty">
+												<p>처리되지 않은 상담 신청이 없습니다.</p>
+											</div>
+										)}
+
+										{/* 오늘의 상담 건수 - 바로 화상채팅방 또는 예약 확인창 이동  */}
+
+										{scheduleCount > 0 ? (
+											<div className="main--page--info">
+												<ul className="d-flex align-items-start">
+													<li>📢 오늘의 상담 건수</li>
+												</ul>
+
+												<p>
+													<a
+														href="/preReserve/preList"
+														onClick={(e) => {
+															e.preventDefault();
+															navigate('/videotest');
+														}}
+													>
+														오늘의 상담이 {scheduleCount}건 존재합니다.
 													</a>
 												</p>
 											</div>
