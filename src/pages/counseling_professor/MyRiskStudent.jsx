@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
+import OptionForm from '../../components/form/OptionForm';
 
 export default function MyRiskStudent() {
 	const [riskList, setRiskList] = useState([]);
@@ -20,8 +21,8 @@ export default function MyRiskStudent() {
 	}, []);
 
 	const riskHeaders = [
-		'학번',
-		'이름',
+		'과목',
+		'학생정보',
 		'위험타입',
 		'위험레벨',
 		'상태',
@@ -34,7 +35,8 @@ export default function MyRiskStudent() {
 
 	const riskTableData = useMemo(() => {
 		return riskList.map((r) => ({
-			학번: r.studentId ?? '',
+			과목: r.subjectName ?? '',
+			학생정보: `${r.studentName} (${r.studentId})`,
 			이름: r.studentName ?? '',
 			위험타입: r.riskType ?? '',
 			위험레벨: r.riskLevel ?? '',
@@ -47,24 +49,29 @@ export default function MyRiskStudent() {
 		}));
 	}, [riskList]);
 
+	const subjectOptions = [
+		{ value: 'subject1', label: '교수과목1' },
+		{ value: 'subject2', label: '교수과목2' },
+	];
+
+	const riskLevelOptions = [
+		{ value: 'DANGER', label: '위험' },
+		{ value: 'WARNING', label: '경고' },
+	];
+
+	const value = 'value는뭘넣어야할까';
+
 	return (
 		<div className="risk-wrap">
 			<h2>(이번 학기)내 담당 위험학생</h2>
 
-			{/* 필터 영역 */}
-			<div className="filter-bar">
-				<select>
-					<option>과목</option>
-				</select>
+			<OptionForm label="과목" name="subject" value={value} options={subjectOptions} />
+			<OptionForm label="위험레벨" name="subject" value={value} options={riskLevelOptions} />
 
-				<select>
-					<option value="">전체</option>
-					<option value="DANGER">출결</option>
-					<option value="WARNING">경고</option>
-				</select>
-			</div>
-
-			{/* 리스트 */}
+			{/* 상담이 필요한 학생 목록 */}
+			<DataTable headers={riskHeaders} data={riskTableData} />
+			<hr />
+			{/* 상담완료된 학생 목록 */}
 			<DataTable headers={riskHeaders} data={riskTableData} />
 		</div>
 	);
