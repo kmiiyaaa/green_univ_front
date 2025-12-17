@@ -14,6 +14,7 @@
 * {
 	box-sizing: border-box;
 }
+
 html,
 body {
 	height: 100%;
@@ -245,6 +246,7 @@ body {
 	box-shadow: var(--shadow);
 	margin: 0 !important;
 }
+
 .panel-heading {
 	background: #ffffff !important;
 	border-bottom: 1px solid var(--border) !important;
@@ -274,17 +276,14 @@ body {
 	align-items: stretch;
 }
 
-/* videolocal: mute/unpublish 기준 */
+/* ===== Local video container ===== */
 #videolocal {
 	position: relative;
+	isolation: isolate; /* ✅ video 레이어 이슈 방지 */
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	min-height: 320px;
-}
-#videolocal #mute,
-#videolocal #unpublish {
-	z-index: 10;
 }
 
 /* 영상 꽉 차게 */
@@ -296,9 +295,35 @@ body {
 	border-radius: 14px;
 	background: #111;
 	object-fit: cover;
+
+	position: relative;
+	z-index: 1;
 }
 
-/* 혹시 remote에 버튼 들어가면 숨김 */
+/* ✅ 컨트롤 레이어 (localControls 방식) */
+#videolocal .local-controls {
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
+	z-index: 99999;
+	display: flex;
+	gap: 8px;
+	pointer-events: auto;
+}
+#videolocal .local-controls .btn {
+	border-radius: 12px !important;
+	font-weight: 900 !important;
+}
+
+/* 혹시 JS가 버튼을 직접(#mute/#unpublish) videolocal에 붙이는 경우 대비 */
+#videolocal #mute,
+#videolocal #unpublish {
+	z-index: 99999 !important;
+	transform: translateZ(0);
+	pointer-events: auto;
+}
+
+/* Remote 1에 버튼 들어가면 숨김 */
 #videoremote1 #mute,
 #videoremote1 #unpublish {
 	display: none !important;
@@ -398,27 +423,6 @@ body.in-call .consult-left {
 }
 body.in-call #prejoin {
 	display: none !important;
-}
-
-/* 버튼이 영상 위로 올라오도록 오버레이 처리 */
-#videolocal #mute {
-	position: absolute;
-	left: 12px;
-	bottom: 12px;
-	z-index: 50;
-}
-
-#videolocal #unpublish {
-	position: absolute;
-	left: 96px; /* mute 옆으로 */
-	bottom: 12px;
-	z-index: 50;
-}
-
-/* 혹시 클릭이 안 되면 */
-#videolocal #mute,
-#videolocal #unpublish {
-	pointer-events: auto;
 }
 
 /* 반응형 */

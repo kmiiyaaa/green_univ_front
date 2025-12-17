@@ -300,63 +300,29 @@ $(document).ready(function () {
 								}
 							},
 							onlocalstream: function (stream) {
-								Janus.debug(' ::: Got a local stream :::', stream);
 								mystream = stream;
 								$('#videojoin').hide();
 								$('#videos').removeClass('hide').show();
+
+								// ✅ video는 videolocal에 계속 붙임
 								if ($('#myvideo').length === 0) {
 									$('#videolocal').append(
-										'<video class="rounded centered" id="myvideo" width="100%" height="100%" autoplay playsinline muted="muted"/>'
+										'<video class="rounded centered" id="myvideo" autoplay playsinline muted="muted"></video>'
 									);
-									// Add a 'mute' button
-									$('#videolocal').append(
-										'<button class="btn btn-warning btn-xs" id="mute" style="position: absolute; bottom: 0px; left: 0px; margin: 15px;">Mute</button>'
-									);
-									$('#mute').click(toggleMute);
-									// Add an 'unpublish' button
-									$('#videolocal').append(
-										'<button class="btn btn-warning btn-xs" id="unpublish" style="position: absolute; bottom: 0px; right: 0px; margin: 15px;">Unpublish</button>'
-									);
-									$('#unpublish').click(unpublishOwnFeed);
 								}
-								$('#publisher').removeClass('hide').html(myusername).show();
+
+								// ✅ (중요) videolocal 내부 오버레이(localControls) 방식 제거
+								// if ($('#localControls').length === 0) { ... }  <-- 이 블록 삭제
+								// $('#localControls').html(`...`)               <-- 이 블록 삭제
+
+								// ✅ 버튼은 "헤더"에서 보여주고 이벤트만 연결
+								$('#localControlsHead').removeClass('hide').show();
+
+								$('#mute').off('click').on('click', toggleMute);
+								$('#unpublish').off('click').on('click', unpublishOwnFeed);
+
 								Janus.attachMediaStream($('#myvideo').get(0), stream);
 								$('#myvideo').get(0).muted = 'muted';
-								if (
-									sfutest.webrtcStuff.pc.iceConnectionState !== 'completed' &&
-									sfutest.webrtcStuff.pc.iceConnectionState !== 'connected'
-								) {
-									$('#videolocal')
-										.parent()
-										.parent()
-										.block({
-											message: '<b>Publishing...</b>',
-											css: {
-												border: 'none',
-												backgroundColor: 'transparent',
-												color: 'white',
-											},
-										});
-								}
-								var videoTracks = stream.getVideoTracks();
-								if (!videoTracks || videoTracks.length === 0) {
-									// No webcam
-									$('#myvideo').hide();
-									if ($('#videolocal .no-video-container').length === 0) {
-										$('#videolocal').append(
-											'<div class="no-video-container">' +
-												'<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-												'<span class="no-video-text">No webcam available</span>' +
-												'</div>'
-										);
-									}
-								} else {
-									$('#videolocal .no-video-container').remove();
-									$('#myvideo').removeClass('hide').show();
-								}
-							},
-							onremotestream: function (stream) {
-								// The publisher stream is sendonly, we don't expect anything here
 							},
 							oncleanup: function () {
 								Janus.log(' ::: Got a cleanup notification: we are unpublished now :::');
