@@ -1,15 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
+import { useNavigate } from 'react-router-dom';
 
 const TotalGrade = () => {
 	const [myGradeList, setMyGradeList] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		// 이번 학기 수강과목 강의평가 안 되어있으면 리턴
+		api.get('/evaluation/hasEval').then((res) => {
+			console.log(res.data.hasEval);
+			if (!res?.data?.hasEval) {
+				alert('먼저 강의 평가를 완료해주세요');
+				navigate(-1, { replace: true });
+			}
+		});
+	}, []);
 
 	useEffect(() => {
 		const fetchTotal = async () => {
 			try {
 				const res = await api.get('/grade/total');
+				console.log(res.data);
 				const data = res.data;
 				setMyGradeList(data.gradeList ?? []);
 			} catch (e) {
@@ -29,7 +43,7 @@ const TotalGrade = () => {
 		return (myGradeList ?? []).map((g) => ({
 			연도: `${g.subYear}년`,
 			학기: `${g.semester}학기`,
-			신청학점: g.sumGrades,
+			신청학점: g.totalCredits,
 			취득학점: g.myGrades,
 			평점평균: g.average ?? g.avg ?? '-',
 		}));

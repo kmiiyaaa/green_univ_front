@@ -22,7 +22,7 @@ export default function Subject() {
 		subDay: '월',
 		startTime: '',
 		endTime: '',
-		grades: '',
+		credits: '',
 		capacity: '',
 	});
 
@@ -46,7 +46,7 @@ export default function Subject() {
 			subDay: '월',
 			startTime: '',
 			endTime: '',
-			grades: '',
+			credits: '',
 			capacity: '',
 		});
 		setEditingId(null);
@@ -64,7 +64,7 @@ export default function Subject() {
 			semester: formData.semester ? Number(formData.semester) : null,
 			startTime: formData.startTime ? Number(formData.startTime) : null,
 			endTime: formData.endTime ? Number(formData.endTime) : null,
-			grades: formData.grades ? Number(formData.grades) : null,
+			credits: formData.credits ? Number(formData.credits) : null,
 			capacity: formData.capacity ? Number(formData.capacity) : null,
 		};
 	};
@@ -98,7 +98,7 @@ export default function Subject() {
 				학기: sub.semester,
 				요일: sub.subDay,
 				시간: `${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)}`,
-				이수학점: sub.grades,
+				이수학점: sub.credits,
 				정원: sub.capacity,
 				원본데이터: sub,
 			}));
@@ -207,7 +207,7 @@ export default function Subject() {
 			subDay: sub.subDay || '월',
 			startTime: sub.startTime != null ? String(sub.startTime) : '',
 			endTime: sub.endTime != null ? String(sub.endTime) : '',
-			grades: sub.grades != null ? String(sub.grades) : '',
+			credits: sub.credits != null ? String(sub.credits) : '',
 			capacity: sub.capacity != null ? String(sub.capacity) : '',
 		});
 		setEditingId(sub.id);
@@ -329,7 +329,7 @@ export default function Subject() {
 					name="startTime"
 					value={formData.startTime}
 					onChange={handleChange}
-					placeholder="예 : 900 (09:00)"
+					placeholder="예 : 9 (09:00)"
 				/>
 				<InputForm
 					label="종료 시간"
@@ -339,7 +339,13 @@ export default function Subject() {
 					placeholder="예 : 1030 (10:30)"
 				/>
 
-				<InputForm label="이수학점" name="grades" value={formData.grades} onChange={handleChange} placeholder="예: 3" />
+				<InputForm
+					label="이수학점"
+					name="credits"
+					value={formData.credits}
+					onChange={handleChange}
+					placeholder="예: 3"
+				/>
 				<InputForm
 					label="정원"
 					name="capacity"

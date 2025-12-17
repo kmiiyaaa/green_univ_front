@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import OptionForm from '../../components/form/OptionForm';
 import DataTable from '../../components/table/DataTable';
 import api from '../../api/httpClient';
+import { useNavigate } from 'react-router-dom';
 
 // 학기별 성적 조회
 
@@ -19,8 +20,20 @@ const Semester = () => {
 	const [subYear, setSubYear] = useState('');
 	const [semester, setSemester] = useState('');
 	const [type, setType] = useState('전체');
+	const navigate = useNavigate();
 
 	const [loading, setLoading] = useState(true);
+
+	// 이번 학기 수강 과목 강의평가 안 되어있으면 리턴
+	useEffect(() => {
+		api.get('/evaluation/hasEval').then((res) => {
+			console.log(res.data.hasEval);
+			if (!res?.data?.hasEval) {
+				alert('먼저 강의 평가를 완료해주세요');
+				navigate(-1, { replace: true });
+			}
+		});
+	}, []);
 
 	//옵션
 	const yearOptions = useMemo(
@@ -97,7 +110,7 @@ const Semester = () => {
 			과목번호: g.subjectId ?? '',
 			과목명: g.name ?? '',
 			강의구분: g.type ?? '',
-			학점: g.grade ?? '',
+			학점: g.letterGrade ?? '',
 		}));
 	}, [gradeList]);
 

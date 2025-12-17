@@ -5,18 +5,18 @@ import api from '../../api/httpClient';
 import OptionForm from '../../components/form/OptionForm';
 
 // 교수 - 성적 기입 컴포넌트
-export default function GradeInput({ gradeitem, setOpenGrade, stuNum }) {
+export default function GradeInput({ gradeItem, setOpenGrade, stuNum }) {
 	// 학생 기본 정보 props에서 뽑기
 	const headers = ['번호', '이름'];
 	const tableData = useMemo(() => {
-		return gradeitem.map((s) => ({
+		return gradeItem.map((s) => ({
 			번호: s.studentId ?? '',
 			이름: s.studentName ?? '',
 		}));
-	}, [gradeitem]);
+	}, [gradeItem]);
 
 	// gradeitem에서 기본값 먼저 세팅
-	const base = gradeitem[0]; // 객체
+	const base = gradeItem[0]; // 객체
 
 	const subjectId = base?.subjectId;
 	const studentId = base?.studentId;
