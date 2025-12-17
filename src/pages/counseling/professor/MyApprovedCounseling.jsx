@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
+import '../../../assets/css/MyCounselingManage.css';
 
 export default function MyCounselingManage() {
 	const [allList, setAllList] = useState([]);
@@ -9,7 +10,7 @@ export default function MyCounselingManage() {
 	// 상담 일정(approved) 과목 필터
 	const [subjectId, setSubjectId] = useState('');
 
-	// ✅ 전체 목록 로드 (한 번만)
+	// 전체 목록 로드
 	const loadAll = async () => {
 		const res = await api.get('/reserve/list/professor');
 		setAllList(res.data ?? []);
@@ -19,13 +20,11 @@ export default function MyCounselingManage() {
 		loadAll();
 	}, []);
 
-	// ✅ REQUESTED / APPROVED 분리
+	// REQUESTED / APPROVED 분리
 	const requestedList = useMemo(() => allList.filter((r) => r.approvalState === 'REQUESTED'), [allList]);
-
 	const approvedList = useMemo(() => allList.filter((r) => r.approvalState === 'APPROVED'), [allList]);
 
-	// ✅ 승인/반려 처리 → 처리 후 재조회하면
-	// 요청에서 사라지고(REQUESTED 아님) 상담일정에 자동 등장(APPROVED)
+	// 승인/반려 처리
 	const handleDecision = async (reserveId, decision) => {
 		try {
 			setLoadingId(reserveId);
@@ -33,19 +32,16 @@ export default function MyCounselingManage() {
 			await api.post('/reserve/decision', null, {
 				params: { reserveId, decision },
 			});
-
-			// ✅ 동기화 핵심!
 			await loadAll();
 		} catch (e) {
+			console.error(e);
 			alert('처리 실패! 잠시 후 다시 시도해주세요.');
 		} finally {
 			setLoadingId(null);
 		}
 	};
 
-	// ----------------------
-	// 1) 상담 요청 테이블
-	// ----------------------
+	// 상담요청
 	const headers1 = ['학생', '과목', '상담사유', '상세', '처리'];
 
 	const data1 = useMemo(() => {
@@ -56,6 +52,7 @@ export default function MyCounselingManage() {
 			상세: (
 				<button
 					type="button"
+					className="cm-btn cm-btn--ghost"
 					onClick={() => {
 						sessionStorage.setItem('counselingDetail', JSON.stringify(r));
 						window.open('/counseling/info', '_blank');
@@ -65,11 +62,21 @@ export default function MyCounselingManage() {
 				</button>
 			),
 			처리: (
-				<div style={{ display: 'flex', gap: 8 }}>
-					<button type="button" disabled={loadingId === r.id} onClick={() => handleDecision(r.id, '승인')}>
+				<div className="cm-actions">
+					<button
+						type="button"
+						className="cm-btn cm-btn--primary"
+						disabled={loadingId === r.id}
+						onClick={() => handleDecision(r.id, '승인')}
+					>
 						승인
 					</button>
-					<button type="button" disabled={loadingId === r.id} onClick={() => handleDecision(r.id, '반려')}>
+					<button
+						type="button"
+						className="cm-btn cm-btn--danger"
+						disabled={loadingId === r.id}
+						onClick={() => handleDecision(r.id, '반려')}
+					>
 						반려
 					</button>
 				</div>
@@ -77,10 +84,7 @@ export default function MyCounselingManage() {
 		}));
 	}, [requestedList, loadingId]);
 
-	// ----------------------
-	// 2) 상담 일정 테이블
-	// ----------------------
-
+	// 상담 일정
 	// 과목 목록 (APPROVED 기준 중복 제거)
 	const subjects = useMemo(() => {
 		const map = new Map();
@@ -107,6 +111,7 @@ export default function MyCounselingManage() {
 			상세: (
 				<button
 					type="button"
+					className="cm-btn cm-btn--ghost"
 					onClick={() => {
 						sessionStorage.setItem('counselingDetail', JSON.stringify(r));
 						window.open('/counseling/info', '_blank');
@@ -119,32 +124,58 @@ export default function MyCounselingManage() {
 	}, [filteredApproved]);
 
 	return (
-		<div>
-			<h2>내 상담 관리</h2>
+		<div className="cm-page">
+			<div className="cm-header">
+				<div>
+					<h2 className="cm-title">내 상담 관리</h2>
+				</div>
+				<button type="button" className="cm-btn cm-btn--ghost" onClick={loadAll}>
+					새로고침
+				</button>
+			</div>
 
-			<div>
-				<h3>상담 요청</h3>
+			{/* 상담 요청 */}
+			<section className="cm-card">
+				<div className="cm-card-head">
+					<h3 className="cm-card-title">상담 요청</h3>
+					<span className="cm-badge">{requestedList.length}건</span>
+				</div>
+
 				{requestedList.length === 0 ? (
-					<p>처리할 상담 요청이 없습니다.</p>
+					<div className="cm-empty">처리할 상담 요청이 없습니다.</div>
 				) : (
-					<DataTable headers={headers1} data={data1} />
+					<div className="cm-table">
+						<DataTable headers={headers1} data={data1} />
+					</div>
 				)}
-			</div>
+			</section>
 
-			<h3>상담 일정</h3>
-			{/* 과목 선택 필터 */}
-			<div style={{ marginBottom: '10px' }}>
-				<select value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
-					<option value="">전체 과목</option>
-					{subjects.map((s) => (
-						<option key={s.id} value={s.id}>
-							{s.name}
-						</option>
-					))}
-				</select>
-			</div>
+			{/* 상담 일정 */}
+			<section className="cm-card">
+				<div className="cm-card-head">
+					<h3 className="cm-card-title">상담 일정</h3>
+					<div className="cm-filter">
+						<label className="cm-filter-label">과목</label>
+						<select className="cm-select" value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
+							<option value="">전체 과목</option>
+							{subjects.map((s) => (
+								<option key={s.id} value={s.id}>
+									{s.name}
+								</option>
+							))}
+						</select>
+						<span className="cm-badge">{filteredApproved.length}건</span>
+					</div>
+				</div>
 
-			{approvedList.length === 0 ? <p>확정된 상담 일정이 없습니다.</p> : <DataTable headers={headers2} data={data2} />}
+				{approvedList.length === 0 ? (
+					<div className="cm-empty">확정된 상담 일정이 없습니다.</div>
+				) : (
+					<div className="cm-table">
+						<DataTable headers={headers2} data={data2} />
+					</div>
+				)}
+			</section>
 		</div>
 	);
 }
