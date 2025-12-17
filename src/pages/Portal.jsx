@@ -46,6 +46,8 @@ export default function Portal() {
 	const [riskCount, setRiskCount] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
 	const [upcomingCount, setUpcomingCount] = useState(0);
+	const [pendingCount, setPendingCount] = useState(0);
+	const [scheduleCount, setScheduleCount] = useState(0);
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
@@ -160,26 +162,77 @@ export default function Portal() {
 		loadPendingBreakCount();
 	}, [token, userRole]);
 
-	// professor 상담신청
+	// professor 업무처리 -  상담신청 조회
+
+	// 1. 처리안된 상담목록
 	useEffect(() => {
 		if (!token || userRole !== 'professor') {
 			setProfessorPendingCount(0);
 			return;
 		}
 
-		const loadPendingBreakCount = async () => {
+		const loadnotApplicated = async () => {
 			try {
-				const res = await api.get('/preReserve/preList');
-				const raw = res.data.preList || [];
-
-				const count = raw.length;
-
-				setProfessorPendingCount(count);
+				const res = await api.get('/reserve/notApplicated'); // int 로 옴
+				setPendingCount(res.data);
 			} catch (e) {
 				console.error('상담 신청 로드 실패"', e);
 				setProfessorPendingCount(0);
 			}
 		};
+		loadnotApplicated();
+	}, [token, userRole]);
+
+	// 2. 오늘의 상담 건수
+	useEffect(() => {
+		if (!token || userRole !== 'professor') return;
+
+		const loadcounselingByDate = async () => {
+			try {
+				const res = await api.get('/counseling/today'); // int 로 옴
+				setScheduleCount(res.data);
+			} catch (e) {
+				console.error('상담 건수 로드 실패"', e);
+				setScheduleCount(0);
+			}
+		};
+		loadcounselingByDate();
+	}, [token, userRole]);
+
+	// student 알림
+	useEffect(() => {
+		if (!token || userRole !== 'student') {
+			setRiskCount(0);
+			setRequestCount(0);
+			setUpcomingCount(0);
+			return;
+		}
+
+		const loadPendingBreakCount = async () => {
+			try {
+				// 1) 위험과목
+				const riskRes = await api.get('/risk/me');
+				const riskRaw = riskRes.data.riskList || [];
+				setRiskCount(riskRaw.length);
+
+				// 2) 상담요청 / 3) 상담예정
+				// ✅ 아직 API가 없다면 0으로 유지
+				// TODO: 엔드포인트 생기면 아래 주석 해제 후 세팅
+				// const reqRes = await api.get('/counseling/request/me');
+				// setRequestCount((reqRes.data.list || []).length);
+				// const upcomingRes = await api.get('/counseling/upcoming/me');
+				// setUpcomingCount((upcomingRes.data.list || []).length);
+
+				setRequestCount(0);
+				setUpcomingCount(0);
+			} catch (e) {
+				console.error('학생 알림 로드 실패', e);
+				setRiskCount(0);
+				setRequestCount(0);
+				setUpcomingCount(0);
+			}
+		};
+
 		loadPendingBreakCount();
 	}, [token, userRole]);
 
@@ -380,7 +433,33 @@ export default function Portal() {
 															navigate('/professor/counseling/pre');
 														}}
 													>
-														학생 상담 신청이 {professorPendingCount}건 존재합니다.
+														처리되지 않은 학생 상담 신청이 {pendingCount}건 존재합니다.
+													</a>
+												</p>
+											</div>
+										) : (
+											<div className="main--page--info empty">
+												<p>처리되지 않은 상담 신청이 없습니다.</p>
+											</div>
+										)}
+
+										{/* 오늘의 상담 건수 - 바로 화상채팅방 또는 예약 확인창 이동  */}
+
+										{scheduleCount > 0 ? (
+											<div className="main--page--info">
+												<ul className="d-flex align-items-start">
+													<li>📢 오늘의 상담 건수</li>
+												</ul>
+
+												<p>
+													<a
+														href="/preReserve/preList"
+														onClick={(e) => {
+															e.preventDefault();
+															navigate('/videotest');
+														}}
+													>
+														오늘의 상담이 {scheduleCount}건 존재합니다.
 													</a>
 												</p>
 											</div>
