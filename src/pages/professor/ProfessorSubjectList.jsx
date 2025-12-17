@@ -39,6 +39,7 @@ export default function ProfessorSubjectList() {
 
 		loadProfessorSubjectList();
 	}, []);
+
 	// 년도, 학기 별 강의 검색하기
 	const searchProfessorSubject = async () => {
 		try {

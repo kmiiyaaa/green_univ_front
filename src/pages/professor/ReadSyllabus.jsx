@@ -26,7 +26,7 @@ export default function ReadSyllabus({ syllabus, setIsEdit }) {
 
 					<tr>
 						<th>학점</th>
-						<td>{syllabus.grades}</td>
+						<td>{syllabus.credits}</td>
 						<th>이수 구분</th>
 						<td>{syllabus.type}</td>
 					</tr>

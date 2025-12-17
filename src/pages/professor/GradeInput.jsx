@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import api from '../../api/httpClient';
 import OptionForm from '../../components/form/OptionForm';
 
 // 교수 - 성적 기입 컴포넌트
-export default function GradeInput({ gradeItem, setOpenGrade, stuNum }) {
+export default function GradeInput({ gradeItem, setOpenGrade, stuNum, onSuccess }) {
 	// 학생 기본 정보 props에서 뽑기
 	const headers = ['번호', '이름'];
 	const tableData = useMemo(() => {
@@ -42,8 +42,9 @@ export default function GradeInput({ gradeItem, setOpenGrade, stuNum }) {
 			await api.patch(`/professor/subject/${subjectId}/${studentId}`, value);
 			alert('성적 입력이 완료되었습니다.');
 			setOpenGrade(false);
+			onSuccess?.(); // 성공 후 부모한테 refetch 신호
 		} catch (e) {
-			alert(e.response.data.message);
+			alert(e?.response?.data?.message ?? '성적 입력에 실패하였습니다.');
 			console.log('성적 입력 실패 : ' + e);
 		}
 	};
