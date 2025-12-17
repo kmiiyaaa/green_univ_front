@@ -3,6 +3,7 @@ import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
 import OptionForm from '../../components/form/OptionForm';
 import { useNavigate } from 'react-router-dom';
+import '../../assets/css/MyStatus.css';
 
 export default function MyStatus() {
 	const navigate = useNavigate();
@@ -37,9 +38,12 @@ export default function MyStatus() {
 	const loadMyPreReserves = async () => {
 		try {
 			const res = await api.get('/reserve/pre/list/student');
-			setPreReserveList(res.data ?? []);
+			const list = res.data?.list ?? res.data ?? [];
+			setPreReserveList(Array.isArray(list) ? list : []);
 		} catch (e) {
-			console.error('교수 상담요청 목록 로드 실패:', e);
+			console.error(e);
+			alert(e?.response?.data?.message ?? `교수 상담요청 목록 로드 실패(${e?.response?.status ?? 'no-status'})`);
+			setPreReserveList([]);
 		}
 	};
 
@@ -54,6 +58,7 @@ export default function MyStatus() {
 	};
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		loadMyRisk();
 		loadMyPreReserves();
 		loadMyReserves();
@@ -127,7 +132,6 @@ export default function MyStatus() {
 								try {
 									await api.post('/reserve/pre/accept', null, { params: { preReserveId: p.preReserveId } });
 									alert('수락 완료!');
-									// ✅ 요청목록 갱신 + reserve 생성됐으니 reserve도 갱신
 									await loadMyPreReserves();
 									await loadMyReserves();
 								} catch (e) {
@@ -160,34 +164,6 @@ export default function MyStatus() {
 		});
 	}, [preReserveList]);
 
-	// -----------------------------
-	// 테이블 3) 내 상담 신청/예약 내역(Reserve)
-	// ⚠️ reserve는 지금 엔티티가 그대로 내려올 수 있어서 professorName이 비어있을 수 있음
-	// 가능하면 Reserve도 평탄화 DTO 추천.
-	// -----------------------------
-	const reserveHeaders = ['과목', '교수', '일정', '상태', '방코드'];
-
-	const reserveTableData = useMemo(() => {
-		return (reserveList ?? []).map((r) => {
-			const schedule = r.counselingSchedule;
-			const subject = r.subject;
-
-			const date = schedule?.counselingDate ?? '';
-			const time = schedule?.startTime != null ? `${schedule.startTime}:00 ~ ${schedule.endTime}:50` : '';
-
-			// professorName이 백엔드에서 안 내려오면 빈칸일 수 있어(지연로딩/DTO문제)
-			const professor = schedule?.professor?.name ?? '';
-
-			return {
-				과목: subject?.name ?? '',
-				교수: professor,
-				일정: `${date} ${time}`,
-				상태: r.approvalState ?? '',
-				방코드: r.roomCode ?? '-',
-			};
-		});
-	}, [reserveList]);
-
 	return (
 		<div className="risk-wrap">
 			<h1>내 학업 상태</h1>
@@ -212,15 +188,29 @@ export default function MyStatus() {
 			{/* 2) 교수의 상담 요청(수락/거절) */}
 			<div>
 				<h3>교수의 상담 요청 내역(수락/거절)</h3>
-				<DataTable headers={preHeaders} data={preTableData} />
-			</div>
-
-			<hr />
-
-			{/* 3) 내 상담 신청/예약 내역 */}
-			<div>
-				<h3>내 상담 신청/예약 내역</h3>
-				<DataTable headers={reserveHeaders} data={reserveTableData} />
+				<div style={{ fontSize: 20, fontWeight: 800, color: 'red', border: '3px solid red', padding: 10 }}>
+					DEBUG: preReserveList length = {preReserveList?.length} / type ={' '}
+					{Array.isArray(preReserveList) ? 'array' : typeof preReserveList}
+				</div>
+				<div style={{ fontSize: 12, color: '#6b7280', marginTop: 6 }}>
+					preReserveList length: {preReserveList?.length}
+				</div>
+				{preReserveList.length === 0 ? (
+					<div
+						style={{
+							padding: 12,
+							marginTop: 12,
+							border: '1px solid #e5e7eb',
+							background: '#fff',
+							color: '#111827',
+							borderRadius: 8,
+						}}
+					>
+						받은 상담 요청이 없습니다.
+					</div>
+				) : (
+					<DataTable headers={preHeaders} data={preTableData} />
+				)}
 			</div>
 		</div>
 	);
