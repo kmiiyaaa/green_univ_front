@@ -170,9 +170,8 @@
 
 /* Primary: black */
 .cm-btn--primary {
-	background: #111827;
-	color: #fff;
-	border-color: #111827;
+	color: #181a19;
+	border-color: #1c6846;
 }
 
 .cm-btn--primary:hover:not(:disabled) {
@@ -193,9 +192,8 @@
 
 /* Ghost: neutral */
 .cm-btn--ghost {
-	background: #fff;
 	color: var(--cm-text);
-	border-color: var(--cm-border);
+	border: 1px solid #111827;
 }
 
 .cm-btn--ghost:hover:not(:disabled) {
