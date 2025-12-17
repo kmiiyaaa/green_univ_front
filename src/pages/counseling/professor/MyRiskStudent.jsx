@@ -161,7 +161,7 @@ export default function MyRiskStudent() {
 				onSuccess={() => {
 					// 요청 성공 후 UI 반영 필요하면 여기서 리로드
 					// (예: 위험학생 상태가 서버에서 바뀌도록 처리했을 때)
-					// loadRiskStudents();
+					loadRiskStudents();
 				}}
 			/>
 		</div>
