@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
 import ScheduleForm from '../schedule/ScheduleForm';
+import '../../assets/css/ScheduleForm.css';
 
 const ScheduleUpdate = () => {
 	const { id } = useParams();
@@ -55,6 +56,7 @@ const ScheduleUpdate = () => {
 
 	return (
 		<>
+			<h2>학사 일정 수정</h2>
 			<ScheduleForm
 				title="학사 일정 수정"
 				initialValues={initialValues}

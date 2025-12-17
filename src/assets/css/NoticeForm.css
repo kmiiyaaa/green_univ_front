@@ -92,10 +92,10 @@ select.input--box:focus {
 /* 파일 영역 */
 .custom-file {
 	display: flex;
-	flex-direction: column;   /* ✅ 세로 정렬로 변경 */
-	align-items: flex-start;  /* ✅ 왼쪽 정렬 */
-	width: 100%;              /* ✅ 줄맞춤 안정 */
-	gap: 6px;                 /* ✅ input과 안내문 간격 */
+	flex-direction: column; /* ✅ 세로 정렬로 변경 */
+	align-items: flex-start; /* ✅ 왼쪽 정렬 */
+	width: 100%; /* ✅ 줄맞춤 안정 */
+	gap: 6px; /* ✅ input과 안내문 간격 */
 }
 /* 기본 file input을 "포털 느낌"으로 */
 .custom-file-input {
@@ -144,7 +144,6 @@ select.input--box:focus {
 	font-size: 12.5px;
 	color: #6b7280;
 }
-
 
 /* 하단 버튼 영역 */
 .write--div > div:last-child {

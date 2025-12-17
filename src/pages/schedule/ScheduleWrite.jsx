@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
 import ScheduleForm from '../schedule/ScheduleForm';
+import '../../assets/css/ScheduleForm.css';
 
 const ScheduleWrite = () => {
 	const navigate = useNavigate();

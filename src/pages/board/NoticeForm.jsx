@@ -82,13 +82,9 @@ const NoticeForm = ({
 						name="file"
 						onChange={(e) => setFile(e.target.files?.[0] || null)}
 					/>
-					
+
 					{/* 파일선택 아래쪽 현재 첨부파일 표시 */}
-					{currentFileName && (
-						<div className="notice-current-file">
-							현재 첨부파일: {currentFileName}
-						</div>
-					)}
+					{currentFileName && <div className="notice-current-file">현재 첨부파일: {currentFileName}</div>}
 				</div>
 			)}
 
