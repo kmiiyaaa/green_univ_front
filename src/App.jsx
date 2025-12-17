@@ -52,7 +52,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
 import CounselingEntry from './pages/CounselingEntry';
 import VideoCounseling from './pages/video/VideoCounseling';
-import CounselingInfo from './pages/counseling_professor/CounselingInfo';
 import MyApprovedCounseling from './pages/counseling/professor/MyApprovedCounseling';
 import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCounselingScheduleForm';
 import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';

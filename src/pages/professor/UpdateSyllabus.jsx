@@ -3,6 +3,7 @@ import api from '../../api/httpClient';
 import InputForm from '../../components/form/InputForm';
 import { UserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import '../../assets/css/UpdateSyllabus.css';
 
 export default function UpdateSyllabus({ setIsEdit, syllabus }) {
 	const { userRole } = useContext(UserContext);
@@ -14,6 +15,7 @@ export default function UpdateSyllabus({ setIsEdit, syllabus }) {
 		textbook: syllabus.textbook ?? '',
 		program: syllabus.program ?? '',
 	});
+
 	const subjectId = syllabus.subjectId;
 
 	useEffect(() => {
@@ -22,7 +24,7 @@ export default function UpdateSyllabus({ setIsEdit, syllabus }) {
 			navigate('/');
 			return;
 		}
-	});
+	}, [userRole, navigate]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -47,31 +49,34 @@ export default function UpdateSyllabus({ setIsEdit, syllabus }) {
 	};
 
 	return (
-		<div>
+		<div className="usd-wrap">
+			<h2 className="usd-title">강의 계획서 수정</h2>
+
 			<form
+				className="usd-form"
 				onSubmit={(e) => {
-					e.preventDefault(); // 리로드 방지
+					e.preventDefault();
 					updateUserInfo();
 				}}
 			>
-				<div>
+				<div className="usd-box">
 					<InputForm label="강의 개요" name="overview" value={value.overview} onChange={handleChange} />
-				</div>
 
-				<div>
 					<InputForm label="강의 목표" name="objective" value={value.objective} onChange={handleChange} />
-				</div>
 
-				<div>
 					<InputForm label="교재 정보" name="textbook" value={value.textbook} onChange={handleChange} />
-				</div>
 
-				<div>
 					<InputForm label="주간 계획" name="program" value={value.program} onChange={handleChange} />
 				</div>
 
-				<button type="submit">수정</button>
-				<button onClick={() => setIsEdit(false)}>취소</button>
+				<div className="usd-action">
+					<button type="button" className="usd-btn usd-cancel" onClick={() => setIsEdit(false)}>
+						취소
+					</button>
+					<button type="submit" className="usd-btn usd-submit">
+						수정
+					</button>
+				</div>
 			</form>
 		</div>
 	);
