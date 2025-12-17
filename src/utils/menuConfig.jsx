@@ -116,10 +116,9 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'SCHEDULE', label: '학사일정', path: '/schedule' },
 		],
 		COUNSELING_MANAGEMENT: [
-			{ key: 'MY_COUNSELING', label: '내 상담 일정', path: '/professor/counseling/schedule' },
-			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/approved' },
-			{ key: 'COUNSELING_PRE', label: '상담 요청 관리', path: '/professor/counseling/request' },
 			{ key: 'STUDENT_MANAGEMENT', label: '위험 학생 관리', path: '/professor/counseling/risk' },
+			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/approved' },
+			{ key: 'MY_COUNSELING', label: '상담 시간 설정', path: '/professor/counseling/schedule' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},

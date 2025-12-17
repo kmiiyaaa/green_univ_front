@@ -55,7 +55,6 @@ import VideoCounseling from './pages/video/VideoCounseling';
 import CounselingInfo from './pages/counseling_professor/CounselingInfo';
 import MyApprovedCounseling from './pages/counseling/professor/MyApprovedCounseling';
 import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCounselingScheduleForm';
-import CounselingRequestManage from './pages/counseling/professor/CounselingRequestManage';
 import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
 import MyStatus from './pages/counseling/student/MyStatus';
 import CounselingRequestList from './pages/counseling/student/CounselingRequestList';
@@ -184,25 +183,20 @@ function App() {
 							<Route path="/professor/subject" element={<ProfessorSubjectList />} /> {/* 내 강의 목록 */}
 							<Route path="/subject/list" element={<AllsubList />} /> {/* 수업 - 전체 강의 조회 */}
 							<Route path="/professor/evaluation" element={<MyEvaluation />} /> {/* 내 강의 평가 */}
-							
 							{/* 상담 */}
 							{/* ===== 교수 상담 ===== */}
 							<Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} />
-							<Route path="/professor/counseling/request" element={<CounselingRequestManage />} />
 							<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 							<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
-
 							{/* ===== 학생 상담 ===== */}
-							<Route path="/status" element={<MyStatus/>} />
-							<Route path="/counseling/schedule" element={<CounselingRequestList/>} />
+							<Route path="/status" element={<MyStatus />} />
+							<Route path="/counseling/schedule" element={<CounselingRequestList />} />
 							<Route path="/counseling/reserve" element={<CounselingReserve />} />
 							<Route path="/counseling/status" element={<CounselingReserveDetail />} />
-
 							{/* 학생 - 성적 */}
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 							<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 							<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
-						
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
 							<Route path="/videotest" element={<VideoCounseling />} /> {/* 화상 상담 페이지 */}
