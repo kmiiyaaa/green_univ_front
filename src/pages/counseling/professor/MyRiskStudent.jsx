@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../api/httpClient';
-import DataTable from '../../components/table/DataTable';
+import api from '../../../api/httpClient';
+import DataTable from '../../../components/table/DataTable';
 
+// 유림 님이 수정중임
 export default function MyRiskStudent() {
 	const [students, setStudents] = useState([]);
 
 	const loadRiskStudents = async () => {
 		try {
 			const res = await api.get('/counseling/riskStu');
-			console.log(res.data);
 			setStudents(res.data.riskStuList);
+			console.log(res.data.riskStuList);
 		} catch (e) {
 			alert(e.response.default.message);
 		}
@@ -17,6 +18,7 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadRiskStudents();
+		console.log(students);
 	}, []);
 
 	const riskHeaders = [
@@ -45,7 +47,7 @@ export default function MyRiskStudent() {
 			학생메시지: r.aiStudentMessage ?? '',
 			태그: r.aiReasonTags ?? '',
 			업데이트: r.updatedAt ?? '',
-			상담요청: <button>상담 요청</button>,
+			상담요청: r.status === 'DETECTED' ? <button>상담 요청</button> : '상담 신청 완료',
 		}));
 	}, [students]);
 
@@ -61,7 +63,7 @@ export default function MyRiskStudent() {
 
 				<select>
 					<option value="">전체</option>
-					<option value="DANGER">출결</option>
+					<option value="DANGER">위험</option>
 					<option value="WARNING">경고</option>
 				</select>
 			</div>
