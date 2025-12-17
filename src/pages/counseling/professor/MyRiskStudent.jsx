@@ -3,25 +3,82 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import OptionForm from '../../../components/form/OptionForm';
 
-// 유림 님이 수정중임
 export default function MyRiskStudent() {
-	const [riskList, setRiskList] = useState([]);
+	// 데이터용
+	const [pendingList, setPendingList] = useState([]); // 상담 미완료된 학생 목록
+	const [completedList, setCompletedList] = useState([]); // 상담 완료된 학생 목록
+	// 검색 필터용
+	const [subject, setSubject] = useState('');
+	const [riskLevel, setRiskLevel] = useState('');
+	// 교수 강의 목록용
+	const [subjectOptions, setSubjectOptions] = useState([{ value: '', label: '전체' }]);
 
-	const loadRiskStudents = async () => {
-		try {
-			const res = await api.get(`/risk/list`);
-			console.log(res.data);
-			setRiskList(res.data);
-		} catch (e) {
-			alert(e.response.default.message);
-		}
-	};
+	useEffect(() => {
+		loadProfessorSubjects();
+	}, []);
 
 	useEffect(() => {
 		loadRiskStudents();
-	}, []);
+	}, [subject, riskLevel]);
 
-	const riskHeaders = [
+	// 교수의 강의 목록
+	const loadProfessorSubjects = async () => {
+		try {
+			const res = await api.get('/professor/subject');
+			console.log('교수강의', res.data.subjectList);
+			// '전체' 옵션 + API 데이터 합치기
+			const options = res.data.subjectList.map((s) => ({
+				value: s.id,
+				label: s.name,
+			}));
+			setSubjectOptions([{ value: '', label: '전체' }, ...options]);
+		} catch (e) {
+			console.log('교수의 강의 목록을 불러올 수 없습니다: ', e);
+		}
+	};
+
+	// 상담 완료, 미완료로 분리된 학생 목록
+	const loadRiskStudents = async () => {
+		try {
+			const params = {};
+			if (subject) params.subjectId = subject;
+			if (riskLevel) params.level = riskLevel;
+			const res = await api.get(`/risk/list/grouped`, { params });
+			console.log('res.data', res.data);
+			setPendingList(res.data.pending);
+			setCompletedList(res.data.resolved);
+		} catch (e) {
+			alert(e.response?.default?.message || '에러 발생');
+		}
+	};
+
+	// 테이블 데이터 변환 함수
+	const formatTableData = (list, showConsultButton = false) => {
+		return list.map((r) => ({
+			과목: r.subjectName ?? '',
+			학생정보: `${r.studentName} (${r.studentId})`,
+			위험타입: r.riskType ?? '',
+			위험레벨: r.riskLevel ?? '',
+			...(showConsultButton && { 상태: r.status ?? '' }),
+			AI요약: r.aiSummary ?? '',
+			...(showConsultButton && { 교수권장: r.aiRecommendation ?? '' }),
+			태그: r.aiReasonTags ?? '',
+			업데이트: r.updatedAt ?? '',
+			...(showConsultButton && { 상담요청: r.status === 'DETECTED' ? <button>상담 요청</button> : '상담 신청 완료' }),
+		}));
+	};
+
+	const pendingData = useMemo(() => formatTableData(pendingList, true), [pendingList]);
+	const completedData = useMemo(() => formatTableData(completedList, false), [completedList]);
+
+	// 검색 옵션 설정
+	const riskLevelOptions = [
+		{ value: '', label: '전체' },
+		{ value: 'DANGER', label: '위험' },
+		{ value: 'WARNING', label: '경고' },
+	];
+
+	const pendingHeaders = [
 		'과목',
 		'학생정보',
 		'위험타입',
@@ -34,50 +91,33 @@ export default function MyRiskStudent() {
 		'상담요청',
 	];
 
-	const riskTableData = useMemo(() => {
-		return riskList.map((r) => ({
-			과목: r.subjectName ?? '',
-			학생정보: `${r.studentName} (${r.studentId})`,
-			이름: r.studentName ?? '',
-			위험타입: r.riskType ?? '',
-			위험레벨: r.riskLevel ?? '',
-			상태: r.status ?? '',
-			AI요약: r.aiSummary ?? '',
-			교수권장: r.aiRecommendation ?? '',
-			태그: r.aiReasonTags ?? '',
-			업데이트: r.updatedAt ?? '',
-			상담요청: r.status === 'DETECTED' ? <button>상담 요청</button> : '상담 신청 완료',
-		}));
-	}, [riskList]);
-
-	const subjectOptions = [
-		{ value: 'subject1', label: '교수과목1' },
-		{ value: 'subject2', label: '교수과목2' },
-	];
-
-	const riskLevelOptions = [
-		{ value: 'DANGER', label: '위험' },
-		{ value: 'WARNING', label: '경고' },
-	];
-
-	const value = 'value는뭘넣어야할까';
-
-	const handleChange = () => {
-		return;
-	};
+	const completedHeaders = ['과목', '학생정보', '위험타입', '위험레벨', 'AI요약', '태그', '업데이트'];
 
 	return (
 		<div className="risk-wrap">
-			<h2>(이번 학기)내 담당 위험학생</h2>
+			<h2>(이번 학기) 내 담당 위험학생</h2>
 
-			<OptionForm label="과목" name="subject" value={value} onChange={handleChange} options={subjectOptions} />
-			<OptionForm label="위험레벨" name="subject" value={value} onChange={handleChange} options={riskLevelOptions} />
+			<OptionForm
+				label="과목"
+				name="subject"
+				value={subject}
+				onChange={(e) => setSubject(e.target.value)}
+				options={subjectOptions}
+			/>
+			<OptionForm
+				label="위험레벨"
+				name="riskLevel"
+				value={riskLevel}
+				onChange={(e) => setRiskLevel(e.target.value)}
+				options={riskLevelOptions}
+			/>
 
-			{/* 상담이 필요한 학생 목록 */}
-			<DataTable headers={riskHeaders} data={riskTableData} />
+			<DataTable headers={pendingHeaders} data={pendingData} />
+
 			<hr />
-			{/* 상담완료된 학생 목록 */}
-			<DataTable headers={riskHeaders} data={riskTableData} />
+
+			<h2>상담완료된 학생 목록</h2>
+			<DataTable headers={completedHeaders} data={completedData} />
 		</div>
 	);
 }
