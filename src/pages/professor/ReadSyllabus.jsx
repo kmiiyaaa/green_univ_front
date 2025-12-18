@@ -1,9 +1,11 @@
 import { useContext } from 'react';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import { UserContext } from '../../context/UserContext';
+import '../../assets/css/ReadSyllabus.css';
+
 export default function ReadSyllabus({ syllabus, setIsEdit }) {
 	const { userRole, user } = useContext(UserContext);
-	console.log(syllabus);
+
 	return (
 		<div>
 			<h2>강의 계획서 조회</h2>
@@ -48,60 +50,68 @@ export default function ReadSyllabus({ syllabus, setIsEdit }) {
 
 			<br />
 
-			<table border="1">
-				<tbody>
-					<tr>
-						<th rowSpan="2">교강사 정보</th>
-						<th>소속</th>
-						<td>{syllabus.deptName}</td>
-						<th>성명</th>
-						<td>{syllabus.professorName}</td>
-					</tr>
-					<tr>
-						<th>연락처</th>
-						<td>{syllabus.tel}</td>
-						<th>email</th>
-						<td>{syllabus.email}</td>
-					</tr>
-				</tbody>
-			</table>
+			{/* 교강사 정보 */}
+			<div className="rsd-box">
+				<table className="rsd-table">
+					<tbody>
+						<tr>
+							<th rowSpan="2">교강사 정보</th>
+							<th>소속</th>
+							<td>{syllabus.deptName}</td>
+							<th>성명</th>
+							<td>{syllabus.professorName}</td>
+						</tr>
+						<tr>
+							<th>연락처</th>
+							<td>{syllabus.tel}</td>
+							<th>email</th>
+							<td>{syllabus.email}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
-			<br />
+			{/* 상세 내용 */}
+			<div className="rsd-box">
+				<table className="rsd-table">
+					<tbody>
+						<tr>
+							<th className="rsd-wide-th">강의 개요</th>
+						</tr>
+						<tr>
+							<td className="rsd-text">{syllabus?.overview}</td>
+						</tr>
 
-			<table border="1">
-				<tbody>
-					<tr>
-						<th>강의 개요</th>
-					</tr>
-					<tr>
-						<td>{syllabus?.overview}</td>
-					</tr>
+						<tr>
+							<th className="rsd-wide-th">강의 목표</th>
+						</tr>
+						<tr>
+							<td className="rsd-text">{syllabus?.objective}</td>
+						</tr>
 
-					<tr>
-						<th>강의 목표</th>
-					</tr>
-					<tr>
-						<td>{syllabus?.objective}</td>
-					</tr>
+						<tr>
+							<th className="rsd-wide-th">교재 정보</th>
+						</tr>
+						<tr>
+							<td className="rsd-text">{syllabus?.textbook}</td>
+						</tr>
 
-					<tr>
-						<th>교재 정보</th>
-					</tr>
-					<tr>
-						<td>{syllabus?.textbook}</td>
-					</tr>
-
-					<tr>
-						<th>주간 계획</th>
-					</tr>
-					<tr>
-						<td>{syllabus?.program}</td>
-					</tr>
-				</tbody>
-			</table>
+						<tr>
+							<th className="rsd-wide-th">주간 계획</th>
+						</tr>
+						<tr>
+							<td className="rsd-text">{syllabus?.program}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
 			{userRole === 'professor' && user === syllabus.professorId && (
-				<button onClick={() => setIsEdit(true)}>수정</button>
+				<div className="rsd-action">
+					<button className="rsd-edit-btn" onClick={() => setIsEdit(true)}>
+						수정
+					</button>
+				</div>
 			)}
 		</div>
 	);

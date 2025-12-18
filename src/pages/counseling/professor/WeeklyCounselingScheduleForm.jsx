@@ -87,7 +87,7 @@ export default function WeeklyCounselingScheduleForm() {
 			setInitialSlots(slots); // 기준 갱신
 		} catch (e) {
 			console.error(e);
-			alert('상담 일정 저장 실패');
+			alert(e.response.data.message ?? '상담 일정 저장 실패');
 		}
 	};
 

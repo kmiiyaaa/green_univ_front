@@ -114,7 +114,7 @@ export default function MyCounselingManage() {
 					className="cm-btn cm-btn--ghost"
 					onClick={() => {
 						sessionStorage.setItem('counselingDetail', JSON.stringify(r));
-						window.open('/counseling/info', '_blank');
+						window.open('/counseling/info', '_blank', 'width=900,height=800,scrollbars=yes');
 					}}
 				>
 					보기

@@ -384,7 +384,7 @@ export default function Portal() {
 														href="/preReserve/preList"
 														onClick={(e) => {
 															e.preventDefault();
-															navigate('/professor/counseling/pre');
+															navigate('/professor/counseling/approved');
 														}}
 													>
 														처리되지 않은 학생 상담 신청이 {pendingCount}건 존재합니다.

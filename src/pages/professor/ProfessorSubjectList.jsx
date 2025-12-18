@@ -8,42 +8,40 @@ import SubjectStudentList from './SubjectStudentList';
 
 export default function ProfessorSubjectList() {
 	const [subjectList, setSubjectList] = useState([]);
-	const [category, setCategory] = useState(''); // select 선택창 용
-	const [categoryOptions, setCategoryOptions] = useState([]); // select 선택창 용
+	const [category, setCategory] = useState('ALL'); // 기본값: 전체
+	const [categoryOptions, setCategoryOptions] = useState([]);
 
-	const [subjectId, setSubjectId] = useState(); // 학생 목록 조회 용
-	const [subName, setSubName] = useState(); // 과목 이름 표시 용
-	const [listOpen, setListOpen] = useState(false); // 학생 목록 조회 컴포넌트 열기? 여부
+	const [subjectId, setSubjectId] = useState();
+	const [subName, setSubName] = useState();
+	const [listOpen, setListOpen] = useState(false);
 
 	useEffect(() => {
-		// 기본 : 지금 학기 강의 목록 불러오기
 		const loadProfessorSubjectList = async () => {
 			try {
 				const res = await api.get('/professor/subject');
 				setSubjectList(res.data.subjectList);
 
-				// semesterList를 그대로 refineList에 넘겨야 함
 				const refined = refineList(res.data.semesterList);
-				setCategoryOptions(refined);
 
-				// 기본값 설정 (옵션 중 첫 번째 값)
-				// 학기 선택은 최신순으로 되어있지만,
-				// 백에서 현재 날짜 상수처리 되어있어서 거기 수정해야 함
-				if (refined.length > 0) {
-					setCategory(refined[0].value);
-				}
+				// 전체 조회 옵션 추가
+				const optionsWithAll = [{ value: 'ALL', label: '전체' }, ...refined];
+
+				setCategoryOptions(optionsWithAll);
+
+				// 최초 렌더링 시 전체 조회
+				setCategory('ALL');
 			} catch (e) {
 				console.log('교수 - 내 강의 조회 실패! : ', e);
 			}
 		};
-
 		loadProfessorSubjectList();
+		searchProfessorSubject();
 	}, []);
 
 	// 년도, 학기 별 강의 검색하기
 	const searchProfessorSubject = async () => {
 		try {
-			const res = await api.post(`/professor/subject`, null, {
+			const res = await api.post('/professor/subject', null, {
 				params: {
 					period: category,
 				},
@@ -65,7 +63,6 @@ export default function ProfessorSubjectList() {
 		setListOpen(true);
 	};
 
-	// 테이블 데이터
 	const headers = ['학수번호', '강의명', '강의시간', '강의계획서', '학생목록'];
 
 	const subjectTable = useMemo(() => {
@@ -81,7 +78,6 @@ export default function ProfessorSubjectList() {
 	return (
 		<div>
 			{subjectId && listOpen ? (
-				// 학생 목록 컴포넌트
 				<SubjectStudentList subjectId={subjectId} subName={subName} setListOpen={setListOpen} />
 			) : (
 				<div>
@@ -92,9 +88,11 @@ export default function ProfessorSubjectList() {
 						onChange={(e) => setCategory(e.target.value)}
 						options={categoryOptions}
 					/>
-					<button onClick={() => searchProfessorSubject()} className="button">
+
+					<button onClick={searchProfessorSubject} className="button">
 						검색
 					</button>
+
 					<DataTable headers={headers} data={subjectTable} />
 				</div>
 			)}
