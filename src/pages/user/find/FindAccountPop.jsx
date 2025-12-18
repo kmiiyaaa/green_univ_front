@@ -3,6 +3,7 @@ import InputForm from '../../../components/form/InputForm';
 import RadioForm from '../../../components/form/RadioForm';
 import api from '../../../api/httpClient';
 import { useParams } from 'react-router-dom';
+import PopResult from './PopResult';
 
 export default function FindAccountPop() {
 	// 아이디 / 비밀번호 찾기
