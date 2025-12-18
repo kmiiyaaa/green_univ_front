@@ -71,19 +71,26 @@ export default function MyRiskStudent() {
 
 	// 테이블 데이터 변환
 	const formatTableData = (list, showConsultButton = false) => {
-		return list.map((r) => ({
-			과목: r.subjectName ?? '',
-			학생정보: `${r.studentName} (${r.studentId})`,
-			위험타입: r.riskType ?? '',
-			위험레벨: r.riskLevel ?? '',
-			...(showConsultButton && { 상태: r.status ?? '' }),
-			AI요약: r.aiSummary ?? '',
-			...(showConsultButton && { 교수권장: r.aiRecommendation ?? '' }),
-			태그: r.aiReasonTags ?? '',
-			업데이트: r.updatedAt ?? '',
-			...(showConsultButton && {
-				상담요청:
-					r.status === 'DETECTED' ? (
+		return list.map((r) => {
+			// - DETECTED 상태이고
+			// - 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
+			const canRequest =
+				showConsultButton && r.status === 'DETECTED' && (!r.consultState || r.consultState === 'CONSULT_REJECTED');
+
+			const requestBtnLabel = r.consultState === 'CONSULT_REJECTED' ? '재요청' : '상담 요청';
+
+			return {
+				과목: r.subjectName ?? '',
+				학생정보: `${r.studentName} (${r.studentId})`,
+				위험타입: r.riskType ?? '',
+				위험레벨: r.riskLevel ?? '',
+				...(showConsultButton && { 상태: r.status ?? '' }),
+				AI요약: r.aiSummary ?? '',
+				...(showConsultButton && { 교수권장: r.aiRecommendation ?? '' }),
+				태그: r.aiReasonTags ?? '',
+				업데이트: r.updatedAt ?? '',
+				...(showConsultButton && {
+					상담요청: canRequest ? (
 						<button
 							type="button"
 							onClick={(ev) => {
@@ -91,13 +98,21 @@ export default function MyRiskStudent() {
 								handleOpenModal(r);
 							}}
 						>
-							상담 요청
+							{requestBtnLabel}
 						</button>
+					) : r.consultState === 'CONSULT_REQ' ? (
+						'요청 대기'
+					) : r.consultState === 'CONSULT_APPROVED' ? (
+						'상담 확정'
+					) : r.consultState === 'CONSULT_REJECTED' ? (
+						'거절됨(재요청 가능)'
 					) : (
-						'상담 신청 완료'
+						// consultState 없고 DETECTED도 아니면(예: CONSULT_REQ 상태만 있고 consultState 계산이 없는 경우)
+						'상태 확인'
 					),
-			}),
-		}));
+				}),
+			};
+		});
 	};
 
 	const pendingData = useMemo(() => formatTableData(pendingList, true), [pendingList]);
@@ -159,8 +174,7 @@ export default function MyRiskStudent() {
 				target={target}
 				onClose={() => setOpenModal(false)}
 				onSuccess={() => {
-					// 요청 성공 후 UI 반영 필요하면 여기서 리로드
-					// (예: 위험학생 상태가 서버에서 바뀌도록 처리했을 때)
+					// 요청 성공 후
 					loadRiskStudents();
 				}}
 			/>

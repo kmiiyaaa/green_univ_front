@@ -112,7 +112,7 @@ export default function MyStatus() {
 			과목: p.subjectName ?? '',
 			교수: p.professorName ?? '',
 			상담일자: p.counselingDate ?? '',
-			시간: `${p.startTime ?? ''}:00 ~ ${p.endTime ?? ''}:50`,
+			시간: p.startTime != null && p.endTime != null ? `${p.startTime}:00 ~ ${p.endTime}:50` : '',
 			요청메시지: p.reason ?? '',
 			처리: (
 				<div style={{ display: 'flex', gap: 8 }}>
