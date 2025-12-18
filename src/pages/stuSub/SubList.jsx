@@ -58,7 +58,7 @@ export default function SubList() {
 				강의구분: sub.type,
 				강의명: sub.name,
 				담당교수: sub.professorName,
-				학점: sub.grades,
+				학점: sub.credits,
 				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,

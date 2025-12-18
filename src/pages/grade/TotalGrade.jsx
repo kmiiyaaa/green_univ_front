@@ -23,6 +23,7 @@ const TotalGrade = () => {
 		const fetchTotal = async () => {
 			try {
 				const res = await api.get('/grade/total');
+				console.log(res.data);
 				const data = res.data;
 				setMyGradeList(data.gradeList ?? []);
 			} catch (e) {
@@ -42,7 +43,7 @@ const TotalGrade = () => {
 		return (myGradeList ?? []).map((g) => ({
 			연도: `${g.subYear}년`,
 			학기: `${g.semester}학기`,
-			신청학점: g.sumGrades,
+			신청학점: g.totalCredits,
 			취득학점: g.myGrades,
 			평점평균: g.average ?? g.avg ?? '-',
 		}));

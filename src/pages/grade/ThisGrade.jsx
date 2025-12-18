@@ -35,8 +35,8 @@ const ThisGrade = () => {
 			과목번호: g.subjectId ?? '',
 			과목명: g.name ?? '',
 			'강의 구분': g.type ?? '',
-			이수학점: g.grades ?? '',
-			성적: g.grade ?? '',
+			이수학점: g.credits ?? '',
+			성적: g.letterGrade ?? '',
 			강의평가:
 				g.evaluationId == null ? (
 					<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId, g.name)}>
