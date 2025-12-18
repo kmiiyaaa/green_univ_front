@@ -50,6 +50,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'G_CUR', label: '금학기 성적 조회', path: '/grade/current' },
 			{ key: 'G_SEM', label: '학기별 성적 조회', path: '/grade/semester' },
 			{ key: 'G_TOT', label: '누계 성적', path: '/grade/total' },
+			{ key: 'G_POLICY', label: '성적 산출 기준', path: '/grade/policy' },
 		],
 
 		INFO: [
@@ -109,6 +110,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'SUBJECT_ALL', label: '전체 강의 조회', path: '/subject/list' },
 			{ key: 'MY_SUB', label: '내 강의 조회', path: '/professor/subject' },
 			{ key: 'EVAL', label: '내 강의 평가', path: '/professor/evaluation' },
+			{ key: 'G_POLICY', label: '성적 산출 기준', path: '/grade/policy' },
 		],
 
 		INFO: [
