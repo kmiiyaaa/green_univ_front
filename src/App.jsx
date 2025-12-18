@@ -61,6 +61,7 @@ import CounselingReserve from './pages/counseling/student/CounselingReserve';
 import CounselingReserveDetail from './pages/counseling/student/CounselingReserveDetail';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
+import GradePolicy from './pages/grade/GradePolicy';
 
 function App() {
 	// React Query 라이브러리
@@ -196,6 +197,7 @@ function App() {
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 							<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 							<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
+							<Route path='/grade/policy' element={<GradePolicy/>} /> {/* 성적 산출 기준 안내 */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
 							<Route path="/videotest" element={<VideoCounseling />} /> {/* 화상 상담 페이지 */}

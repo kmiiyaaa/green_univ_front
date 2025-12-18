@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/UpdatePeriod.css';
 import api from '../../api/httpClient';
-import DataTable from '../../components/table/DataTable';
 
 // 수강 신청 기간 상태 변경
 export default function UpdatePeriod() {

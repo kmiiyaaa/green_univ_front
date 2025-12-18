@@ -5,6 +5,7 @@ import { toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
 import { refineList } from '../../utils/DeDuple';
 import SubjectStudentList from './SubjectStudentList';
+import '../../assets/css/SyllabusButton.css';
 
 export default function ProfessorSubjectList() {
 	const [subjectList, setSubjectList] = useState([]);
@@ -85,12 +86,12 @@ export default function ProfessorSubjectList() {
 				s.roomId +
 				')',
 			강의계획서: (
-				<button onClick={() => handleSubDetail(s.id)}>
+				<button className="syllabus-btn" onClick={() => handleSubDetail(s.id)}>
 					강의계획서
 				</button>
 			),
 			학생목록: (
-				<button onClick={() => handleStudentList(s.id, s.name)}>
+				<button  className="syllabus-btn" onClick={() => handleStudentList(s.id, s.name)}>
 					학생 목록
 				</button>
 			),
@@ -99,6 +100,10 @@ export default function ProfessorSubjectList() {
 
 	return (
 		<div>
+
+			<h2>내 강의 조회</h2>
+			<br>
+			</br>
 			{subjectId && listOpen ? (
 				<SubjectStudentList
 					subjectId={subjectId}
