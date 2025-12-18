@@ -212,11 +212,18 @@ export default function Portal() {
 			try {
 				// 위험과목
 				const riskRes = await api.get('/risk/me');
-				setRiskCount(Array.isArray(riskRes.data) ? riskRes.data.length : 0);
+				// 서버가 { riskList: [...] } 또는 그냥 [...] 둘 다 대응
+				const riskList = riskRes.data?.riskList ?? riskRes.data ?? [];
+				setRiskCount(Array.isArray(riskList) ? riskList.length : 0);
 
 				// 2) 상담요청/상담예정 (카운트 API)
 				const countRes = await api.get('/reserve/count/student');
 				setUpcomingCount(Number(countRes.data?.approved) || 0); // APPROVED(확정만)
+
+				// 교수 상담요청 목록은 보통 { list: [...] } 형태로 내려옴
+				const requestRes = await api.get('/reserve/pre/list/student');
+				const reqList = requestRes.data?.list ?? requestRes.data ?? [];
+				setRequestCount(Array.isArray(reqList) ? reqList.length : 0);
 			} catch (e) {
 				console.error('학생 알림 로드 실패', e);
 				setRiskCount(0);
@@ -227,6 +234,7 @@ export default function Portal() {
 
 		loadStudentAlerts();
 	}, [token, userRole]);
+
 	// 로그아웃 핸들러
 	const handleLogout = () => {
 		if (logout) logout();
@@ -432,7 +440,7 @@ export default function Portal() {
 										requestCount={requestCount}
 										upcomingCount={upcomingCount}
 										onGoRisk={() => navigate('/status')}
-										onGoRequest={() => navigate('/reserve/list')} // 요청 목록 (REQUESTED)
+										onGoRequest={() => navigate('/status')} // 요청 목록 (REQUESTED)
 										onGoUpcoming={() => navigate('/counseling/schedule')} // 예정 목록 (APPROVED)
 									/>
 								)}

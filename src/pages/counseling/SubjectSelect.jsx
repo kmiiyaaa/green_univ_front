@@ -1,14 +1,8 @@
 // 과목 선택 공통 컴포넌트
-import OptionForm from "../../components/form/OptionForm";
+import OptionForm from '../../components/form/OptionForm';
 
 // subjects: [{ id, name }]
-export default function SubjectSelect({
-	label = '과목',
-	subjects = [],
-	value,
-	onChange,
-	includeAll = true,
-}) {
+export default function SubjectSelect({ label = '과목', subjects = [], value, onChange, includeAll = true }) {
 	const options = [];
 
 	if (includeAll) {
@@ -17,19 +11,10 @@ export default function SubjectSelect({
 
 	subjects.forEach((s) => {
 		options.push({
-			value: String(s.id),
+			value: s.id,
 			label: s.name,
 		});
 	});
 
-	return (
-		<OptionForm
-			label={label}
-			name="subjectId"
-			value={value}
-			onChange={onChange}
-			options={options}
-		/>
-	);
+	return <OptionForm label={label} name="subjectId" value={value} onChange={onChange} options={options} />;
 }
-
