@@ -165,7 +165,7 @@ export default function VideoCounseling() {
 								? '불러오는 중...'
 								: roomCode
 								? `상담 코드: ${roomCode}`
-								: '상담 시작 → (레거시 화면에서) 상담 코드 입력 후 입장하면 메모가 활성화됩니다.'}
+								: '상담 코드 입력 후 입장하면 메모가 활성화됩니다.'}
 						</div>
 					</div>
 

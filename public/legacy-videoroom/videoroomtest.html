@@ -88,7 +88,7 @@
 
 
 				<!-- JS가 #start를 one("click")으로 잡음: id 유지 필수 -->
-				<p class="perm-hint">상담을 시작하면 <b>카메라/마이크 권한</b>을 요청합니다. <b>허용</b>을 눌러주세요.</p>
+				<p class="perm-hint">상담을 시작 후<b>카메라/마이크 권한</b>을 요청시 <b>허용</b>을 눌러주세요.</p>
 				<button class="btn btn-primary" autocomplete="off" id="start">상담 시작</button>
 			</header>
 
@@ -158,30 +158,33 @@
 							<div class="panel panel-default video-card">
 								<div class="panel-heading">
 									<h3 class="panel-title">
+									<span class="title-left">
 										내 화면 <span class="label label-primary hide" id="publisher"></span>
+									</span>
 
-										<!-- bitrate dropdown (JS가 존재를 가정) -->
+									<span class="title-right">
+										<span id="localControlsHead" class="local-controls-head hide">
+										<button class="btn btn-warning btn-xs" id="mute" type="button">Mute</button>
+										<button class="btn btn-warning btn-xs" id="unpublish" type="button">Unpublish</button>
+										</span>
+										<!-- bitrate dropdown -->
 										<div class="btn-group btn-group-xs pull-right hide">
-											<div class="btn-group btn-group-xs">
-												<button
-													id="bitrateset"
-													autocomplete="off"
-													class="btn btn-primary dropdown-toggle"
-													data-toggle="dropdown"
-												>
-													화질<span class="caret"></span>
-												</button>
-												<ul id="bitrate" class="dropdown-menu" role="menu">
-													<li><a href="#" id="0">제한 없음</a></li>
-													<li><a href="#" id="128">128kbps</a></li>
-													<li><a href="#" id="256">256kbps</a></li>
-													<li><a href="#" id="512">512kbps</a></li>
-													<li><a href="#" id="1024">1mbps</a></li>
-													<li><a href="#" id="1500">1.5mbps</a></li>
-													<li><a href="#" id="2000">2mbps</a></li>
-												</ul>
-											</div>
+										<div class="btn-group btn-group-xs">
+											<button id="bitrateset" autocomplete="off" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+											화질<span class="caret"></span>
+											</button>
+											<ul id="bitrate" class="dropdown-menu" role="menu">
+											<li><a href="#" id="0">제한 없음</a></li>
+											<li><a href="#" id="128">128kbps</a></li>
+											<li><a href="#" id="256">256kbps</a></li>
+											<li><a href="#" id="512">512kbps</a></li>
+											<li><a href="#" id="1024">1mbps</a></li>
+											<li><a href="#" id="1500">1.5mbps</a></li>
+											<li><a href="#" id="2000">2mbps</a></li>
+											</ul>
 										</div>
+										</div>
+									</span>
 									</h3>
 								</div>
 
