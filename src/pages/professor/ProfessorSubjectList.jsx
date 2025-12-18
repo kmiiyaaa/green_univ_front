@@ -38,7 +38,7 @@ export default function ProfessorSubjectList() {
 		searchProfessorSubject();
 	}, []);
 
-	// 년도, 학기 별 강의 검색
+	// 년도, 학기 별 강의 검색하기
 	const searchProfessorSubject = async () => {
 		try {
 			const res = await api.post('/professor/subject', null, {

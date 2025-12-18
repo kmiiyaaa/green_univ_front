@@ -13,31 +13,30 @@ export default function useSubjectGrade(subjectId) {
 	});
 
 	// 초기 데이터 로드 (AI 상태 + 학생 리스트 한번에)
+	const loadData = async () => {
+		try {
+			// 병렬 요청으로 속도 개선
+			const [statusRes, listRes] = await Promise.all([
+				api.get(`/professor/subjects/${subjectId}/ai-status`),
+				api.get(`/professor/subject/${subjectId}`),
+			]);
+
+			const hasGrade = listRes.data.studentList.some((s) => s.letterGrade);
+
+			setState({
+				studentList: listRes.data.studentList,
+				stuNum: listRes.data.stuNum,
+				subNumOfStudent: listRes.data.subject.numOfStudent,
+				relative: hasGrade,
+				aiStatus: statusRes.data.status,
+				aiMessage: statusRes.data.message ?? '',
+				loading: false,
+			});
+		} catch (e) {
+			console.error('데이터 로드 실패:', e);
+		}
+	};
 	useEffect(() => {
-		const loadData = async () => {
-			try {
-				// 병렬 요청으로 속도 개선
-				const [statusRes, listRes] = await Promise.all([
-					api.get(`/professor/subjects/${subjectId}/ai-status`),
-					api.get(`/professor/subject/${subjectId}`),
-				]);
-
-				const hasGrade = listRes.data.studentList.some((s) => s.letterGrade);
-
-				setState({
-					studentList: listRes.data.studentList,
-					stuNum: listRes.data.stuNum,
-					subNumOfStudent: listRes.data.subject.numOfStudent,
-					relative: hasGrade,
-					aiStatus: statusRes.data.status,
-					aiMessage: statusRes.data.message ?? '',
-					loading: false,
-				});
-			} catch (e) {
-				console.error('데이터 로드 실패:', e);
-			}
-		};
-
 		loadData();
 	}, [subjectId]);
 
@@ -68,7 +67,6 @@ export default function useSubjectGrade(subjectId) {
 	// 등급 산출
 	const calculateGrade = async () => {
 		if (!window.confirm('전체 학생 등급을 산출할까요?')) return;
-
 		try {
 			await api.patch(`/professor/relativeGrade/${subjectId}`);
 			setState((prev) => ({ ...prev, relative: true }));
@@ -101,5 +99,10 @@ export default function useSubjectGrade(subjectId) {
 		}
 	};
 
-	return { ...state, calculateGrade, finalizeGrade };
+	// ⭐ 외부에서 다시 불러올 때 쓸 함수
+	const refetch = () => {
+		loadData();
+	};
+
+	return { ...state, calculateGrade, finalizeGrade, refetch };
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSubjectGrade from '../../hooks/useSubjectGrade';
 import DataTable from '../../components/table/DataTable';
@@ -19,6 +19,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		loading,
 		calculateGrade,
 		finalizeGrade,
+		refetch,
 	} = useSubjectGrade(subjectId);
 
 	const handleOpenGrade = (student) => {
@@ -63,7 +64,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 	}));
 
 	if (openGrade) {
-		return <GradeInput gradeItem={gradeItem} setOpenGrade={setOpenGrade} stuNum={stuNum} />;
+		return <GradeInput gradeItem={gradeItem} setOpenGrade={setOpenGrade} stuNum={stuNum} onSuccess={refetch} />;
 	}
 
 	return (
