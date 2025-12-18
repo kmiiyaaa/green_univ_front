@@ -131,7 +131,6 @@ export default function MyRiskStudent() {
 		'학생정보',
 		'위험타입',
 		'위험레벨',
-		'상태',
 		'AI요약',
 		'교수권장',
 		'태그',

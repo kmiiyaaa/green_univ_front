@@ -142,9 +142,9 @@ export default function VideoCounseling() {
 					<div className="video-counsel-sub">교수 · 학생 화상상담</div>
 				</div>
 
-				<a className="video-counsel-open" href={iframeSrc} target="_blank" rel="noreferrer">
+				{/* <a className="video-counsel-open" href={iframeSrc} target="_blank" rel="noreferrer">
 					새 창으로 열기
-				</a>
+				</a> */}
 			</div>
 
 			<div className="video-counsel-layout">
