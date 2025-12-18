@@ -8,6 +8,7 @@ import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 import { toHHMM } from '../../utils/DateTimeUtil';
+import '../../assets/css/SyllabusButton.css';
 
 export default function SubList() {
 	const { user, token, userRole } = useContext(UserContext);
@@ -62,7 +63,7 @@ export default function SubList() {
 				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: <button onClick={() => handleSubDetail(sub.id)}>강의계획서</button>, // 강의 계획서 이 부분 수정해야함
+				강의계획서: <button className="syllabus-btn" onClick={() => handleSubDetail(sub.id)}>강의계획서</button>,
 			}));
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);

@@ -190,6 +190,7 @@ export default function Portal() {
 		const loadcounselingByDate = async () => {
 			try {
 				const res = await api.get('/counseling/today'); // int 로 옴
+				console.log(res)
 				setScheduleCount(res.data);
 			} catch (e) {
 				console.error('상담 건수 로드 실패"', e);
@@ -419,7 +420,7 @@ export default function Portal() {
 											</div>
 										) : (
 											<div className="main--page--info empty">
-												<p>상담 신청이 없습니다.</p>
+												<p>오늘의 상담 일정이 없습니다.</p>
 											</div>
 										)}
 									</>
