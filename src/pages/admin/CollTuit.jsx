@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import api from '../../api/httpClient';
 import InputForm from './../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
+import '../../assets/css/AdminFormLayout.css';
 
 const CollTuit = () => {
 	// 폼 상태
@@ -108,56 +109,60 @@ const CollTuit = () => {
 
 	return (
 		<div className="form-container">
-			<h3>단대별 등록금 등록 / 수정</h3>
+			<section className="admin-section">
+				<h3>단대별 등록금 등록 / 수정</h3>
 
-			<div className="entity-form entity-form-card colltuit-form">
-				<InputForm label="단과대 이름" name="name" placeholder="입력" value={formData.name} onChange={handleChange} />
-				<InputForm label="등록금" name="amount" placeholder="입력" value={formData.amount} onChange={handleChange} />
+				<div className="entity-form entity-form-card colltuit-form">
+					<InputForm label="단과대 이름" name="name" placeholder="입력" value={formData.name} onChange={handleChange} />
+					<InputForm label="등록금" name="amount" placeholder="입력" value={formData.amount} onChange={handleChange} />
 
-				<div className="button-row">
-					<button type="button" className="button" onClick={handleSubmit}>
-						{selectedCollegeId ? '등록금 수정' : '등록금 등록'}
-					</button>
-					{selectedCollegeId && (
-						<button
-							type="button"
-							className="button button-secondary"
-							onClick={() => {
-								setSelectedCollegeId(null);
-								setFormData({ name: '', amount: '' });
-							}}
-						>
-							취소
+					<div className="button-row">
+						<button type="button" className="button" onClick={handleSubmit}>
+							{selectedCollegeId ? '등록금 수정' : '등록금 등록'}
 						</button>
-					)}
+						{selectedCollegeId && (
+							<button
+								type="button"
+								className="button button-secondary"
+								onClick={() => {
+									setSelectedCollegeId(null);
+									setFormData({ name: '', amount: '' });
+								}}
+							>
+								취소
+							</button>
+						)}
+					</div>
 				</div>
-			</div>
+			</section>
 
-			<h3>단대별 등록금 목록</h3>
-			<div>
-				<DataTable
-					headers={headers}
-					data={collTuit}
-					renderActions={(row) => (
-						<div>
-							<button
-								type="button"
-								className="button button--sm button--outline button--outline-green"
-								onClick={() => handleEditRow(row)}
-							>
-								수정
-							</button>
-							<button
-								type="button"
-								className="button button--sm button--outline button--outline-red"
-								onClick={() => handleDeleteRow(row)}
-							>
-								삭제
-							</button>
-						</div>
-					)}
-				/>
-			</div>
+			<section className="admin-section">
+				<h3>단대별 등록금 목록</h3>
+				<div className="admin-table">
+					<DataTable
+						headers={headers}
+						data={collTuit}
+						renderActions={(row) => (
+							<div className="row-actions">
+								<button
+									type="button"
+									className="button button--sm button--outline button--outline-green"
+									onClick={() => handleEditRow(row)}
+								>
+									수정
+								</button>
+								<button
+									type="button"
+									className="button button--sm button--outline button--outline-red"
+									onClick={() => handleDeleteRow(row)}
+								>
+									삭제
+								</button>
+							</div>
+						)}
+					/>
+				</div>
+			</section>
 		</div>
 	);
 };

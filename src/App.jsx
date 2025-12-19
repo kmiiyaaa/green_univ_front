@@ -17,7 +17,6 @@ import College from './pages/admin/College';
 import Department from './pages/admin/Department';
 import CollTuit from './pages/admin/CollTuit';
 import Room from './pages/admin/Room';
-import CreateStudent from './pages/user/create/CreateStudent';
 import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
