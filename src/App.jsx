@@ -47,7 +47,6 @@ import TotalGrade from './pages/grade/TotalGrade';
 import Evaluation from './pages/evaluation/Evaluation';
 import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
-// import VideoRoomTest from './pages/video/VideoRoomTest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
 import CounselingEntry from './pages/CounselingEntry';
@@ -197,7 +196,7 @@ function App() {
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 							<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 							<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
-							<Route path='/grade/policy' element={<GradePolicy/>} /> {/* 성적 산출 기준 안내 */}
+							<Route path="/grade/policy" element={<GradePolicy />} /> {/* 성적 산출 기준 안내 */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
 							<Route path="/videotest" element={<VideoCounseling />} /> {/* 화상 상담 페이지 */}

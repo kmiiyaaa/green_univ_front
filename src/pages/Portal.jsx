@@ -121,12 +121,6 @@ export default function Portal() {
 		loadHomeData();
 	}, []);
 
-	// 로그아웃 핸들러
-	const handleLogout = () => {
-		if (logout) logout();
-		navigate('/');
-	};
-
 	return (
 		<div className="home-container">
 			{/* [Section 1] 상단 배너 */}
@@ -286,7 +280,7 @@ export default function Portal() {
 								<button className="action-btn" onClick={() => navigate('/user/info')}>
 									마이페이지
 								</button>
-								<button className="action-btn logout" onClick={handleLogout}>
+								<button className="action-btn logout" onClick={logout}>
 									로그아웃
 								</button>
 							</div>
