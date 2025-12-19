@@ -23,7 +23,7 @@ export default function WeeklyCounselingScheduleForm() {
 			const today = new Date();
 
 			const thisMonday = getMonday(today);
-			const nextMonday = getMonday(new Date(thisMonday.getTime() + 7 * 24 * 60 * 60 * 1000)); 
+			const nextMonday = getMonday(new Date(thisMonday.getTime() + 7 * 24 * 60 * 60 * 1000));
 
 			const thisWeek = getWeekDates(thisMonday);
 			const nextWeek = getWeekDates(nextMonday);
@@ -109,7 +109,7 @@ export default function WeeklyCounselingScheduleForm() {
 	if (!dates.length) return null;
 
 	return (
-		<div className="weekly-wrap">
+		<div className="form-container">
 			<h2 className="weekly-title">주간 상담 일정 관리</h2>
 
 			<p className="weekly-range">
