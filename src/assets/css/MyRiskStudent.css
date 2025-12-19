@@ -98,9 +98,9 @@
 }
 
 .pill-dark {
-	border-color: #111827;
-	background: #111827;
-	color: #fff;
+	border-color: #444444;
+	background: #ffffff;
+	color: #000000;
 }
 
 /* 필터 바 (딱딱함 제거) */

@@ -231,6 +231,7 @@ export default function MyRiskStudent() {
 			<div className="risk-section">
 				<div className="risk-section-head">
 					<h3>상담이 필요한 학생</h3>
+					{/* <span className="pill pill-dark">총 {pendingList.length}명</span> */}
 				</div>
 				<div className="risk-card">
 					<DataTable headers={pendingHeaders} data={pendingData} />
@@ -244,7 +245,7 @@ export default function MyRiskStudent() {
 			<div className="risk-section">
 				<div className="risk-section-head">
 					<h3>상담완료된 학생 목록</h3>
-					<span className="pill">총 {completedList.length}명</span>
+					{/* <span className="pill">총 {completedList.length}명</span> */}
 				</div>
 				<div className="risk-card">
 					<DataTable headers={completedHeaders} data={completedData} />
