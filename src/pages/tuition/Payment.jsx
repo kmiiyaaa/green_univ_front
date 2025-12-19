@@ -113,8 +113,7 @@ export default function Payment() {
 
 								<tr>
 									<th>납부기간</th>
-									{/* 원본도 따로 값을 받아 찍진 않음 */}
-									<td colSpan="3">~ 2023.05.02</td>
+									<td colSpan="3">{tuition.expireDate}</td>
 								</tr>
 							</tbody>
 						</table>
