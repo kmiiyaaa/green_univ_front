@@ -57,8 +57,8 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		...(subNumOfStudent < 20 || relative ? { 등급: s.letterGrade || '-' } : {}),
 		경고여부: s.status || '-',
 		점수기입: (
-			<button onClick={() => handleOpenGrade(s)} disabled={s.finalized}>
-				점수기입
+			<button onClick={() => handleOpenGrade(s)} disabled={s.finalized || aiStatus === 'SUCCESS'}>
+				{s.finalized || aiStatus === 'SUCCESS' ? '확정완료' : '점수기입'}
 			</button>
 		),
 	}));
@@ -98,7 +98,7 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 				<div style={{ marginBottom: '12px' }}>
 					<h3>최종 성적 확정</h3>
 					<button onClick={finalizeGrade} disabled={loading || aiStatus === 'RUNNING'}>
-						{loading ? '확정 중...' : '확정하고 AI 돌리기'}
+						{loading ? '성적 확정 및 AI 분석 중...' : '확정하고 AI 돌리기'}
 					</button>
 					<span style={{ marginLeft: '10px' }}>
 						{aiStatus === 'RUNNING' && '분석중'}
