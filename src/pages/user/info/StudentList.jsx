@@ -85,7 +85,7 @@ export default function StudentList() {
 	}, [lists]);
 
 	return (
-		<div>
+		<div className="form-container">
 			<h2>학생 명단 조회</h2>
 			<hr></hr>
 

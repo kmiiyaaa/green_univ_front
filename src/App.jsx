@@ -18,8 +18,6 @@ import Department from './pages/admin/Department';
 import CollTuit from './pages/admin/CollTuit';
 import Room from './pages/admin/Room';
 import CreateStudent from './pages/user/create/CreateStudent';
-import CreateStaff from './pages/user/create/CreateStaff';
-import CreateProfessor from './pages/user/create/CreateProfessor';
 import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
@@ -62,6 +60,7 @@ import CounselingReserveDetail from './pages/counseling/student/CounselingReserv
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
+import UserCreate from './pages/user/create/UserCreate';
 
 function App() {
 	// React Query 라이브러리
@@ -103,26 +102,10 @@ function App() {
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
 							{/* 교수, 직원, 학생 등록 - staff 권한 */}
 							<Route
-								path="/user/create/professor"
+								path="/user/create"
 								element={
 									<ProtectedRoute allowedRoles={['staff']}>
-										<CreateProfessor />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/user/create/staff"
-								element={
-									<ProtectedRoute allowedRoles={['staff']}>
-										<CreateStaff />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/user/create/student"
-								element={
-									<ProtectedRoute allowedRoles={['staff']}>
-										<CreateStudent />
+										<UserCreate />
 									</ProtectedRoute>
 								}
 							/>
@@ -197,7 +180,7 @@ function App() {
 							<Route path="/grade/current" element={<ThisGrade />} /> {/* 이번 학기 성적*/}
 							<Route path="/grade/semester" element={<Semester />} /> {/* 학기별 성적 조회*/}
 							<Route path="/grade/total" element={<TotalGrade />} /> {/* 누계 성적 조회*/}
-							<Route path='/grade/policy' element={<GradePolicy/>} /> {/* 성적 산출 기준 안내 */}
+							<Route path="/grade/policy" element={<GradePolicy />} /> {/* 성적 산출 기준 안내 */}
 							{/* 상담 폼 (임시)*/}
 							<Route path="/counseling" element={<CounselingEntry />} /> {/* 상담 폼 */}
 							<Route path="/videotest" element={<VideoCounseling />} /> {/* 화상 상담 페이지 */}

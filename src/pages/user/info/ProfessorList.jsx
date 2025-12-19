@@ -68,7 +68,7 @@ export default function ProfessorList() {
 	}, [lists]);
 
 	return (
-		<div>
+		<div className="form-container">
 			<h2>교수 명단 조회</h2>
 
 			{/* 검색 폼 */}

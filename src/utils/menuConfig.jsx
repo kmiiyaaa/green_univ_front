@@ -76,9 +76,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'STU_LIST', label: '학생 명단 조회', path: '/student/list' },
 			{ key: 'PRO_LIST', label: '교수 명단 조회', path: '/professor/list' },
 
-			{ key: 'CRT_STU', label: '학생 등록', path: '/user/create/student' },
-			{ key: 'CRT_PRO', label: '교수 등록', path: '/user/create/professor' },
-			{ key: 'CRT_STAFF', label: '직원 등록', path: '/user/create/staff' },
+			{ key: 'CRT_USER', label: '유저 등록', path: '/user/create' },
 
 			{ key: 'TUI_BILL', label: '등록금 고지서 발송', path: '/tuition/bill' },
 			{ key: 'BREAK_STAFF', label: '휴학 처리', path: '/break/list/staff' },
