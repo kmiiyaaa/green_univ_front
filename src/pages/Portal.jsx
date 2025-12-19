@@ -9,6 +9,7 @@ import portal1 from '../assets/images/portal1.png';
 import portal2 from '../assets/images/portal2.png';
 import StaffAlert from './user/alert/StaffAlert';
 import StudentAlerts from './user/alert/StudentAlert';
+import ProfessorAlert from './user/alert/ProfessorAlert';
 
 // 배너 이미지 데이터
 const bannerImages = [
@@ -35,19 +36,6 @@ export default function Portal() {
 
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [miniUserInfo, setMiniUserInfo] = useState({});
-
-	// 업무 알림용 상태 (Staff)
-	const [staffPendingCount, setStaffPendingCount] = useState(0);
-
-	// professor 상담신청 알림용 상태
-	const [professorPendingCount, setProfessorPendingCount] = useState(0);
-	const [pendingCount, setPendingCount] = useState(0);
-	const [scheduleCount, setScheduleCount] = useState(0);
-
-	// 학생 알림용
-	const [riskCount, setRiskCount] = useState(0);
-	const [requestCount, setRequestCount] = useState(0);
-	const [upcomingCount, setUpcomingCount] = useState(0);
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
@@ -132,109 +120,6 @@ export default function Portal() {
 
 		loadHomeData();
 	}, []);
-
-	// staff 업무처리
-	useEffect(() => {
-		// staff가 아니거나 토큰 없으면 업무알림 필요 없음
-		if (!token || userRole !== 'staff') {
-			// eslint-disable-next-line react-hooks/set-state-in-effect
-			setStaffPendingCount(0);
-			return;
-		}
-
-		const loadPendingBreakCount = async () => {
-			try {
-				const res = await api.get('/break/list/staff');
-				const raw = res.data.breakAppList || [];
-
-				const count = raw.length;
-
-				// 예: status가 있다면 이렇게
-				// const count = raw.filter(b => b.status === 'PENDING').length;
-
-				setStaffPendingCount(count);
-			} catch (e) {
-				console.error('휴학 대기건수 로드 실패:', e);
-				setStaffPendingCount(0);
-			}
-		};
-
-		loadPendingBreakCount();
-	}, [token, userRole]);
-
-	// professor 업무처리 -  상담신청 조회
-
-	// 1. 처리안된 상담목록
-	useEffect(() => {
-		if (!token || userRole !== 'professor') {
-			setProfessorPendingCount(0);
-			return;
-		}
-
-		const loadnotApplicated = async () => {
-			try {
-				const res = await api.get('/reserve/notApplicated'); // int 로 옴
-				setPendingCount(res.data);
-			} catch (e) {
-				console.error('상담 신청 로드 실패"', e);
-				setProfessorPendingCount(0);
-			}
-		};
-		loadnotApplicated();
-	}, [token, userRole]);
-
-	// 2. 오늘의 상담 건수
-	useEffect(() => {
-		if (!token || userRole !== 'professor') return;
-
-		const loadcounselingByDate = async () => {
-			try {
-				const res = await api.get('/counseling/today'); // int 로 옴
-				console.log(res)
-				setScheduleCount(res.data);
-			} catch (e) {
-				console.error('상담 건수 로드 실패"', e);
-				setScheduleCount(0);
-			}
-		};
-		loadcounselingByDate();
-	}, [token, userRole]);
-
-	// student 알림
-	useEffect(() => {
-		if (!token || userRole !== 'student') {
-			setRiskCount(0);
-			setRequestCount(0);
-			setUpcomingCount(0);
-			return;
-		}
-
-		const loadStudentAlerts = async () => {
-			try {
-				// 위험과목
-				const riskRes = await api.get('/risk/me');
-				// 서버가 { riskList: [...] } 또는 그냥 [...] 둘 다 대응
-				const riskList = riskRes.data?.riskList ?? riskRes.data ?? [];
-				setRiskCount(Array.isArray(riskList) ? riskList.length : 0);
-
-				// 2) 상담요청/상담예정 (카운트 API)
-				const countRes = await api.get('/reserve/count/student');
-				setUpcomingCount(Number(countRes.data?.approved) || 0); // APPROVED(확정만)
-
-				// 교수 상담요청 목록은 보통 { list: [...] } 형태로 내려옴
-				const requestRes = await api.get('/reserve/pre/list/student');
-				const reqList = requestRes.data?.list ?? requestRes.data ?? [];
-				setRequestCount(Array.isArray(reqList) ? reqList.length : 0);
-			} catch (e) {
-				console.error('학생 알림 로드 실패', e);
-				setRiskCount(0);
-				setRequestCount(0);
-				setUpcomingCount(0);
-			}
-		};
-
-		loadStudentAlerts();
-	}, [token, userRole]);
 
 	// 로그아웃 핸들러
 	const handleLogout = () => {
@@ -374,75 +259,24 @@ export default function Portal() {
 									)}
 								</div>
 
-								{/* [Staff 전용] 업무 알림 영역 */}
-								{userRole === 'staff' && (
-									<StaffAlert pendingCount={staffPendingCount} onGoList={() => navigate('/break/list/staff')} />
+								{/* 업무 알림 영역 */}
+								{/* [Staff 전용] */}
+								{userRole === 'staff' && token && <StaffAlert onGoList={() => navigate('/break/list/staff')} />}
+
+								{/* [Professor 전용] */}
+								{userRole === 'professor' && token && (
+									<ProfessorAlert
+										onGoPending={() => navigate('/professor/counseling/approved')}
+										onGoToday={() => navigate('/videotest')}
+									/>
 								)}
 
-								{/* [professor 전용] 상담요청 알림 영역 */}
-								{userRole === 'professor' && (
-									<>
-										{professorPendingCount > 0 ? (
-											<div className="main--page--info">
-												<ul className="d-flex align-items-start">
-													<li>📢 상담 요청 알림</li>
-												</ul>
-
-												<p>
-													<a
-														href="/preReserve/preList"
-														onClick={(e) => {
-															e.preventDefault();
-															navigate('/professor/counseling/approved');
-														}}
-													>
-														처리되지 않은 학생 상담 신청이 {pendingCount}건 존재합니다.
-													</a>
-												</p>
-											</div>
-										) : (
-											<div className="main--page--info empty">
-												<p>처리되지 않은 상담 신청이 없습니다.</p>
-											</div>
-										)}
-
-										{/* 오늘의 상담 건수 - 바로 화상채팅방 또는 예약 확인창 이동  */}
-
-										{scheduleCount > 0 ? (
-											<div className="main--page--info">
-												<ul className="d-flex align-items-start">
-													<li>📢 오늘의 상담 건수</li>
-												</ul>
-
-												<p>
-													<a
-														href="/preReserve/preList"
-														onClick={(e) => {
-															e.preventDefault();
-															navigate('/videotest');
-														}}
-													>
-														오늘의 상담이 {scheduleCount}건 존재합니다.
-													</a>
-												</p>
-											</div>
-										) : (
-											<div className="main--page--info empty">
-												<p>오늘의 상담 일정이 없습니다.</p>
-											</div>
-										)}
-									</>
-								)}
-
-								{/* [student 전용] 알림 영역 */}
-								{userRole === 'student' && (
+								{/* [Student 전용] */}
+								{userRole === 'student' && token && (
 									<StudentAlerts
-										riskCount={riskCount}
-										requestCount={requestCount}
-										upcomingCount={upcomingCount}
 										onGoRisk={() => navigate('/status')}
-										onGoRequest={() => navigate('/status')} // 요청 목록 (REQUESTED)
-										onGoUpcoming={() => navigate('/counseling/schedule')} // 예정 목록 (APPROVED)
+										onGoRequest={() => navigate('/counseling/reserve')}
+										onGoUpcoming={() => navigate('/counseling/reserve')}
 									/>
 								)}
 							</div>

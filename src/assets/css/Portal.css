@@ -1,7 +1,6 @@
-/* 기본 변수 설정 (그린대학교 테마) */
 :root {
-	--green-primary: #4caf50;
-	--green-dark: #388e3c;
+	--green-primary: #2e6130;
+	--green-dark: #1a5c1d;
 	--bg-light: #f9f9f9;
 	--text-dark: #333;
 	--text-gray: #666;
@@ -9,7 +8,6 @@
 	--alert-border: #c5e1a5;
 	--alert-text: #33691e;
 
-	/* ✅ [추가] 세련된 느낌용 토큰 */
 	--card-border: rgba(15, 23, 42, 0.08);
 	--card-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
 	--card-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.12);
@@ -55,7 +53,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	filter: saturate(1.05) contrast(1.02); /* ✅ 살짝 선명하게 */
+	filter: saturate(1.05) contrast(1.02);
 }
 
 .banner-text {
@@ -108,7 +106,7 @@
 	align-items: stretch;
 }
 
-/* ✅ 카드 공통 */
+/* 카드 공통 */
 .section-card {
 	flex: 1;
 	background: white;
@@ -118,19 +116,18 @@
 	border: 1px solid var(--card-border);
 	display: flex;
 	flex-direction: column;
-	position: relative; /* ✅ VIEW MORE 우하단 배치 */
+	position: relative; /* VIEW MORE 우하단 배치 */
 	transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .section-card:hover {
-	transform: translateY(-2px);
 	box-shadow: var(--card-shadow-hover);
 }
 
-/* ✅ 제목 라인 (더 깔끔하게) */
+/* 제목 라인 (더 깔끔하게) */
 .section-title {
 	font-size: 1.1rem;
-	font-weight: 900;
+	font-weight: 850;
 	margin-bottom: 16px;
 	color: var(--text-dark);
 	border-bottom: 2px solid rgba(76, 175, 80, 0.35);
@@ -141,13 +138,13 @@
 	letter-spacing: -0.01em;
 }
 
-/* ✅ [추가] 카드 내용 영역 (VIEW MORE 때문에 아래 여백 확보) */
+/* 카드 내용 영역 (VIEW MORE 때문에 아래 여백 확보) */
 .card-body {
 	flex: 1;
 	padding-bottom: 34px; /* VIEW MORE 버튼 영역 확보 */
 }
 
-/* ✅ [추가] VIEW MORE 버튼 (공지/학사 공통) */
+/* VIEW MORE 버튼 (공지/학사 공통) */
 .view-more-btn {
 	position: absolute;
 	right: 18px;
@@ -187,7 +184,7 @@
 	margin: 0;
 }
 
-/* ✅ 공지 리스트 영역도 스크롤 가능하게(공지 많을 때 대비) */
+/* 공지 리스트 영역도 스크롤 가능하게(공지 많을 때 대비) */
 .notice-list {
 	max-height: 280px; /* 필요하면 240~340 조절 */
 	overflow: auto;
@@ -222,14 +219,14 @@
 	gap: 14px;
 }
 
-/* ✅ 일정 많을 때: 리스트 영역만 스크롤 */
+/* 일정 많을 때: 리스트 영역만 스크롤 */
 .calendar-list {
 	max-height: 280px; /* 필요하면 240~340 조절 */
 	overflow: auto;
 	padding-right: 6px; /* 스크롤바 공간 */
 }
 
-/* ✅ 아이템 간 구분선 느낌 */
+/* 아이템 간 구분선 느낌 */
 .cal-item {
 	display: flex;
 	gap: 12px;
@@ -260,7 +257,7 @@
 }
 
 /* ===================== */
-/* ✅ [추가] 학사일정 카드 (스크린샷 스타일) */
+/* 학사일정 카드 
 /* ===================== */
 .schedule-list-card {
 	display: flex;
@@ -278,9 +275,9 @@
 
 .schedule-row {
 	display: flex;
-	gap: 16px;
+	gap: 10px;
 	align-items: flex-start;
-	padding-bottom: 18px;
+	padding-bottom: 7px;
 	border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
@@ -290,12 +287,11 @@
 }
 
 .schedule-badge {
-	width: 78px;
-	height: 78px;
+	width: 70px;
+	height: 70px;
 	border-radius: 999px;
 	background: #f3f4f6;
-	border: 1px solid rgba(15, 23, 42, 0.06);
-
+	border: 1px dashed #001e5e;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -304,17 +300,17 @@
 }
 
 .badge-month {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 900;
 	letter-spacing: 0.08em;
-	color: #111827;
+	color: #001e5e;
 	opacity: 0.9;
 }
 
 .badge-day {
-	font-size: 30px;
+	font-size: 27px;
 	font-weight: 900;
-	color: #111827;
+	color: #001e5e;
 	line-height: 1.05;
 }
 
@@ -394,141 +390,104 @@
 	color: #111827;
 }
 
-/* --- [추가] 업무 알림 박스 (교직원용) --- */
-.main--page--info {
-	margin: 15px 0;
-	padding: 15px;
-	background-color: rgb(251, 249, 246);
-	border: 1px solid #48494b;
-	border-radius: 12px;
+/* =========================
+   업무/상담 알림 (Staff/Professor) - 리워크
+   ========================= */
+
+/* 알림들이 여러 개 붙을 때 간격 확보 */
+.my-info-card .main--page--info {
+	margin: 10px 0; /* 기존 15px -> 더 촘촘+정돈 */
 }
 
+/* 알림 카드 자체 */
+.main--page--info {
+	padding: 14px 14px;
+	border-radius: 14px;
+	border: 1px solid rgba(15, 23, 42, 0.1);
+	background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
+	box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+
+	/* 내부 정렬 */
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+/* 아이콘 + 제목 라인 */
 .main--page--info ul {
 	list-style: none;
 	padding: 0;
-	margin: 0 0 8px 0;
+	margin: 0;
+
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	color: var(--alert-text);
+	gap: 8px;
+
+	color: #111827;
 	font-weight: 900;
 	font-size: 0.95rem;
+	letter-spacing: -0.01em;
 }
 
-.material-symbols-rounded {
-	font-size: 1.3rem;
-	vertical-align: middle;
-}
-
+/* 내용 문장 */
 .main--page--info p {
 	margin: 0;
-	font-size: 0.9rem;
-	color: #558b2f;
-	line-height: 1.4;
+	font-size: 0.92rem;
+	color: #374151;
+	line-height: 1.45;
+	font-weight: 700;
 }
 
+/* 링크: 기존 빨강 언더라인이 너무 튀어서 "포탈 톤"으로 */
 .main--page--info a {
-	color: #d32f2f;
-	text-decoration: underline;
+	color: #111827;
+	text-decoration: none;
 	font-weight: 900;
 	cursor: pointer;
-}
 
-/* 알림박스 : 학생 */
-.alert-box {
-	margin-top: 14px;
-	border: 1px solid #e5e7eb;
-	border-radius: 14px;
-	background: #ffffff;
-	padding: 12px;
-}
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
 
-.alert-box-title {
-	font-weight: 800;
-	color: #111827;
-	margin-bottom: 10px;
-}
-
-.alert-row {
-	width: 100%;
-	text-align: left;
-	border: 1px solid #e5e7eb;
+	padding: 8px 10px;
 	border-radius: 12px;
+	border: 1px solid rgba(15, 23, 42, 0.1);
 	background: #f9fafb;
-	padding: 12px 12px;
-	margin-bottom: 10px;
-	cursor: pointer;
+
+	transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
-.alert-row:hover {
-	width: 100%;
-	text-align: left;
-	border: 1px solid #e5e7eb;
-	border-radius: 12px;
-	background: #f1e5e2;
-	padding: 12px 12px;
-	margin-bottom: 10px;
-	cursor: pointer;
+.main--page--info a:hover {
+	background: rgba(17, 24, 39, 0.06);
+	border-color: rgba(15, 23, 42, 0.16);
+	transform: translateY(-1px);
+	box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
 }
 
-.alert-row:last-child {
-	margin-bottom: 0;
+.main--page--info a:active {
+	transform: translateY(0);
+	box-shadow: none;
 }
 
-.alert-row-title {
-	font-weight: 800;
-	color: #111827;
-	margin-bottom: 6px;
+/* (선택) 링크 끝에 화살표 느낌 */
+.main--page--info a::after {
+	content: '›';
+	font-size: 18px;
+	line-height: 1;
+	opacity: 0.7;
+	margin-left: auto;
 }
 
-.alert-row-desc {
-	font-weight: 700;
-	color: #dc2626; /* 기존처럼 빨강 유지하고 싶으면 */
-}
-
-.portal-alert-box {
-	margin-top: 14px;
-	border: 1px solid #e5e7eb;
-	border-radius: 14px;
+/* 혹시 empty가 남아있어도 너무 커 보이지 않게 */
+.main--page--info.empty {
 	background: #ffffff;
-	padding: 12px;
+	border-style: dashed;
+	opacity: 0.85;
 }
 
-.portal-alert-title {
-	font-weight: 800;
-	color: #111827;
-	margin-bottom: 10px;
-}
-
-.portal-alert-list {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.portal-alert-item {
-	width: 100%;
-	text-align: left;
-	border: 1px solid #e5e7eb;
-	border-radius: 12px;
-	background: #f9fafb;
-	padding: 12px;
-	cursor: pointer;
-}
-
-.portal-alert-item:hover {
-	background: #d2e4d3;
-}
-
-.portal-alert-item-title {
-	font-weight: 800;
-	color: #111827;
-	margin-bottom: 6px;
-}
-
-.portal-alert-item-desc {
-	font-weight: 700;
-	color: #dc2626;
+/* 알림 카드가 연속으로 2개 이상 나올 때 "붙어 보임" 방지 */
+.my-info-card > div > .main--page--info + .main--page--info {
+	margin-top: 12px;
 }
 
 /* 버튼 영역 */
@@ -538,7 +497,6 @@
 	margin-top: auto; /* 하단 고정 */
 }
 
-/* ✅ 버튼 더 깔끔하게 */
 .action-btn {
 	flex: 1;
 	padding: 12px;

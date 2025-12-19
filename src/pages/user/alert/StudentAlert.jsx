@@ -1,51 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '../../../api/httpClient';
 
-export default function StudentAlerts({
-	riskCount = 0,
-	requestCount = 0,
-	upcomingCount = 0,
-	onGoRisk,
-	onGoRequest,
-	onGoUpcoming,
-}) {
-	const items = [
-		{
-			key: 'risk',
-			title: '● 상담 권유 알림',
-			desc: `위험 과목이 ${riskCount}건 존재합니다.`,
-			onClick: onGoRisk,
-			show: riskCount > 0,
-		},
-		{
-			key: 'req',
-			title: '● 상담 요청 알림',
-			desc: `상담 요청이 ${requestCount}건 존재합니다.`,
-			onClick: onGoRequest,
-			show: requestCount > 0,
-		},
-		{
-			key: 'up',
-			title: '● 상담 예정 알림',
-			desc: `상담 예정이 ${upcomingCount}건 존재합니다.`,
-			onClick: onGoUpcoming,
-			show: upcomingCount > 0,
-		},
-	].filter((x) => x.show);
+export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
+	const [riskCount, setRiskCount] = useState(0);
+	const [requestCount, setRequestCount] = useState(0);
+	const [upcomingCount, setUpcomingCount] = useState(0);
 
-	if (items.length === 0) return null;
+	useEffect(() => {
+		const load = async () => {
+			try {
+				const [riskRes, countRes, requestRes] = await Promise.all([
+					api.get('/risk/me'),
+					api.get('/reserve/count/student'),
+					api.get('/reserve/pre/list/student'),
+				]);
+
+				const riskList = riskRes.data?.riskList ?? riskRes.data ?? [];
+				setRiskCount(Array.isArray(riskList) ? riskList.length : 0);
+
+				setUpcomingCount(Number(countRes.data?.approved) || 0);
+
+				const reqList = requestRes.data?.list ?? requestRes.data ?? [];
+				setRequestCount(Array.isArray(reqList) ? reqList.length : 0);
+			} catch (e) {
+				console.error('학생 알림 로드 실패:', e);
+				setRiskCount(0);
+				setRequestCount(0);
+				setUpcomingCount(0);
+			}
+		};
+
+		load();
+	}, []);
+
+	// 셋 다 없으면 숨김
+	if (riskCount + requestCount + upcomingCount <= 0) return null;
 
 	return (
-		<div className="portal-alert-box">
-			<div className="portal-alert-title">📢 학생 알림</div>
+		<div className="main--page--info">
+			<ul className="d-flex align-items-start">
+				<li>📢 알림</li>
+			</ul>
 
-			<div className="portal-alert-list">
-				{items.map((it) => (
-					<button key={it.key} type="button" className="portal-alert-item" onClick={it.onClick}>
-						<div className="portal-alert-item-title">{it.title}</div>
-						<div className="portal-alert-item-desc">{it.desc}</div>
-					</button>
-				))}
-			</div>
+			<p style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+				{riskCount > 0 && (
+					<a
+						href="/status"
+						onClick={(e) => {
+							e.preventDefault();
+							onGoRisk?.();
+						}}
+					>
+						위험 과목이 {riskCount}개 있습니다.
+					</a>
+				)}
+				{requestCount > 0 && (
+					<a
+						href="/counseling/reserve"
+						onClick={(e) => {
+							e.preventDefault();
+							onGoRequest?.();
+						}}
+					>
+						교수 상담 요청이 {requestCount}건 도착했습니다.
+					</a>
+				)}
+				{upcomingCount > 0 && (
+					<a
+						href="/counseling/reserve"
+						onClick={(e) => {
+							e.preventDefault();
+							onGoUpcoming?.();
+						}}
+					>
+						확정된 상담 일정이 {upcomingCount}건 있습니다.
+					</a>
+				)}
+			</p>
 		</div>
 	);
 }
