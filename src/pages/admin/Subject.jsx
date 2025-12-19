@@ -260,7 +260,7 @@ export default function Subject() {
 		<div className="form-container">
 			<h3>강의 등록</h3>
 
-			{/* ✅ 공통 엔티티 폼 카드 */}
+			{/* 공통 엔티티 폼 카드 */}
 			<div className="entity-form entity-form-card subject-form">
 				<InputForm
 					label="강의명"
@@ -336,7 +336,7 @@ export default function Subject() {
 					name="endTime"
 					value={formData.endTime}
 					onChange={handleChange}
-					placeholder="예 : 1030 (10:30)"
+					placeholder="예 : 10 (10:00)"
 				/>
 
 				<InputForm

@@ -1,4 +1,3 @@
-// 과목 선택 - 해당 과목의 상담 일정 로드
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../../api/httpClient';
@@ -22,19 +21,21 @@ export default function CounselingReserve() {
 	// 위험 학생 페이지에서 넘어온 subjectId
 	useEffect(() => {
 		const sid = searchParams.get('subjectId');
-		if (sid) setSelectedSubjectId(Number(sid));
+		if (sid) setSelectedSubjectId(sid);
 	}, [searchParams]);
 
 	// 과목 선택 시 상담 일정 조회
 	useEffect(() => {
 		if (!selectedSubjectId) return;
 
-		api.get('/counseling/schedule', {
-			params: { subjectId: selectedSubjectId },
-		}).then((res) => {
-			setSchedules(res.data.scheduleList);
-			setSubName(res.data.subjectName);
-		});
+		api
+			.get('/counseling/schedule', {
+				params: { subjectId: selectedSubjectId },
+			})
+			.then((res) => {
+				setSchedules(res.data.scheduleList);
+				setSubName(res.data.subjectName);
+			});
 	}, [selectedSubjectId]);
 
 	return (
@@ -45,16 +46,12 @@ export default function CounselingReserve() {
 			<SubjectSelect
 				subjects={subjects}
 				value={selectedSubjectId}
-				onChange={(e) => setSelectedSubjectId(Number(e.target.value))}
+				onChange={(e) => setSelectedSubjectId(e.target.value)}
 			/>
 
 			{/* 과목 선택 시 상담 일정 표시 */}
 			{selectedSubjectId && (
-				<CounselingScheduleDetailPage
-					counselingSchedule={schedules}
-					subId={selectedSubjectId}
-					subName={subName}
-				/>
+				<CounselingScheduleDetailPage counselingSchedule={schedules} subId={selectedSubjectId} subName={subName} />
 			)}
 		</div>
 	);
