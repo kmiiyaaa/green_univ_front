@@ -5,38 +5,60 @@ import { getMonday, getWeekDates } from '../../../utils/DateTimeUtil';
 import '../../../assets/css/ProfessorCounselRequestModal.css';
 
 export default function ProfessorCounselRequestModal({ open, target, onClose, onSuccess }) {
-	const [weekStartDate, setWeekStartDate] = useState(''); // ✅ 문자열(YYYY-MM-DD)
 	const [slotList, setSlotList] = useState([]);
 	const [selectedSlotId, setSelectedSlotId] = useState('');
 	const [reason, setReason] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	// 모달 열릴 때: 무조건 "YYYY-MM-DD"로 weekStartDate 세팅
+	// 이번 주 + 다음 주 weekStartDate 계산
+	const getThisAndNextWeekStartDates = () => {
+		const today = new Date();
+		const thisMonday = getMonday(today);
+		const nextMonday = getMonday(new Date(thisMonday.getTime() + 7 * 24 * 60 * 60 * 1000));
+
+		const thisWsd = getWeekDates(thisMonday)[0];
+		const nextWsd = getWeekDates(nextMonday)[0];
+
+		return { thisWsd, nextWsd };
+	};
+
+	// 지난 날짜/시간 슬롯 제외
+	const isPastSlot = (s) => {
+		const date = s?.counselingDate; // "YYYY-MM-DD"
+		const startTime = s?.startTime; // 15, 16
+		if (!date || startTime == null) return true;
+
+		const slotTime = new Date(`${date}T${String(startTime).padStart(2, '0')}:00:00`);
+		return slotTime <= new Date(); // 지금 포함해서 이전은 제외
+	};
+
+	// 모달 열릴 때: weekly에서 저장한 가능한 슬롯만 불러오게 처리
 	useEffect(() => {
 		if (!open) return;
 
-		const monday = getMonday();
-		const wsd = getWeekDates(monday)[0]; //  weekDates[0] 방식으로 통일
-		setWeekStartDate(wsd);
-
 		setSelectedSlotId('');
 		setReason('');
-		loadSlots(wsd);
+
+		const { thisWsd, nextWsd } = getThisAndNextWeekStartDates();
+		loadSlots(thisWsd, nextWsd);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
-	const loadSlots = async (wsd) => {
+	// 이번주 + 다음주 슬롯을 합쳐서 불러오기
+	const loadSlots = async (thisWsd, nextWsd) => {
 		try {
 			setLoading(true);
 
-			const res = await api.get('/counseling/professor', {
-				params: { weekStartDate: wsd }, // 문자열
-			});
+			const [res1, res2] = await Promise.all([
+				api.get('/counseling/professor', { params: { weekStartDate: thisWsd } }),
+				api.get('/counseling/professor', { params: { weekStartDate: nextWsd } }),
+			]);
 
-			const list = res.data?.list ?? [];
+			const list1 = res1.data?.list ?? [];
+			const list2 = res2.data?.list ?? [];
 
 			// 예약 안된 슬롯만
-			const available = list.filter((s) => s.reserved === false);
+			const available = [...list1, ...list2].filter((s) => s.reserved === false).filter((s) => !isPastSlot(s)); // 지난 날짜 슬롯 안보여주기
 
 			available.sort((a, b) => {
 				const d = String(a.counselingDate).localeCompare(String(b.counselingDate));
@@ -99,74 +121,56 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 
 	return (
 		<div className="pcm-backdrop" onClick={onClose}>
-			<div className="pcm-modal" onClick={(e) => e.stopPropagation()}>
-				<div className="pcm-head">
-					<h3 className="pcm-title">상담 요청 보내기</h3>
-					<button type="button" className="pcm-x" onClick={onClose} aria-label="닫기">
-						×
-					</button>
-				</div>
-
-				<div className="pcm-info">
-					<div>
-						<strong>학생</strong>: {target?.studentName} ({target?.studentId})
+			<div className="pcm-content">
+				<div className="pcm-modal" onClick={(e) => e.stopPropagation()}>
+					<div className="pcm-head">
+						<h3 className="pcm-title">상담 요청 보내기</h3>
+						<button type="button" className="pcm-x" onClick={onClose} aria-label="닫기">
+							×
+						</button>
 					</div>
-					<div>
-						<strong>과목</strong>: {target?.subjectName}
+
+					<div className="pcm-info">
+						<div>
+							<strong>학생</strong>: {target?.studentName} ({target?.studentId})
+						</div>
+						<div>
+							<strong>과목</strong>: {target?.subjectName}
+						</div>
 					</div>
-				</div>
 
-				<div className="pcm-row">
-					<label className="pcm-label">상담 일자</label>
-					<input
-						className="pcm-date"
-						type="date"
-						value={weekStartDate}
-						onChange={async (e) => {
-							const v = e.target.value;
-							setWeekStartDate(v);
-							setSelectedSlotId('');
-							await loadSlots(v);
-						}}
-					/>
-					<button type="button" className="pcm-btn" onClick={() => loadSlots(weekStartDate)}>
-						새로고침
-					</button>
-				</div>
+					<div className="pcm-row">
+						<OptionForm
+							label="상담 시간"
+							name="slot"
+							value={selectedSlotId}
+							onChange={(e) => setSelectedSlotId(e.target.value)}
+							options={slotOptions}
+						/>
+					</div>
 
-				<div className="pcm-row">
-					<OptionForm
-						label="상담시간(이후 가능한시간도 나옴)"
-						name="slot"
-						value={selectedSlotId}
-						onChange={(e) => setSelectedSlotId(e.target.value)}
-						options={slotOptions}
-					/>
-				</div>
+					<div className="pcm-row pcm-col">
+						<label className="pcm-label">요청 메시지(선택)</label>
+						<textarea
+							className="pcm-textarea"
+							rows={4}
+							value={reason}
+							onChange={(e) => setReason(e.target.value)}
+							placeholder="예) 성적 관련 상담이 필요합니다."
+						/>
+					</div>
 
-				<div className="pcm-row pcm-col">
-					<label className="pcm-label">요청 메시지(선택)</label>
-					<textarea
-						className="pcm-textarea"
-						rows={4}
-						value={reason}
-						onChange={(e) => setReason(e.target.value)}
-						placeholder="예) 이번 주 상담이 필요합니다."
-					/>
-				</div>
+					<div className="pcm-actions">
+						<button type="button" className="pcm-btn" onClick={onClose}>
+							취소
+						</button>
+						<button type="button" className="pcm-btn pcm-btn-primary" onClick={submit} disabled={!selectedSlotId}>
+							요청 보내기
+						</button>
+					</div>
 
-				<div className="pcm-actions">
-					<button type="button" className="pcm-btn" onClick={onClose}>
-						취소
-					</button>
-					<button type="button" className="pcm-btn pcm-btn-primary" onClick={submit} disabled={!selectedSlotId}>
-						요청 보내기
-					</button>
+					{!loading && slotList.length === 0 && <div className="pcm-hint">가능한 상담 시간이 없습니다.</div>}
 				</div>
-
-				{!loading && slotList.length === 0 && (
-					<div className="pcm-hint">가능한 상담 시간이 없습니다. (주간 상담 일정에서 체크 후 저장했는지 확인!)</div>
-				)}
 			</div>
 		</div>
 	);
