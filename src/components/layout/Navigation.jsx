@@ -20,7 +20,9 @@ export default function Navigation() {
 	const role = normalizeRole(userRole);
 
 	const activeHeaderKey = getActiveHeaderKey(role, pathname);
-	const sidebarItems = getSidebarMenus(role, activeHeaderKey);
+
+	// hidden은 화면에서만 제외
+	const sidebarItems = getSidebarMenus(role, activeHeaderKey).filter((i) => !i.hidden);
 
 	return (
 		<aside className="sidebar">

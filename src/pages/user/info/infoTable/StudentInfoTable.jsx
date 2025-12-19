@@ -6,7 +6,7 @@ export default function StudentInfoTable({ userInfo, stustatList }) {
 	const header2 = ['변동 일자', '변동 구분', '세부', '승인 여부', '복학 예정 연도', '복학 예정 학기'];
 
 	return (
-		<div>
+		<div className="form-container">
 			<table>
 				<tbody>
 					<tr>

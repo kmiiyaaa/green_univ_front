@@ -52,7 +52,7 @@ export default function StaffCreatePage() {
 					<h1>직원 등록</h1>
 				</div>
 
-				{/* ✅ onSubmit으로 처리 */}
+				{/* onSubmit으로 처리 */}
 				<form className="user-create-form" onSubmit={handleSubmit}>
 					<table className="user-form-table">
 						<tbody>

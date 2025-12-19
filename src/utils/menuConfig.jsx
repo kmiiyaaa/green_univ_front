@@ -33,6 +33,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'PW', label: '비밀번호 변경', path: '/user/update/password' },
 			{ key: 'BREAK_APP', label: '휴학 신청', path: '/break/application' },
 			{ key: 'BREAK_LIST', label: '휴학 내역 조회', path: '/break/list' },
+			{ key: 'BREAK_DETAIL', label: '휴학 상세', path: '/break/detail', hidden: true },
 			{ key: 'TUI_LIST', label: '등록금 내역 조회', path: '/tuition' },
 			{ key: 'TUI_PAY', label: '등록금 납부 고지서', path: '/tuition/payment' },
 		],
@@ -60,6 +61,7 @@ export const SIDEBAR_BY_HEADER = {
 		COUNSELING: [
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약/관리', path: '/counseling/reserve' },
+			{ key: 'MY_COUNSELING', label: '상담 신청 내역', path: '/counseling/schedule', hidden: true },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},
@@ -80,6 +82,7 @@ export const SIDEBAR_BY_HEADER = {
 
 			{ key: 'TUI_BILL', label: '등록금 고지서 발송', path: '/tuition/bill' },
 			{ key: 'BREAK_STAFF', label: '휴학 처리', path: '/break/list/staff' },
+			{ key: 'BREAK_DETAIL', label: '휴학 상세', path: '/break/detail', hidden: true },
 
 			{ key: 'SUGANG_SET', label: '수강신청 기간 설정', path: '/sugang/period' },
 		],

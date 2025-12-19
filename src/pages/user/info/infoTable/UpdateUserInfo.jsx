@@ -32,7 +32,7 @@ export default function UpdateUserInfo({ userInfo, setIsEdit }) {
 	};
 
 	return (
-		<div>
+		<div className="form-container">
 			<h2>개인 정보 수정</h2>
 
 			<form

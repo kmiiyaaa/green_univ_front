@@ -9,14 +9,11 @@ export default function MyStatus() {
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const navigate = useNavigate();
 
-	// 교수 -> 학생 상담요청(PreReserve: 수락/거절 대상)
-	const [preReserveList, setPreReserveList] = useState([]);
-
 	const loadMyRisk = async () => {
 		try {
 			const res = await api.get('/risk/me');
 
-			// 서버가 list를 바로 주는 경우가 대부분이라 둘 다 대응
+			// 서버가 list를 바로 주는 경우가 대부분이라 방어차원 둘다 대응
 			const list = res.data?.riskList ?? res.data ?? [];
 			setRiskList(list);
 		} catch (e) {
@@ -24,24 +21,6 @@ export default function MyStatus() {
 			console.error(e);
 		}
 	};
-
-	// 내가 받은 교수 상담요청 목록
-	const loadMyPreReserves = async () => {
-		try {
-			const res = await api.get('/reserve/pre/list/student');
-			const list = res.data?.list ?? res.data ?? [];
-			setPreReserveList(list);
-		} catch (e) {
-			alert(e?.response?.data?.message ?? '교수 상담요청 조회 실패');
-			console.error(e);
-		}
-	};
-
-	useEffect(() => {
-		loadMyRisk();
-		loadMyPreReserves();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const subjectOptions = useMemo(() => {
 		const map = new Map();
@@ -82,63 +61,6 @@ export default function MyStatus() {
 		}));
 	}, [filteredRiskList, navigate]);
 
-	// 교수 상담요청 테이블
-	const preHeaders = ['과목', '교수', '상담일자', '시간', '요청메시지', '처리'];
-
-	const acceptPre = async (preReserveId) => {
-		try {
-			await api.post('/reserve/pre/accept', null, { params: { preReserveId } });
-			alert('상담 요청을 수락했습니다.');
-			await loadMyPreReserves();
-		} catch (e) {
-			alert(e?.response?.data?.message ?? '수락 실패');
-			console.error(e);
-		}
-	};
-
-	const rejectPre = async (preReserveId) => {
-		try {
-			await api.post('/reserve/pre/reject', null, { params: { preReserveId } });
-			alert('상담 요청을 거절했습니다.');
-			await loadMyPreReserves();
-		} catch (e) {
-			alert(e?.response?.data?.message ?? '거절 실패');
-			console.error(e);
-		}
-	};
-
-	const preTableData = useMemo(() => {
-		return (preReserveList ?? []).map((p) => ({
-			과목: p.subjectName ?? '',
-			교수: p.professorName ?? '',
-			상담일자: p.counselingDate ?? '',
-			시간: p.startTime != null && p.endTime != null ? `${p.startTime}:00 ~ ${p.endTime}:50` : '',
-			요청메시지: p.reason ?? '',
-			처리: (
-				<div style={{ display: 'flex', gap: 8 }}>
-					<button
-						type="button"
-						onClick={(ev) => {
-							ev.stopPropagation();
-							acceptPre(p.preReserveId);
-						}}
-					>
-						수락
-					</button>
-					<button
-						type="button"
-						onClick={(ev) => {
-							ev.stopPropagation();
-							rejectPre(p.preReserveId);
-						}}
-					>
-						거절
-					</button>
-				</div>
-			),
-		}));
-	}, [preReserveList]);
-
 	return (
 		<div className="risk-wrap">
 			<h1>내 학업 상태</h1>
@@ -156,11 +78,6 @@ export default function MyStatus() {
 					/>
 				</div>
 				<DataTable headers={headers} data={tableData} />
-			</div>
-			<hr />
-			<div>
-				<h3>교수의 상담 요청 내역</h3>
-				<DataTable headers={preHeaders} data={preTableData} />
 			</div>
 		</div>
 	);

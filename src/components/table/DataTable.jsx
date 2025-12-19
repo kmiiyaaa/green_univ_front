@@ -8,7 +8,9 @@ const DataTable = ({ headers, data, onRowClick, onCellClick, clickableHeaders = 
 				<thead>
 					<tr>
 						{headers.map((h) => (
-							<th key={h}>{h}</th>
+							<th key={h} data-col={h}>
+								{h}
+							</th>
 						))}
 						{renderActions && <th>관리</th>}
 					</tr>
