@@ -61,7 +61,14 @@ export default function ProfessorCreatePage() {
 
 							{/* 교수 전용 필드 */}
 							<InputForm label="과 ID" name="deptId" value={formData.deptId} onChange={handleChange} />
-							<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
+							<InputForm
+								label="고용날짜"
+								name="hireDate"
+								type="date"
+								value={formData.hireDate}
+								onKeyDown={(e) => e.preventDefault()}
+								onChange={handleChange}
+							/>
 						</tbody>
 					</table>
 
