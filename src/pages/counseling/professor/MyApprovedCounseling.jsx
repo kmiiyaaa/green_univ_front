@@ -3,7 +3,7 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import '../../../assets/css/MyCounselingManage.css';
 
-export default function MyCounselingManage() {
+export default function MyApprovedCounseling() {
 	const [allList, setAllList] = useState([]);
 	const [loadingId, setLoadingId] = useState(null);
 
@@ -20,9 +20,24 @@ export default function MyCounselingManage() {
 		loadAll();
 	}, []);
 
-	// REQUESTED / APPROVED 분리
-	const requestedList = useMemo(() => allList.filter((r) => r.approvalState === 'REQUESTED'), [allList]);
-	const approvedList = useMemo(() => allList.filter((r) => r.approvalState === 'APPROVED'), [allList]);
+	// REQUESTED / APPROVED 분리 + "상담요청에는 학생 신청만"
+	const requestedList = useMemo(
+		() => allList.filter((r) => r.approvalState === 'REQUESTED' && r.requester === 'STUDENT'),
+		[allList]
+	);
+
+	// 교수발 요청(내가 보낸 요청) 별도 분리 (원하면 섹션 삭제 가능)
+	const requestedByProfessor = useMemo(
+		() => allList.filter((r) => r.approvalState === 'REQUESTED' && r.requester === 'PROFESSOR'),
+		[allList]
+	);
+
+	//  승인된 상담을 상담확정/상담완료로 분리
+	const approvedUpcomingList = useMemo(
+		() => allList.filter((r) => r.approvalState === 'APPROVED' && !r.past),
+		[allList]
+	);
+	const approvedPastList = useMemo(() => allList.filter((r) => r.approvalState === 'APPROVED' && r.past), [allList]);
 
 	// 승인/반려 처리
 	const handleDecision = async (reserveId, decision) => {
@@ -84,26 +99,44 @@ export default function MyCounselingManage() {
 		}));
 	}, [requestedList, loadingId]);
 
+	// 내가 보낸 요청 섹션(교수발 요청)
+	const headersSent = ['학생', '과목', '상담사유', '상담일자', '상담 시간'];
+	const dataSent = useMemo(() => {
+		return requestedByProfessor.map((r) => ({
+			학생: r.student?.name ?? '',
+			과목: r.subject?.name ?? '',
+			상담사유: r.reason ?? '',
+			상담일자: r.counselingSchedule?.counselingDate ?? '',
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.endTime ?? ''}:50`,
+		}));
+	}, [requestedByProfessor]);
+
 	// 상담 일정
 	// 과목 목록 (APPROVED 기준 중복 제거)
+	// 상담확정/상담완료 모두에서 과목 옵션 뽑기
 	const subjects = useMemo(() => {
 		const map = new Map();
-		approvedList.forEach((r) => {
+		[...approvedUpcomingList, ...approvedPastList].forEach((r) => {
 			if (r.subject) map.set(r.subject.id, r.subject.name);
 		});
 		return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
-	}, [approvedList]);
+	}, [approvedUpcomingList, approvedPastList]);
 
-	// 과목 필터 적용
-	const filteredApproved = useMemo(() => {
-		if (!subjectId) return approvedList;
-		return approvedList.filter((r) => r.subject?.id === Number(subjectId));
-	}, [approvedList, subjectId]);
+	// 과목 필터 적용(상담확정 / 상담완료 각각)
+	const filteredUpcoming = useMemo(() => {
+		if (!subjectId) return approvedUpcomingList;
+		return approvedUpcomingList.filter((r) => r.subject?.id === Number(subjectId));
+	}, [approvedUpcomingList, subjectId]);
+
+	const filteredPast = useMemo(() => {
+		if (!subjectId) return approvedPastList;
+		return approvedPastList.filter((r) => r.subject?.id === Number(subjectId));
+	}, [approvedPastList, subjectId]);
 
 	const headers2 = ['학생', '과목', '상담일자', '방코드', '상세'];
 
-	const data2 = useMemo(() => {
-		return filteredApproved.map((r) => ({
+	const dataUpcoming = useMemo(() => {
+		return filteredUpcoming.map((r) => ({
 			학생: r.student?.name ?? '',
 			과목: r.subject?.name ?? '',
 			상담일자: r.counselingSchedule?.counselingDate ?? '',
@@ -121,7 +154,29 @@ export default function MyCounselingManage() {
 				</button>
 			),
 		}));
-	}, [filteredApproved]);
+	}, [filteredUpcoming]);
+
+	// 상담완료 테이블
+	const dataPast = useMemo(() => {
+		return filteredPast.map((r) => ({
+			학생: r.student?.name ?? '',
+			과목: r.subject?.name ?? '',
+			상담일자: r.counselingSchedule?.counselingDate ?? '',
+			방코드: r.roomCode ?? '',
+			상세: (
+				<button
+					type="button"
+					className="cm-btn cm-btn--ghost"
+					onClick={() => {
+						sessionStorage.setItem('counselingDetail', JSON.stringify(r));
+						window.open('/counseling/info', '_blank', 'width=900,height=800,scrollbars=yes');
+					}}
+				>
+					보기
+				</button>
+			),
+		}));
+	}, [filteredPast]);
 
 	return (
 		<div className="cm-page">
@@ -150,10 +205,26 @@ export default function MyCounselingManage() {
 				)}
 			</section>
 
-			{/* 상담 일정 */}
+			{/* 내가 보낸 상담 요청(교수발) */}
 			<section className="cm-card">
 				<div className="cm-card-head">
-					<h3 className="cm-card-title">상담 일정</h3>
+					<h3 className="cm-card-title">내가 보낸 상담 요청</h3>
+					<span className="cm-badge">{requestedByProfessor.length}건</span>
+				</div>
+
+				{requestedByProfessor.length === 0 ? (
+					<div className="cm-empty">내가 보낸 상담 요청이 없습니다.</div>
+				) : (
+					<div className="cm-table">
+						<DataTable headers={headersSent} data={dataSent} />
+					</div>
+				)}
+			</section>
+
+			{/* 상담확정 */}
+			<section className="cm-card">
+				<div className="cm-card-head">
+					<h3 className="cm-card-title">상담확정</h3>
 					<div className="cm-filter">
 						<label className="cm-filter-label">과목</label>
 						<select className="cm-select" value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
@@ -164,15 +235,42 @@ export default function MyCounselingManage() {
 								</option>
 							))}
 						</select>
-						<span className="cm-badge">{filteredApproved.length}건</span>
+						<span className="cm-badge">{filteredUpcoming.length}건</span>
 					</div>
 				</div>
 
-				{approvedList.length === 0 ? (
-					<div className="cm-empty">확정된 상담 일정이 없습니다.</div>
+				{approvedUpcomingList.length === 0 ? (
+					<div className="cm-empty">상담확정 일정이 없습니다.</div>
 				) : (
 					<div className="cm-table">
-						<DataTable headers={headers2} data={data2} />
+						<DataTable headers={headers2} data={dataUpcoming} />
+					</div>
+				)}
+			</section>
+
+			{/* 상담완료 */}
+			<section className="cm-card">
+				<div className="cm-card-head">
+					<h3 className="cm-card-title">상담완료</h3>
+					<div className="cm-filter">
+						<label className="cm-filter-label">과목</label>
+						<select className="cm-select" value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
+							<option value="">전체 과목</option>
+							{subjects.map((s) => (
+								<option key={s.id} value={s.id}>
+									{s.name}
+								</option>
+							))}
+						</select>
+						<span className="cm-badge">{filteredPast.length}건</span>
+					</div>
+				</div>
+
+				{approvedPastList.length === 0 ? (
+					<div className="cm-empty">상담완료 일정이 없습니다.</div>
+				) : (
+					<div className="cm-table">
+						<DataTable headers={headers2} data={dataPast} />
 					</div>
 				)}
 			</section>

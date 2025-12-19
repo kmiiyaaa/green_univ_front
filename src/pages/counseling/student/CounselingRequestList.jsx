@@ -18,27 +18,39 @@ export default function CounselingRequestList() {
 		});
 	}, []);
 
-	// 승인된 상담만 필터링
-	const approvedList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED'), [list]);
+	// 승인된 상담을 상담확정/상담완료로 분리
+	const approvedUpcomingList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED' && !r.past), [list]);
+	const approvedPastList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED' && r.past), [list]);
 
 	// 전체 신청 내역
 	const requestList = useMemo(() => list, [list]);
 
-	// ===== 승인된 상담 (방 번호 테이블) =====
+	// ===== 상담확정 (방 번호 테이블) =====
 	const approvedHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호'];
 
-	const approvedData = useMemo(() => {
-		return approvedList.map((r) => ({
+	const approvedUpcomingData = useMemo(() => {
+		return approvedUpcomingList.map((r) => ({
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
 			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 		}));
-	}, [approvedList]);
+	}, [approvedUpcomingList]);
+
+	// 상담완료 테이블
+	const approvedPastData = useMemo(() => {
+		return approvedPastList.map((r) => ({
+			과목: r.subject?.name ?? '',
+			교수: r.counselingSchedule?.professor?.name ?? '',
+			상담일: r.counselingSchedule?.counselingDate ?? '',
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'방 번호': r.roomCode ?? '',
+		}));
+	}, [approvedPastList]);
 
 	// ===== 전체 신청 내역 =====
-	const requestHeaders = ['과목', '교수', '상담사유', '상태', '신청일', '신청 시간'];
+	const requestHeaders = ['과목', '교수', '상담사유', '상태', '신청일', '신청 시간', '요청자'];
 
 	const requestData = useMemo(() => {
 		return requestList.map((r) => ({
@@ -48,6 +60,7 @@ export default function CounselingRequestList() {
 			상태: reservationStatus(r.approvalState),
 			신청일: r.counselingSchedule?.counselingDate ?? '',
 			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			요청자: r.requester === 'PROFESSOR' ? '교수' : '학생',
 		}));
 	}, [requestList]);
 
@@ -55,15 +68,20 @@ export default function CounselingRequestList() {
 		<div>
 			<h2>내 상담 신청 내역</h2>
 
-			{/* 승인된 상담 */}
-			{approvedList.length > 0 && (
+			{approvedUpcomingList.length > 0 && (
 				<>
-					<h4>확정된 상담</h4>
-					<DataTable headers={approvedHeaders} data={approvedData} />
+					<h4>상담확정</h4>
+					<DataTable headers={approvedHeaders} data={approvedUpcomingData} />
 				</>
 			)}
 
-			{/* 전체 신청 내역 */}
+			{approvedPastList.length > 0 && (
+				<>
+					<h4>상담완료</h4>
+					<DataTable headers={approvedHeaders} data={approvedPastData} />
+				</>
+			)}
+
 			<h4>전체 신청 내역</h4>
 			<DataTable headers={requestHeaders} data={requestData} />
 		</div>

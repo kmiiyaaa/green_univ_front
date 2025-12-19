@@ -36,8 +36,6 @@ export default function CounselingReserve() {
 				return '승인 완료';
 			case 'REJECTED':
 				return '반려';
-			case 'CANCELED':
-				return '취소';
 			default:
 				return state ?? '';
 		}
@@ -93,7 +91,7 @@ export default function CounselingReserve() {
 	// Effects
 	// -----------------------------
 
-	// 로그인 학생의 수강 과목 조회
+	// 수강 과목 조회
 	useEffect(() => {
 		fetchSubjectsThisSemester();
 	}, [fetchSubjectsThisSemester]);
@@ -124,30 +122,42 @@ export default function CounselingReserve() {
 	// Derived
 	// -----------------------------
 
-	// 승인된 상담만 필터링
-	const approvedList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED'), [list]);
+	// 승인된 상담만 필터링 + past로 상담확정/상담완료 분리
+	const approvedUpcomingList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED' && !r.past), [list]);
+	const approvedPastList = useMemo(() => list.filter((r) => r.approvalState === 'APPROVED' && r.past), [list]);
 
-	// 전체 신청 내역
-	const requestList = useMemo(() => list, [list]);
+	// 내가 보낸 신청(requester=STUDENT)
+	const myRequestList = useMemo(() => list.filter((r) => r.requester === 'STUDENT'), [list]);
 
-	// ===== 승인된 상담 (방 번호 테이블) =====
+	// ===== 상담확정 (방 번호 테이블) =====
 	const approvedHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호'];
 
-	const approvedData = useMemo(() => {
-		return approvedList.map((r) => ({
+	const approvedUpcomingData = useMemo(() => {
+		return approvedUpcomingList.map((r) => ({
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
 			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 		}));
-	}, [approvedList]);
+	}, [approvedUpcomingList]);
 
-	// ===== 전체 신청 내역 =====
+	//상담완료(날짜 지난 확정) 테이블
+	const approvedPastData = useMemo(() => {
+		return approvedPastList.map((r) => ({
+			과목: r.subject?.name ?? '',
+			교수: r.counselingSchedule?.professor?.name ?? '',
+			상담일: r.counselingSchedule?.counselingDate ?? '',
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'방 번호': r.roomCode ?? '',
+		}));
+	}, [approvedPastList]);
+
+	// ===== 내가 보낸 신청 내역(학생 신청만) =====
 	const requestHeaders = ['과목', '교수', '상담사유', '상태', '신청일', '신청 시간'];
 
 	const requestData = useMemo(() => {
-		return requestList.map((r) => ({
+		return myRequestList.map((r) => ({
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담사유: r.reason ?? '',
@@ -155,7 +165,7 @@ export default function CounselingReserve() {
 			신청일: r.counselingSchedule?.counselingDate ?? '',
 			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
 		}));
-	}, [requestList, reservationStatus]);
+	}, [myRequestList, reservationStatus]); //
 
 	// 교수의 상담요청(PreReserve)
 	const preHeaders = ['과목', '교수', '상담일자', '시간', '요청메시지', '처리'];
@@ -165,6 +175,7 @@ export default function CounselingReserve() {
 			await api.post('/reserve/pre/accept', null, { params: { preReserveId } });
 			alert('상담 요청을 수락했습니다.');
 			await loadMyPreReserves();
+			await fetchMyReserveList(); // 수락하면 reserve가 APPROVED로 바뀌니까 목록 갱신
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '수락 실패');
 			console.error(e);
@@ -177,6 +188,7 @@ export default function CounselingReserve() {
 			await api.post('/reserve/pre/reject', null, { params: { preReserveId } });
 			alert('상담 요청을 거절했습니다.');
 			await loadMyPreReserves();
+			await fetchMyReserveList(); // 거절 후에도 상태 반영
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '거절 실패');
 			console.error(e);
@@ -236,14 +248,25 @@ export default function CounselingReserve() {
 				)}
 			</section>
 
-			{/* 확정된 상담 */}
+			{/* 상담확정(날짜 안 지난 승인) */}
 			<section className="reserve-panel">
-				<h3>확정된 상담</h3>
+				<h3>상담확정</h3>
 
-				{approvedList.length > 0 ? (
-					<DataTable headers={approvedHeaders} data={approvedData} />
+				{approvedUpcomingList.length > 0 ? (
+					<DataTable headers={approvedHeaders} data={approvedUpcomingData} />
 				) : (
-					<div className="reserve-empty">확정된 상담이 없습니다.</div>
+					<div className="reserve-empty">상담확정 내역이 없습니다.</div>
+				)}
+			</section>
+
+			{/* 상담완료(날짜 지난 승인) */}
+			<section className="reserve-panel">
+				<h3>상담완료</h3>
+
+				{approvedPastList.length > 0 ? (
+					<DataTable headers={approvedHeaders} data={approvedPastData} />
+				) : (
+					<div className="reserve-empty">상담완료 내역이 없습니다.</div>
 				)}
 			</section>
 

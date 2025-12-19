@@ -9,6 +9,9 @@ export default function MyStatus() {
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const navigate = useNavigate();
 
+	// 내 상담 신청/예약 내역(Reserve)도 같이 가져와서 버튼 상태 제어
+	const [reserveList, setReserveList] = useState([]);
+
 	const loadMyRisk = async () => {
 		try {
 			const res = await api.get('/risk/me');
@@ -21,6 +24,23 @@ export default function MyStatus() {
 			console.error(e);
 		}
 	};
+
+	// 내 상담 목록 로드
+	const loadMyReserves = async () => {
+		try {
+			const res = await api.get('/reserve/list');
+			setReserveList(res.data ?? []);
+		} catch (e) {
+			// 필요하면 alert로 바꿔도 됨
+			console.error(e);
+		}
+	};
+
+	useEffect(() => {
+		loadMyRisk();
+		loadMyReserves();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const subjectOptions = useMemo(() => {
 		const map = new Map();
@@ -40,26 +60,81 @@ export default function MyStatus() {
 		return riskList.filter((r) => String(r.subjectId) === String(selectedSubjectId));
 	}, [riskList, selectedSubjectId]);
 
+	//  과목별 상담 상태 맵 만들기
+	// - 우선순위: APPROVED(past=true) > APPROVED(past=false) > REQUESTED > 없음
+	const reserveStateBySubjectId = useMemo(() => {
+		const m = new Map();
+
+		(reserveList ?? []).forEach((r) => {
+			const sid = r?.subject?.id ?? r?.subjectId; // 서버 형태 혼재 방어
+			if (sid == null) return;
+
+			const key = String(sid);
+
+			const state = r?.approvalState;
+			const past = !!r?.past; // backend dto에서 내려줌
+			const requester = r?.requester; // STUDENT/PROFESSOR
+
+			// 기존값이 있으면 우선순위 비교
+			const prev = m.get(key);
+
+			const rank = (v) => {
+				if (!v) return 0;
+				if (v.approvalState === 'APPROVED' && v.past) return 4; // 상담완료
+				if (v.approvalState === 'APPROVED' && !v.past) return 3; // 상담확정
+				if (v.approvalState === 'REQUESTED') return 2; // 요청대기
+				return 1;
+			};
+
+			const cur = { approvalState: state, past, requester };
+			if (!prev || rank(cur) > rank(prev)) m.set(key, cur);
+		});
+
+		return m;
+	}, [reserveList]);
+
 	const headers = ['과목', '교수', '메시지', '상담요청'];
 
 	const tableData = useMemo(() => {
-		return filteredRiskList.map((r) => ({
-			과목: r.subjectName ?? '',
-			교수: r.professorName ?? '',
-			메시지: r.aiStudentMessage ?? '',
-			상담요청: (
-				<button
-					type="button"
-					onClick={(ev) => {
-						ev.stopPropagation();
-						navigate(`/counseling/reserve?subjectId=${r.subjectId}`);
-					}}
-				>
-					상담 요청
-				</button>
-			),
-		}));
-	}, [filteredRiskList, navigate]);
+		return filteredRiskList.map((r) => {
+			const sidKey = String(r.subjectId);
+			const rs = reserveStateBySubjectId.get(sidKey);
+
+			// 버튼 상태 결정
+			let label = '상담 요청';
+			let disabled = false;
+
+			if (rs?.approvalState === 'APPROVED' && rs.past) {
+				label = '상담 완료';
+				disabled = true;
+			} else if (rs?.approvalState === 'APPROVED' && !rs.past) {
+				label = '요청 완료';
+				disabled = true;
+			} else if (rs?.approvalState === 'REQUESTED') {
+				label = '요청 대기';
+				disabled = true;
+			}
+
+			return {
+				과목: r.subjectName ?? '',
+				교수: r.professorName ?? '',
+				메시지: r.aiStudentMessage ?? '',
+				상담요청: (
+					<button
+						type="button"
+						disabled={disabled}
+						onClick={(ev) => {
+							ev.stopPropagation();
+							if (disabled) return;
+							navigate(`/counseling/reserve?subjectId=${r.subjectId}`);
+						}}
+					>
+						{label}
+					</button>
+				),
+			};
+		});
+	}, [filteredRiskList, navigate, reserveStateBySubjectId]);
 
 	return (
 		<div className="risk-wrap">
