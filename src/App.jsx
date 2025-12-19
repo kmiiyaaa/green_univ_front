@@ -100,9 +100,7 @@ function App() {
 								{/* 등록금 고지서 생성 */}
 								<Route path="/tuition/bill" element={<CreatePayment />} />
 								{/* 사용자 생성 */}
-								<Route path="/user/create/professor" element={<CreateProfessor />} />
-								<Route path="/user/create/staff" element={<CreateStaff />} />
-								<Route path="/user/create/student" element={<CreateStudent />} />
+								<Route path="/user/create" element={<UserCreate />} />
 								{/* 학생, 교수 리스트 보기 */}
 								<Route path="/student/list" element={<StudentList />} />
 								<Route path="/professor/list" element={<ProfessorList />} />
