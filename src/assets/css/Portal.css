@@ -497,6 +497,39 @@
 	margin-top: auto; /* 하단 고정 */
 }
 
+/* ✅ 숫자(건수)만 강조: 배지 스타일 */
+.main--page--info .count-bold {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	min-width: 26px;
+	height: 22px;
+	padding: 0 8px;
+
+	border-radius: 999px;
+
+	/* 빨강 너무 쨍하지 않게 */
+	color: #b91c1c; /* red-700 느낌 */
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.25);
+
+	font-weight: 900;
+	font-size: 0.95rem;
+	line-height: 1;
+
+	/* 글자 주변만 살짝 강조 */
+	box-shadow: 0 6px 14px rgba(239, 68, 68, 0.1);
+}
+
+/* ✅ 링크 hover 시 숫자 배지도 살짝 살아나게 */
+.main--page--info a:hover .count-bold {
+	background: rgba(239, 68, 68, 0.14);
+	border-color: rgba(239, 68, 68, 0.32);
+	transform: translateY(-0.5px);
+	transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
 .action-btn {
 	flex: 1;
 	padding: 12px;

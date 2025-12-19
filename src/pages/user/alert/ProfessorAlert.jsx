@@ -41,7 +41,7 @@ export default function ProfessorAlert({ onGoPending, onGoToday }) {
 								onGoPending?.();
 							}}
 						>
-							처리되지 않은 학생 상담 신청이 {pendingCount}건 존재합니다.
+							처리되지 않은 학생 상담 신청이 <span className="count-bold">{pendingCount}</span>건 존재합니다.
 						</a>
 					</p>
 				</div>
@@ -61,7 +61,7 @@ export default function ProfessorAlert({ onGoPending, onGoToday }) {
 								onGoToday?.();
 							}}
 						>
-							오늘의 상담이 {scheduleCount}건 존재합니다.
+							오늘의 상담이 <span className="count-bold">{scheduleCount}</span>건 존재합니다.
 						</a>
 					</p>
 				</div>

@@ -35,7 +35,7 @@ export default function StaffAlert({ onGoList }) {
 						onGoList?.();
 					}}
 				>
-					처리되지 않은 휴학 신청이 {count}건 존재합니다.
+					처리되지 않은 휴학 신청이 <span className="count-bold">{count}</span>건 존재합니다.
 				</a>
 			</p>
 		</div>

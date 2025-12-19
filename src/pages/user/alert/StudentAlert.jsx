@@ -51,7 +51,7 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 							onGoRisk?.();
 						}}
 					>
-						위험 과목이 {riskCount}개 있습니다.
+						위험 과목이 <span className="count-bold">{riskCount}</span>개 있습니다.
 					</a>
 				)}
 				{requestCount > 0 && (
@@ -62,7 +62,7 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 							onGoRequest?.();
 						}}
 					>
-						교수 상담 요청이 {requestCount}건 도착했습니다.
+						교수 상담 요청이 <span className="count-bold">{requestCount}</span>건 도착했습니다.
 					</a>
 				)}
 				{upcomingCount > 0 && (
@@ -73,7 +73,7 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 							onGoUpcoming?.();
 						}}
 					>
-						확정된 상담 일정이 {upcomingCount}건 있습니다.
+						확정된 상담 일정이 <span className="count-bold">{upcomingCount}</span>건 있습니다.
 					</a>
 				)}
 			</p>
