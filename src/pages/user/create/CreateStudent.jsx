@@ -47,7 +47,7 @@ export default function CreateStudent() {
 			});
 		} catch (err) {
 			console.error(err);
-			alert('학생 등록 중 오류가 발생했습니다.');
+			alert(err.response.data.message);
 		}
 	};
 
@@ -70,9 +70,10 @@ export default function CreateStudent() {
 							<InputForm
 								label="입학일"
 								name="entranceDate"
+								type="date"
 								value={formData.entranceDate}
+								onKeyDown={(e) => e.preventDefault()}
 								onChange={handleChange}
-								placeholder="예 : YYYY-MM-DD"
 							/>
 							<InputForm
 								label="학년"

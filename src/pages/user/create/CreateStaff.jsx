@@ -59,7 +59,14 @@ export default function StaffCreatePage() {
 							<CommonUserFields formData={formData} onChange={handleChange} />
 
 							{/* 직원 전용 필드 */}
-							<InputForm label="고용날짜" name="hireDate" value={formData.hireDate} onChange={handleChange} />
+							<InputForm
+								label="고용날짜"
+								name="hireDate"
+								type="date"
+								value={formData.hireDate}
+								onKeyDown={(e) => e.preventDefault()}
+								onChange={handleChange}
+							/>
 						</tbody>
 					</table>
 
