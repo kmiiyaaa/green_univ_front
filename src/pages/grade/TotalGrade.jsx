@@ -59,12 +59,13 @@ const TotalGrade = () => {
 			<div className="split--div"></div>
 
 			<div>
-				<h4>평점 평균</h4>
-
 				{myGradeList.length === 0 ? (
 					<p className="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
 				) : (
-					<DataTable headers={headers} data={totalGrade} />
+					<div>
+						<h4>평점 평균</h4>
+						<DataTable headers={headers} data={totalGrade} />
+					</div>
 				)}
 			</div>
 		</div>

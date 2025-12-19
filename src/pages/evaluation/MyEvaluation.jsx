@@ -45,11 +45,9 @@ export default function MyEvaluation() {
 
 	return (
 		<div>
-			
-			<h2>내 강의 조회</h2>
-			<br>
-			</br>
-			
+			<h2>내 강의 평가</h2>
+			<br></br>
+
 			{evalList.length > 0 ? (
 				<div>
 					<select name="subName" value={subName ?? '과목 선택'} onChange={(e) => setSubName(e.target.value)}>
