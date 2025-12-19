@@ -17,9 +17,6 @@ import College from './pages/admin/College';
 import Department from './pages/admin/Department';
 import CollTuit from './pages/admin/CollTuit';
 import Room from './pages/admin/Room';
-import CreateStudent from './pages/user/create/CreateStudent';
-import CreateStaff from './pages/user/create/CreateStaff';
-import CreateProfessor from './pages/user/create/CreateProfessor';
 import PublicLayout from './components/layout/PublicLayout';
 import PublicHome from './pages/PublicHome';
 import PortalLayout from './components/layout/PortalLayout';
@@ -61,6 +58,7 @@ import CounselingReserveDetail from './pages/counseling/student/CounselingReserv
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
+import UserCreate from './pages/user/create/UserCreate';
 
 function App() {
 	// React Query 라이브러리

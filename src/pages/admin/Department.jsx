@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../../api/httpClient';
 import InputForm from './../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
+import '../../assets/css/AdminFormLayout.css';
 
 const Department = () => {
 	// 학과 전용 상태

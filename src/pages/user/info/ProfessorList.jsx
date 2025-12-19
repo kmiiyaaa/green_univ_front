@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import PaginationForm from '../../../components/form/PaginationForm';
 import InputForm from '../../../components/form/InputForm';
+import '../../../assets/css/ListPage.css';
 
 export default function ProfessorList() {
 	const [currentPage, setCurrentPage] = useState(0);
@@ -68,27 +69,47 @@ export default function ProfessorList() {
 	}, [lists]);
 
 	return (
-		<div>
-			<h2>교수 명단 조회</h2>
+		<div className="list-page">
+			<div className="list-card">
+				<div className="list-head">
+					<div>
+						<h2 className="list-title">교수 명단 조회</h2>
+						<p className="list-subtitle">사번/학과로 교수 정보를 검색할 수 있어요.</p>
+					</div>
+				</div>
 
-			{/* 검색 폼 */}
-			<form onSubmit={handleSearchSubmit}>
-				<InputForm label="사번" name="professorId" placeholder="검색어를 입력하세요" onChange={handleChange} />
-				<InputForm label="학과 이름" name="deptName" placeholder="검색어를 입력하세요" onChange={handleChange} />
-				<button type="submit">검색</button>
-			</form>
+				<div className="filters">
+					<form className="filters-form" onSubmit={handleSearchSubmit}>
+						<InputForm label="사번" name="professorId" placeholder="검색어를 입력하세요" onChange={handleChange} />
+						<InputForm label="학과 이름" name="deptName" placeholder="검색어를 입력하세요" onChange={handleChange} />
 
-			<hr />
+						<div className="filters-actions">
+							<button className="btn-primary" type="submit">
+								검색
+							</button>
+						</div>
+					</form>
+				</div>
 
-			{/* 테이블 */}
-			<DataTable headers={headers} data={tableData} />
-			{/* 페이징 */}
-			<PaginationForm
-				currentPage={currentPage}
-				blockSize={10}
-				totalPages={totalPages}
-				onPageChange={(p) => setCurrentPage(p)}
-			/>
+				<div className="list-divider" />
+
+				<div className="table-section">
+					<div className="table-topline">
+						<div className="table-hint">총 페이지: {totalPages}</div>
+					</div>
+
+					<DataTable headers={headers} data={tableData} />
+
+					<div className="pagination-wrap">
+						<PaginationForm
+							currentPage={currentPage}
+							blockSize={10}
+							totalPages={totalPages}
+							onPageChange={(p) => setCurrentPage(p)}
+						/>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }

@@ -87,9 +87,6 @@ export default function BreakAppDetail() {
 
 	return (
 		<div className="form-container break-detail">
-			<h3>휴학 내역 조회</h3>
-			<div className="split--div"></div>
-
 			<div className="d-flex flex-column align-items-center">
 				<div className="document--layout">
 					<h3>휴학 신청서</h3>
@@ -122,20 +119,31 @@ export default function BreakAppDetail() {
 
 				{/* 처리중일 때만  */}
 				{breakApp.status === '처리중' && (
-					<div className="schedule-list-actions">
+					<div className="break-detail-actions">
+						{/* 학생 */}
 						{userRole === 'student' && (
-							<button type="button" className="btn btn-dark" onClick={handleDelete}>
-								취소하기
-							</button>
+							<div className="break-detail-actions__group">
+								<button type="button" className="btn btn-dark" onClick={handleDelete}>
+									취소하기
+								</button>
+
+								<button type="button" className="btn btn-dark" onClick={() => navigate(-1)}>
+									뒤로
+								</button>
+							</div>
 						)}
 
+						{/* 교직원 */}
 						{userRole === 'staff' && (
-							<div className="d-flex">
+							<div className="break-detail-actions__group">
 								<button type="button" className="btn btn-dark" onClick={() => handleUpdate('승인')}>
 									승인하기
 								</button>
 								<button type="button" className="btn btn-dark" onClick={() => handleUpdate('반려')}>
 									반려하기
+								</button>
+								<button type="button" className="btn btn-dark" onClick={() => navigate(-1)}>
+									뒤로
 								</button>
 							</div>
 						)}

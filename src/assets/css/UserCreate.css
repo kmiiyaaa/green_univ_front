@@ -1,161 +1,223 @@
-/* fallback vars (전역에 이미 있으면 이 블록은 무시돼도 OK) */
-:root {
-	--border-soft: #e5e7eb;
-	--text-main: #111827;
-	--text-sub: #6b7280;
-	--bg: #ffffff;
-	--radius: 18px;
+.user-create-sub {
+	margin-top: 6px;
+	font-size: 13px;
+	color: #6b7280;
 }
 
-/* 페이지 래퍼 */
-.user-create-page {
+.user-type-tabs {
+	display: flex;
+	gap: 10px;
+	margin: 14px 0 16px;
+}
+
+.user-type-tab {
+	height: 40px;
+	padding: 0 14px;
+	border-radius: 12px;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	color: #111827;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.user-type-tab:hover {
+	background: #f9fafb;
+}
+
+.user-type-tab.is-active {
+	background: #1f3b2a; /* 너네 그린 톤에 맞춰 조절 가능 */
+	border-color: #1f3b2a;
+	color: #ffffff;
+}
+
+.user-form-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-top: 14px;
+}
+
+.user-reset-btn {
+	height: 44px;
+	padding: 0 14px;
+	border-radius: 12px;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.user-reset-btn:hover {
+	background: #f9fafb;
+}
+
+/* 페이지 중앙 정렬 + 폭 제한 */
+.form-container {
 	width: 100%;
+	padding: 28px 16px;
 	display: flex;
 	justify-content: center;
-	padding: 26px 16px;
 }
 
-/* 카드 (너무 넓지 않게 컴팩트하게) */
 .user-create-card {
 	width: 100%;
-	max-width: 700px; /* 860 -> 640 */
-	background: var(--bg);
-	border: 1px solid var(--border-soft);
-	border-radius: var(--radius);
-	padding: 22px 24px;
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+	max-width: 1200px;
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 22px;
+	padding: 22px 22px 18px;
+	box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
 }
 
-/* 제목 */
+/* 헤더: 왼쪽 타이틀/설명 + 오른쪽 탭 */
 .user-create-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.user-create-titlebox h1 {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 900;
+	color: #111827;
+}
+
+.user-create-sub {
+	margin-top: 6px;
+	font-size: 13px;
+	color: #6b7280;
+}
+
+/* 탭: 세그먼트(알약) 형태 */
+.user-type-tabs {
+	display: inline-flex;
+	gap: 6px;
+	padding: 6px;
+	border-radius: 9999px;
+	border: 1px solid #e5e7eb;
+	background: #f9fafb;
+}
+
+.user-type-tab {
+	height: 34px;
+	padding: 0 14px;
+	border-radius: 9999px;
+	border: 0;
+	background: transparent;
+	color: #111827;
+	font-weight: 900;
+	cursor: pointer;
+}
+
+.user-type-tab:hover {
+	background: #ffffff;
+}
+
+.user-type-tab.is-active {
+	background: #1f3b2a; /* 그린 톤 */
+	color: #ffffff;
+}
+
+/* 폼 테이블: ✅ 반드시 100%로 */
+.user-form-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0 10px; /* 행 사이 간격 */
+}
+
+/* 섹션 타이틀(기본 정보 / 학생 정보 등) */
+.form-section td {
+	padding: 10px 12px;
+	background: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 14px;
+	font-weight: 900;
+	color: #111827;
+}
+
+/* InputForm이 th/td 구조일 확률이 높아서 일반적으로 잡아줌 */
+.user-form-table th {
+	width: 120px;
+	padding: 8px 10px;
+	text-align: left;
+	vertical-align: middle;
+	font-size: 13px;
+	font-weight: 900;
+	color: #374151;
+}
+
+.user-form-table td {
+	padding: 8px 10px;
+}
+
+/* ✅ input/select/textarea 폭 꽉 채우기 */
+.user-form-table input,
+.user-form-table select,
+.user-form-table textarea {
+	width: 100%;
+	height: 40px;
+	border-radius: 12px;
+	border: 1px solid #e5e7eb;
+	padding: 0 12px;
+	outline: none;
+	background: #ffffff;
+	color: #111827;
+}
+
+.user-form-table input:focus,
+.user-form-table select:focus,
+.user-form-table textarea:focus {
+	border-color: #1f3b2a;
+	box-shadow: 0 0 0 3px rgba(31, 59, 42, 0.12);
+}
+
+/* 하단 액션바 */
+.user-form-actions {
+	margin-top: 14px;
+	padding-top: 14px;
+	border-top: 1px solid #eef2f7;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 18px;
+	gap: 12px;
 }
 
-/* h1에 class 안 줘도 예쁘게 */
-.user-create-header h1 {
-	font-size: 22px;
-	font-weight: 800;
-	color: var(--text-main);
-	letter-spacing: -0.2px;
-	margin: 0;
+.user-form-hint {
+	font-size: 13px;
+	color: #6b7280;
 }
 
-/* 폼 */
-.user-create-form {
+.user-form-btns {
 	display: flex;
-	flex-direction: column;
-	gap: 14px;
+	gap: 10px;
 }
 
-/*
-InputForm이 <tr>을 반환하거나 CommonUserFields에서 <tr>을 쓰고 있으니까
-폼 내부를 table처럼 스타일링
-*/
-.user-form-table {
-	width: 100%;
-	border-collapse: collapse;
-	table-layout: fixed; /* ✅ column 안정적으로 */
-}
-
-/* 행 간격 */
-.user-form-table tr + tr td {
-	padding-top: 12px;
-}
-
-/* 라벨 칸 */
-.user-form-table td:first-child {
-	width: 90px; /* 160 -> 120 */
-	vertical-align: middle;
-}
-
-/* 라벨(왼쪽만) */
-.user-form-table td:first-child label {
-	font-weight: 700;
-	color: var(--text-main);
-}
-
-/* 입력칸 칸은 남은 너비를 다 씀 */
-.user-form-table td:last-child {
-	width: calc(100% - 120px);
-}
-
-/* ✅ Input/Select 공통 느낌 */
-.user-create-card input[type='text'],
-.user-create-card input[type='email'],
-.user-create-card input[type='date'],
-.user-create-card input[type='number'],
-.user-create-card select,
-.user-create-card textarea {
-	width: 100% !important; /* ✅ InputForm에서 width 고정해도 강제 */
-	box-sizing: border-box;
-	min-width: 0;
-
+.user-reset-btn {
 	height: 44px;
-	padding: 0 12px;
-	border: 1px solid var(--border-soft);
+	padding: 0 14px;
 	border-radius: 12px;
-	outline: none;
-	color: var(--text-main);
-	background: #fff;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	font-weight: 900;
+	cursor: pointer;
 }
 
-.user-create-card textarea {
-	height: auto;
-	padding: 10px 12px;
-}
-
-/* focus */
-.user-create-card input:focus,
-.user-create-card select:focus,
-.user-create-card textarea:focus {
-	border-color: rgba(17, 24, 39, 0.5);
-	box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.08);
-}
-
-/* ✅ 성별 라디오 영역 (가로 정렬) */
-.user-radio-row td:last-child {
-	padding-top: 6px; /* 글/라디오 높이감 살짝 */
-}
-
-.user-radio-group {
-	display: flex; /* ✅ 가로로 */
-	gap: 18px; /* 남/여 간격 */
-	flex-wrap: wrap; /* 화면 좁으면 자연스럽게 줄바꿈 */
-}
-
-.user-radio-option {
-	display: inline-flex; /* ✅ 라벨+라디오 한 덩어리 */
-	gap: 8px;
-	font-weight: 600;
-	color: var(--text-main);
-	line-height: 1;
-	margin: 0;
-}
-
-.user-radio-option input[type='radio'] {
-	margin: 0;
-	transform: translateY(1px);
-	accent-color: var(--text-main);
-}
-
-/* 버튼 */
-.user-form-actions {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: 12px;
+.user-reset-btn:hover {
+	background: #f9fafb;
 }
 
 .user-submit-btn {
 	height: 44px;
 	padding: 0 16px;
 	border-radius: 12px;
-	border: 1px solid var(--text-main);
-	background: var(--text-main);
-	color: #fff;
-	font-weight: 800;
+	border: 1px solid #1f3b2a;
+	background: #1f3b2a;
+	color: #ffffff;
+	font-weight: 900;
 	cursor: pointer;
 }
 
@@ -163,12 +225,38 @@ InputForm이 <tr>을 반환하거나 CommonUserFields에서 <tr>을 쓰고 있�
 	filter: brightness(0.95);
 }
 
-/* 반응형 */
-@media (max-width: 640px) {
-	.user-form-table td:first-child {
-		width: 110px;
+/* 모바일 대응 */
+@media (max-width: 720px) {
+	.user-create-header {
+		flex-direction: column;
+		align-items: flex-start;
 	}
-	.user-form-table td:last-child {
-		width: calc(100% - 110px);
+
+	.user-type-tabs {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.user-type-tab {
+		flex: 1;
+		text-align: center;
+	}
+
+	.user-form-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.user-form-btns {
+		width: 100%;
+	}
+
+	.user-reset-btn,
+	.user-submit-btn {
+		flex: 1;
+	}
+
+	.user-form-table th {
+		width: 96px; /* 모바일에서 라벨 폭 줄임 */
 	}
 }

@@ -51,22 +51,30 @@ export default function BreakAppListStaff() {
 	if (loading) return <p>불러오는중 ...</p>;
 
 	return (
-		<div className="form-container">
-			<h3>휴학 처리</h3>
-			<div className="split--div"></div>
+		<div className="list-page">
+			<div className="list-card">
+				<div className="list-head">
+					<div>
+						<h3 className="list-title">휴학 처리</h3>
+						<p className="list-subtitle">대기중인 휴학 신청 내역을 확인하고 상세 처리할 수 있어요.</p>
+					</div>
+				</div>
 
-			{breakAppList.length > 0 ? (
-				<DataTable
-					headers={headers}
-					data={breakAppList}
-					onRowClick={(row) => {
-						const id = row?.id || row?.원본데이터?.id;
-						if (id) navigate(`/break/detail/${id}`);
-					}}
-				/>
-			) : (
-				<p>대기중인 신청 내역이 없습니다.</p>
-			)}
+				<div className="split--div" />
+
+				{breakAppList.length > 0 ? (
+					<DataTable
+						headers={headers}
+						data={breakAppList}
+						onRowClick={(row) => {
+							const id = row?.id || row?.원본데이터?.id;
+							if (id) navigate(`/break/detail/${id}`);
+						}}
+					/>
+				) : (
+					<p className="state-text">대기중인 신청 내역이 없습니다.</p>
+				)}
+			</div>
 		</div>
 	);
 }

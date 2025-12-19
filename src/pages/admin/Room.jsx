@@ -3,6 +3,7 @@ import api from '../../api/httpClient';
 import InputForm from '../../components/form/InputForm';
 import DataTable from '../../components/table/DataTable';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import '../../assets/css/AdminFormLayout.css';
 
 export default function Room() {
 	const queryClient = useQueryClient();

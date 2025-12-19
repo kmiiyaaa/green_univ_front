@@ -404,6 +404,12 @@
 	gap: 10px;
 }
 
+.form-container {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 14px;
+}
 @media (max-width: 520px) {
 	.document--layout {
 		border-radius: 12px;
