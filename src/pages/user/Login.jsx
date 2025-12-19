@@ -1,11 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
 import { UserContext } from '../../context/UserContext';
 
 export default function Login() {
-	const navigate = useNavigate();
-	const { setUser, setUserRole, setToken } = useContext(UserContext);
+	const { setToken } = useContext(UserContext);
 
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
@@ -39,25 +37,15 @@ export default function Login() {
 			// ID 저장 체크 시 localStorage 저장 / 아니면 삭제
 			if (rememberId) localStorage.setItem('savedLoginId', loginId);
 			else localStorage.removeItem('savedLoginId');
-
 			const res = await api.post('/auth/login', {
 				id: loginId,
 				password: password,
 			});
-			// console.log('로그인res.data', res.data); // id, userRole, accessToken
-			const { id, userRole, accessToken } = res.data;
-			// console.log('id', id); //
-			// console.log('userRole', userRole);
-			// console.log('accessToken', accessToken); // 모두 변수 저장됨
-			if (accessToken) setToken(accessToken);
+			const { accessToken } = res.data;
 			localStorage.setItem('token', accessToken);
-			if (id) setUser(id); // 유저 아이디 (기본키 저장)
-			if (userRole) setUserRole(userRole);
-			navigate('/portal', { replace: true });
+			setToken(accessToken); // Context의 setToken 호출 -> Provider useEffect가 /auth/me 자동으로 호출
 		} catch (err) {
 			setError(err.response.data.message);
-			console.error(err.response.data.message);
-			alert(err.response.data.message);
 		} finally {
 			setLoading(false);
 		}
@@ -115,7 +103,7 @@ export default function Login() {
 					</label>
 				</div>
 
-				{error && <p style={{ marginTop: 8, fontSize: 12 }}>{error}</p>}
+				{error && <p className="error-message">{error}</p>}
 
 				<button type="submit" className="public-login-button" disabled={loading}>
 					{loading ? 'LOGGING IN...' : 'LOGIN'}
