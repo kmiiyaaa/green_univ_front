@@ -33,7 +33,7 @@ export default function NoticeWrite() {
 		);
 	}
 
-	const handleCreate = async ({ category, title, content, file }) => {
+	const handleCreate = async ({ category, title, content, file /*, removeFile */ }) => {
 		const formData = new FormData();
 		formData.append('category', category);
 		formData.append('title', title);

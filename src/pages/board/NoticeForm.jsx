@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InputForm from '../../components/form/InputForm';
 import TextField from '../../components/form/TextField';
 import OptionForm from '../../components/form/OptionForm';
@@ -24,18 +24,44 @@ const NoticeForm = ({
 	const [content, setContent] = useState('');
 	const [file, setFile] = useState(null);
 
+	// 기존 첨부파일 삭제
+	const [removeFile, setRemoveFile] = useState(false);
+
+	// 파일 선택 취소를 위해 ref 사용
+	const fileInputRef = useRef(null);
+
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setCategory(initialValues.category ?? '[일반]');
 		setTitle(initialValues.title ?? '');
 		setContent(initialValues.content ?? '');
+
+		// 수정 화면에서 초기값이 바뀌면 삭제 플래그/선택 파일 초기화
+		setRemoveFile(false);
+		setFile(null);
+		if (fileInputRef.current) fileInputRef.current.value = '';
 	}, [initialValues?.category, initialValues?.title, initialValues?.content]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!onSubmit) return;
 
-		await onSubmit({ category, title, content, file });
+		await onSubmit({ category, title, content, file, removeFile });
+	};
+
+	// 새 파일 선택 취소
+	const handleClearSelectedFile = () => {
+		setFile(null);
+		if (fileInputRef.current) fileInputRef.current.value = '';
+	};
+
+	// 기존 첨부파일 삭제(수정 화면)
+	const handleRemoveCurrentFile = () => {
+		// 기존 파일 삭제를 누르면
+		// removeFile=true 로 서버에 알림
+		// 혹시 선택된 새 파일이 있으면 같이 초기화(혼선 방지)
+		setRemoveFile(true);
+		handleClearSelectedFile();
 	};
 
 	return (
@@ -77,14 +103,43 @@ const NoticeForm = ({
 			{enableFile && (
 				<div className="custom-file">
 					<input
+						ref={fileInputRef}
 						type="file"
 						className="custom-file-input"
 						name="file"
-						onChange={(e) => setFile(e.target.files?.[0] || null)}
+						onChange={(e) => {
+							const f = e.target.files?.[0] || null;
+							setFile(f);
+
+							// 새 파일을 선택하면 기존 파일 삭제 플래그는 해제(교체로 간주)
+							if (f) setRemoveFile(false);
+						}}
 					/>
 
+					{/* 파일선택 취소 버튼 (선택한 새 파일만 취소) */}
+					{file && (
+						<div style={{ marginTop: 8 }}>
+							<div className="notice-current-file">선택된 파일: {file.name}</div>
+							<button type="button" className="button" onClick={handleClearSelectedFile}>
+								선택 취소
+							</button>
+						</div>
+					)}
+
 					{/* 파일선택 아래쪽 현재 첨부파일 표시 */}
-					{currentFileName && <div className="notice-current-file">현재 첨부파일: {currentFileName}</div>}
+					{currentFileName && (
+						<div style={{ marginTop: 10 }}>
+							<div className="notice-current-file">
+								현재 첨부파일: {currentFileName}
+								{removeFile && <span style={{ marginLeft: 8 }}>(삭제 예정)</span>}
+							</div>
+
+							{/* 기존 첨부파일 삭제 버튼 */}
+							<button type="button" className="button" onClick={handleRemoveCurrentFile}>
+								첨부파일 삭제
+							</button>
+						</div>
+					)}
 				</div>
 			)}
 

@@ -44,14 +44,20 @@ const NoticeUpdate = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id, userRole]);
 
-	// 파일첨부 수정버전
-	const handleUpdate = async ({ category, title, content, file }) => {
+	// 파일첨부 수정버전 (+ 기존 파일 삭제 플래그)
+	const handleUpdate = async ({ category, title, content, file, removeFile }) => {
 		try {
 			const formData = new FormData();
 			formData.append('category', category);
 			formData.append('title', title);
 			formData.append('content', content);
-			if (file) formData.append('file', file); // 새 파일 있으면 같이 전송
+
+			// 기존 첨부파일 삭제 요청
+			// boolean은 multipart에서 문자열로 들어가므로 "true"/"false"로 보내도 됨
+			if (removeFile === true) formData.append('removeFile', 'true');
+
+			// 새 파일 있으면 같이 전송
+			if (file) formData.append('file', file);
 
 			await api.patch(`/notice/update/${id}`, formData);
 			// Content-Type은 axios가 multipart로 자동 세팅
