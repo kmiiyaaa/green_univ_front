@@ -104,19 +104,20 @@ export default function MyRiskStudent() {
 			// DETECTED 상태이고
 			// 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
 			// 이미 요청대기/확정 상태면 버튼 막기
+			// 취소(CONSULT_CANCELED)도 재요청 가능으로 처리
 
 			// 버튼 활성화는 consultState 기준으로 판단
 			const isAlreadyPending = r.consultState === 'CONSULT_REQ';
 			const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
 
-			// 재요청은 consultState가 CONSULT_REJECTED면 무조건 가능하게
-			const canRequest =
-				showConsultButton &&
-				!isAlreadyPending &&
-				!isAlreadyApproved &&
-				(!r.consultState || r.consultState === 'CONSULT_REJECTED');
+			const isRejected = r.consultState === 'CONSULT_REJECTED';
+			const isCanceled = r.consultState === 'CONSULT_CANCELED';
 
-			const requestBtnLabel = r.consultState === 'CONSULT_REJECTED' ? '재요청' : '상담 요청';
+			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
+			const canRequest =
+				showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
+
+			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
 			return {
 				과목: <span className="cell-strong">{r.subjectName ?? '-'}</span>,
@@ -158,6 +159,8 @@ export default function MyRiskStudent() {
 						<span className="status-pill ok">상담 확정</span>
 					) : r.consultState === 'CONSULT_REJECTED' ? (
 						<span className="status-pill warn">재요청 가능</span>
+					) : r.consultState === 'CONSULT_CANCELED' ? (
+						<span className="status-pill warn">취소됨(재요청 가능)</span>
 					) : (
 						<span className="muted">상태 확인</span>
 					),

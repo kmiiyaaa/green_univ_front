@@ -36,6 +36,8 @@ export default function CounselingReserve() {
 				return '승인 완료';
 			case 'REJECTED':
 				return '반려';
+			case 'CANCELED': 
+				return '취소';
 			default:
 				return state ?? '';
 		}
@@ -87,6 +89,29 @@ export default function CounselingReserve() {
 		}
 	}, []);
 
+	// 학생: 확정(APPROVED) 상담 취소
+	const cancelMyApproved = useCallback(
+		async (reserveId) => {
+			if (!window.confirm('확정된 상담을 취소하시겠습니까?\n취소 후 해당 시간은 다시 예약 가능해집니다.')) return;
+
+			try {
+				await api.delete('/reserve/cancel/student', { params: { reserveId } });
+
+				// 내 예약 목록 갱신
+				await fetchMyReserveList();
+
+				// 취소되면 schedule.reserved=false 이므로, 현재 선택한 과목 일정도 다시 불러오기
+				if (selectedSubjectId) {
+					await fetchCounselingSchedules(selectedSubjectId);
+				}
+			} catch (e) {
+				alert(e?.response?.data?.message ?? '취소 실패');
+				console.error(e);
+			}
+		},
+		[fetchCounselingSchedules, fetchMyReserveList, selectedSubjectId]
+	);
+
 	// -----------------------------
 	// Effects
 	// -----------------------------
@@ -130,7 +155,8 @@ export default function CounselingReserve() {
 	const myRequestList = useMemo(() => list.filter((r) => r.requester === 'STUDENT'), [list]);
 
 	// ===== 상담확정 (방 번호 테이블) =====
-	const approvedHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호'];
+	// 취소 컬럼 추가
+	const approvedHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호', '취소'];
 
 	const approvedUpcomingData = useMemo(() => {
 		return approvedUpcomingList.map((r) => ({
@@ -139,10 +165,17 @@ export default function CounselingReserve() {
 			상담일: r.counselingSchedule?.counselingDate ?? '',
 			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
+			취소: (
+				<button type="button" onClick={() => cancelMyApproved(r.id)}>
+					취소
+				</button>
+			),
 		}));
-	}, [approvedUpcomingList]);
+	}, [approvedUpcomingList, cancelMyApproved]);
 
-	//상담완료(날짜 지난 확정) 테이블
+	//상담완료(날짜 지난 확정) 테이블 (과거는 취소 없음)
+	const approvedPastHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호'];
+
 	const approvedPastData = useMemo(() => {
 		return approvedPastList.map((r) => ({
 			과목: r.subject?.name ?? '',
@@ -176,6 +209,9 @@ export default function CounselingReserve() {
 			alert('상담 요청을 수락했습니다.');
 			await loadMyPreReserves();
 			await fetchMyReserveList(); // 수락하면 reserve가 APPROVED로 바뀌니까 목록 갱신
+
+			// 수락으로 schedule.reserved=true 됐을 수 있으니 일정도 갱신
+			if (selectedSubjectId) await fetchCounselingSchedules(selectedSubjectId);
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '수락 실패');
 			console.error(e);
@@ -264,7 +300,7 @@ export default function CounselingReserve() {
 				<h3>상담완료</h3>
 
 				{approvedPastList.length > 0 ? (
-					<DataTable headers={approvedHeaders} data={approvedPastData} />
+					<DataTable headers={approvedPastHeaders} data={approvedPastData} />
 				) : (
 					<div className="reserve-empty">상담완료 내역이 없습니다.</div>
 				)}

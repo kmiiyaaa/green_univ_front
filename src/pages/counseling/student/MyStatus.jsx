@@ -60,8 +60,8 @@ export default function MyStatus() {
 		return riskList.filter((r) => String(r.subjectId) === String(selectedSubjectId));
 	}, [riskList, selectedSubjectId]);
 
-	//  과목별 상담 상태 맵 만들기
-	// - 우선순위: APPROVED(past=true) > APPROVED(past=false) > REQUESTED > 없음
+	// 과목별 상담 상태 맵 만들기
+	// 우선순위: APPROVED(past=true) > APPROVED(past=false) > REQUESTED > 그 외(취소/반려/없음)
 	const reserveStateBySubjectId = useMemo(() => {
 		const m = new Map();
 
@@ -83,6 +83,8 @@ export default function MyStatus() {
 				if (v.approvalState === 'APPROVED' && v.past) return 4; // 상담완료
 				if (v.approvalState === 'APPROVED' && !v.past) return 3; // 상담확정
 				if (v.approvalState === 'REQUESTED') return 2; // 요청대기
+
+				// CANCELED/REJECTED는 다시 신청 가능 상태로 취급 -> 낮은 rank
 				return 1;
 			};
 
@@ -113,6 +115,10 @@ export default function MyStatus() {
 			} else if (rs?.approvalState === 'REQUESTED') {
 				label = '요청 대기';
 				disabled = true;
+			} else if (rs?.approvalState === 'CANCELED') {
+				// 취소면 다시 신청 가능
+				label = '재신청 가능';
+				disabled = false;
 			}
 
 			return {

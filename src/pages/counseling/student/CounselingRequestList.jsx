@@ -25,6 +25,12 @@ export default function CounselingRequestList() {
 	// 전체 신청 내역
 	const requestList = useMemo(() => list, [list]);
 
+	// 유틸이 CANCELED를 모를 수 있어서 보정
+	const statusLabel = (state) => {
+		if (state === 'CANCELED') return '취소';
+		return reservationStatus(state);
+	};
+
 	// ===== 상담확정 (방 번호 테이블) =====
 	const approvedHeaders = ['과목', '교수', '상담일', '상담 시간', '방 번호'];
 
@@ -57,7 +63,7 @@ export default function CounselingRequestList() {
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담사유: r.reason ?? '',
-			상태: reservationStatus(r.approvalState),
+			상태: statusLabel(r.approvalState),
 			신청일: r.counselingSchedule?.counselingDate ?? '',
 			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
 			요청자: r.requester === 'PROFESSOR' ? '교수' : '학생',
