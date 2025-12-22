@@ -11,21 +11,38 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build React App
         run: npm run build
 
+      - name: Verify build output (dist)
+        run: |
+          echo "== project root =="
+          ls -al
+          echo "== dist =="
+          ls -al dist
+
+      - name: Verify required secrets (fail fast)
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then echo "AWS_ACCESS_KEY_ID is empty"; exit 1; fi
+          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then echo "AWS_SECRET_ACCESS_KEY is empty"; exit 1; fi
+          if [ -z "${{ secrets.AWS_REGION }}" ]; then echo "AWS_REGION is empty"; exit 1; fi
+          if [ -z "${{ secrets.S3_BUCKET }}" ]; then echo "S3_BUCKET is empty"; exit 1; fi
+          if [ -z "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then echo "CLOUDFRONT_DISTRIBUTION_ID is empty"; exit 1; fi
+          echo "All required secrets are present."
+
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -35,4 +52,4 @@ jobs:
         run: aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} --delete
 
       - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" --paths "/*"
