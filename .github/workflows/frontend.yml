@@ -4,7 +4,7 @@ name: Deploy Frontend to S3
 
 on:
 push:
-branches: ["main"]
+branches: "km-251219-build"
 
 jobs:
 deploy:
