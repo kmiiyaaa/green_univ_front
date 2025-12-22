@@ -361,6 +361,49 @@
 	margin: 24px 0;
 }
 
+/* ✅ 학생 통합 섹션: 선택바 */
+.selected-student-bar {
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 14px;
+	padding: 10px 12px;
+}
+
+.selected-student-text {
+	font-size: 13px;
+	color: #374151;
+}
+
+/* ✅ 담당교수 표시 */
+.assign-cell {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* 버튼(혹시 기존 css에 없다면 보강) */
+.btn.btn-ghost {
+	height: 34px;
+	padding: 0 12px;
+	border-radius: 12px;
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	color: #111827;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.btn.btn-ghost:hover {
+	background: #f9fafb;
+}
+
+
 /* 반응형 */
 @media (max-width: 900px) {
 	.risk-page-head {
