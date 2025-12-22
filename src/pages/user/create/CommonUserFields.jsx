@@ -3,7 +3,7 @@ import RadioForm from '../../../components/form/RadioForm';
 import '../../../assets/css/UserCreate.css';
 
 export default function CommonUserFields({ formData, onChange }) {
-	// 화면에 보일 글자는 label, 서버로 보낼 값은 value
+	// 화면에 보일 글자는 label, 서버로 보낼 값은 value 1
 	const genderOptions = [
 		{ label: '여성', value: '여성' },
 		{ label: '남성', value: '남성' },
