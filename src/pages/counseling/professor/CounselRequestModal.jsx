@@ -85,14 +85,17 @@ const loadSlots = async (thisWsd, nextWsd) => {
 		const base = [{ value: '', label: loading ? '불러오는 중...' : '시간을 선택하세요' }];
 
 		const opts = (slotList ?? []).map((s) => {
-			const date = s.counselingDate ?? '';
-			const start = s.startTime != null ? `${s.startTime}:00` : '';
-			const end = s.endTime != null ? `${s.endTime}:50` : '';
-			return {
-				value: String(s.id),
-				label: `${date}  ${start} ~ ${end}`,
-			};
-		});
+  const date = s.counselingDate ?? '';
+  const h = s.startTime != null ? Number(s.startTime) : null;
+
+  const start = h != null ? `${String(h).padStart(2, '0')}:00` : '';
+  const end = h != null ? `${String(h).padStart(2, '0')}:50` : '';
+
+  return {
+    value: String(s.id),
+    label: `${date}  ${start} ~ ${end}`,
+  };
+});
 
 		return [...base, ...opts];
 	}, [slotList, loading]);
