@@ -41,7 +41,7 @@ const initialStaff = {
 export default function UserCreate() {
 	const [type, setType] = useState('student');
 
-	// 타입 바꿔도 입력값 날아가지 않게 "타입별 폼 상태"를 따로 들고감
+	// 타입 바꿔도 입력값 날아가지 않게 타입별 폼 상태를 따로 들고감
 	const [forms, setForms] = useState({
 		student: initialStudent,
 		professor: initialProfessor,
