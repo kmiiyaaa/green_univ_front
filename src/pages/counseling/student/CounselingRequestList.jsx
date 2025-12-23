@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
-import { toHHMM } from '../../../utils/DateTimeUtil';
+import { endMinus10, toHHMM } from '../../../utils/DateTimeUtil';
 import { reservationStatus } from '../ReservationStatus';
 
 export default function CounselingRequestList() {
@@ -39,7 +39,7 @@ export default function CounselingRequestList() {
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 		}));
 	}, [approvedUpcomingList]);
@@ -50,7 +50,7 @@ export default function CounselingRequestList() {
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 		}));
 	}, [approvedPastList]);
@@ -65,7 +65,7 @@ export default function CounselingRequestList() {
 			상담사유: r.reason ?? '',
 			상태: statusLabel(r.approvalState),
 			신청일: r.counselingSchedule?.counselingDate ?? '',
-			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 			요청자: r.requester === 'PROFESSOR' ? '교수' : '학생',
 		}));
 	}, [requestList]);

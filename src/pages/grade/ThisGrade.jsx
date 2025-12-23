@@ -39,7 +39,7 @@ const ThisGrade = () => {
 			성적: g.letterGrade ?? '',
 			강의평가:
 				g.evaluationId == null ? (
-					<button type="button" className="table-link-btn" onClick={() => openEvaluation(g.subjectId, g.name)}>
+					<button type="button" className="syllabus-btn" onClick={() => openEvaluation(g.subjectId, g.name)}>
 						강의평가
 					</button>
 				) : (

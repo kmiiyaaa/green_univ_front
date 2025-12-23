@@ -411,27 +411,67 @@ function registerUsername() {
 				.html('닉네임은 한글/영문/숫자(공백 가능)로 2~20자만 가능합니다.');
 			$('#username').removeAttr('disabled').val('').focus();
 			$('#register').removeAttr('disabled').click(registerUsername);
+
+			// API 검증
+			// 버튼 상태 변경 (중복 클릭 방지)
+			$('#register').attr('disabled', true).text('검증 중...');
+			$('#roomname').attr('disabled', true);
+			$('#username').attr('disabled', true);
+
 			return;
 		}
+		// 룸코드 검증
+		var token = localStorage.getItem('token');
+		
+		fetch('http://localhost:8888/api/reserve/verify?code=' + encodeURIComponent(roomname), {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + token,
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => response.json()) // 서버가 true 또는 false를 JSON으로 준다고 가정
+			.then((isValid) => {
+				if (isValid === true) {
+					// 할당된 방이 맞으면 Janus 입장 로직 실행
+					// "상담방 코드"는 저장만(메모 식별용)
+					myroomCodeRaw = roomname;
 
-		// ✅ "상담방 코드"는 저장만(메모 식별용)
-		myroomCodeRaw = roomname;
+					// 실제 Janus join은 1234로 고정 (사용자에게는 안 보임)
+					myroom = 1234;
 
-		// ✅ 실제 Janus join은 1234로 고정 (사용자에게는 안 보임)
-		myroom = 1234;
+					myusername = username;
 
-		myusername = username;
+					var register = {
+						request: 'join',
+						room: myroom, // ✅ 항상 1234
+						ptype: 'publisher',
+						display: username,
+					};
+					sfutest.send({ message: register });
 
-		var register = {
-			request: 'join',
-			room: myroom, // ✅ 항상 1234
-			ptype: 'publisher',
-			display: username,
-		};
-		sfutest.send({ message: register });
+					// 입력 폼 숨기기
+					$('#registernow').addClass('hide');
+				} else {
+					// 할당되지 않은 방인 경우
+					bootbox.alert('상담방 코드를 다시 확인해주세요.');
+					resetUI();
+					return;
+				}
+			})
+			.catch((error) => {
+				console.error('검증 오류:', error);
+				bootbox.alert('서버 통신 중 오류가 발생했습니다.');
+				resetUI();
+			});
+	}
 
-		// (중요) createRoom 관련 코드는 제거/비활성: createRoom이 정의 안 되어있으면 에러남
-		// sfutest.send({ message: createRoom, success: ... })  <-- 이 블록은 삭제하거나 주석 처리해줘
+	// UI를 다시 입력 가능한 상태로 되돌리는 함수
+	function resetUI() {
+		$('#roomname').removeAttr('disabled');
+		$('#username').removeAttr('disabled');
+		$('#register').removeAttr('disabled').text('입장').unbind('click').click(registerUsername);
+		return;
 	}
 }
 

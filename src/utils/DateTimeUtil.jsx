@@ -1,7 +1,39 @@
-export function toHHMM(hour) {
-	// 14 -> 14:00 형식으로 변환
-	const h = String(hour).padStart(2, '0');
-	return `${h}:00`;
+export function toHHMM(input) {
+	if (input == null) return '';
+
+	// Date 객체
+	if (input instanceof Date) {
+		if (Number.isNaN(input.getTime())) return '';
+		const hh = String(input.getHours()).padStart(2, '0');
+		const mm = String(input.getMinutes()).padStart(2, '0');
+		return `${hh}:${mm}`;
+	}
+
+	// 문자열 (ISO, HH:mm 등)
+	if (typeof input === 'string') {
+		const d = new Date(input);
+		if (!Number.isNaN(d.getTime())) {
+			const hh = String(d.getHours()).padStart(2, '0');
+			const mm = String(d.getMinutes()).padStart(2, '0');
+			return `${hh}:${mm}`;
+		}
+
+		// 이미 HH:mm 형식이면 그대로
+		if (/^\d{1,2}:\d{2}$/.test(input)) {
+			const [h, m] = input.split(':');
+			return `${String(h).padStart(2, '0')}:${m}`;
+		}
+
+		return '';
+	}
+
+	// 숫자 (시 단위: 15 → 15:00)
+	if (typeof input === 'number') {
+		const h = String(input).padStart(2, '0');
+		return `${h}:00`;
+	}
+
+	return '';
 }
 
 export function getMonday(date = new Date()) {
@@ -64,3 +96,11 @@ export function formatDayOfWeek(dateStr, dayOfWeek) {
 	const day = days[new Date(dateStr).getDay()];
 	return `${dateStr} (${day})`;
 }
+
+export const endMinus10 = (endHour) => {
+	if (endHour == null) return '';
+	const d = new Date();
+	d.setHours(endHour, 0, 0, 0); // 15:00
+	d.setMinutes(d.getMinutes() - 10); // 14:50
+	return toHHMM(d);
+};

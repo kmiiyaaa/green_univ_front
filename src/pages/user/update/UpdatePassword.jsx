@@ -92,7 +92,9 @@ export default function UpdatePassword() {
 						/>
 					</div>
 
-					<button type="submit">수정하기</button>
+					<button type="submit" className="btn btn-dark">
+						수정하기
+					</button>
 				</form>
 			</div>
 		</div>

@@ -147,7 +147,7 @@ const Semester = () => {
 							onChange={(e) => setType(e.target.value)}
 						/>
 
-						<button type="button" onClick={handleSearch}>
+						<button type="button" className="button" onClick={handleSearch}>
 							조회
 						</button>
 					</div>

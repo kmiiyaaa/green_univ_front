@@ -135,7 +135,9 @@ export default function Evaluation() {
 					onChange={handleChange}
 				/>
 
-				<button type="submit">제출</button>
+				<button type="submit" className="btn btn-dark">
+					제출
+				</button>
 			</form>
 		</div>
 	);
