@@ -136,8 +136,19 @@ export default function VideoCounseling() {
 		}
 	};
 
-	const handleEndCounsel = () => {
-		navigate('/professor/counseling/approved', { replace: true });
+	const handleEndCounsel = async () => {
+		if (!roomCode) return;
+		if (!window.confirm('상담을 종료하시겠습니까?')) return;
+		setLoading(true);
+		try {
+			await api.get('/risk/counseling/done', { params: { roomCode } });
+			alert('상담이 종료되었습니다.');
+			navigate('/professor/counseling/approved', { replace: true });
+		} catch (e) {
+			console.error(e.response?.data?.message || '서버 오류');
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
