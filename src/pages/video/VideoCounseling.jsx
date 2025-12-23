@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import '../../assets/css/VideoCounseling.css';
+import EndTime from './endTime';
 
 export default function VideoCounseling() {
 	const { user, name, userRole } = useContext(UserContext);
@@ -142,9 +143,11 @@ export default function VideoCounseling() {
 					<div className="video-counsel-sub">교수 · 학생 화상상담</div>
 				</div>
 
-				{/* <a className="video-counsel-open" href={iframeSrc} target="_blank" rel="noreferrer">
-					새 창으로 열기
-				</a> */}
+				{/* {roomCode && (
+					<div>
+						잔여시간 : <EndTime roomCode={roomCode} />
+					</div>
+				)} */}
 			</div>
 
 			<div className="video-counsel-layout">
