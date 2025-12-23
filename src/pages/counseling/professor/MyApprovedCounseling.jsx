@@ -175,7 +175,11 @@ export default function MyApprovedCounseling() {
 					type="button"
 					className="cm-btn cm-btn--danger"
 					disabled={loadingId === r.id}
-					onClick={() => cancelApproved(r.id)}
+					onClick={() => {
+						const rid = r.id ?? r.reserveId ?? r.reservationId;
+						console.log('cancel reserveId =', rid, r); //  rid가 숫자인지 확인
+						cancelApproved(rid);
+					}}
 				>
 					취소
 				</button>

@@ -1,5 +1,3 @@
-/* MyRiskStudent.css */
-
 /* 페이지 래퍼 (너가 원한 넓이 유지) */
 .risk-wrap {
 	max-width: 95%;
@@ -403,6 +401,12 @@
 	background: #f9fafb;
 }
 
+.btn.btn-disabled {
+	background: #e5e7eb;
+	border: 1px solid #d1d5db;
+	color: #6b7280;
+	cursor: not-allowed;
+}
 
 /* 반응형 */
 @media (max-width: 900px) {
