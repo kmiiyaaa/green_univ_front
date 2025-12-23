@@ -9,7 +9,7 @@ import '../../../assets/css/CounselingReserve.css';
 
 export default function CounselingReserve() {
 	const [subjects, setSubjects] = useState([]);
-	const [selectedSubjectId, setSelectedSubjectId] = useState(null);
+	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const [schedules, setSchedules] = useState([]);
 	const [subName, setSubName] = useState('');
 	const [searchParams] = useSearchParams();
@@ -36,7 +36,7 @@ export default function CounselingReserve() {
 				return '승인 완료';
 			case 'REJECTED':
 				return '반려';
-			case 'CANCELED': 
+			case 'CANCELED':
 				return '취소';
 			default:
 				return state ?? '';
@@ -279,7 +279,15 @@ export default function CounselingReserve() {
 				{/* 과목 선택 시 상담 일정 표시 */}
 				{selectedSubjectId && (
 					<div className="reserve-schedule">
-						<CounselingScheduleDetailPage counselingSchedule={schedules} subId={selectedSubjectId} subName={subName} />
+						<CounselingScheduleDetailPage
+							counselingSchedule={schedules}
+							subId={selectedSubjectId}
+							subName={subName}
+							onReserveSuccess={async () => {
+								await fetchMyReserveList(); // 기존: 목록 갱신
+								setSelectedSubjectId(''); // 🔄 추가: 과목 선택 초기화 → UI 닫힘
+							}}
+						/>
 					</div>
 				)}
 			</section>

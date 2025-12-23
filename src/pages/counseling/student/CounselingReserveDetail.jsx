@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/CounselingReserveDetail.css';
 import { useNavigate } from 'react-router-dom';
@@ -13,14 +13,10 @@ const DAY_KR = {
 	SUNDAY: '일',
 };
 
-export default function CounselingReserveDetail({ counselingSchedule, subId, subName }) {
+export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
 	const navigate = useNavigate();
-
-	if (!Array.isArray(counselingSchedule) || counselingSchedule.length === 0) {
-		return <div className="crd-empty">상담 가능 일정이 없습니다.</div>;
-	}
 
 	const professor = counselingSchedule[0]?.professor;
 
@@ -44,12 +40,18 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 				reason,
 			});
 			alert('상담 신청 완료');
-			navigate('/counseling/schedule');
+			onReserveSuccess?.(); // 예약 목록 새로고침
+			setSelected(null);
+			setReason('');
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '상담 신청 실패');
 			setSelected(null);
 		}
 	};
+
+	if (!Array.isArray(counselingSchedule) || counselingSchedule.length === 0) {
+		return <div className="crd-empty">상담 가능 일정이 없습니다.</div>;
+	}
 
 	return (
 		<div className="crd-wrap">

@@ -138,7 +138,6 @@ function App() {
 								<Route path="/status" element={<MyStatus />} />
 								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
 								<Route path="/counseling/reserve" element={<CounselingReserve />} />
-								<Route path="/counseling/status" element={<CounselingReserveDetail />} />
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
