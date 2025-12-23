@@ -1,14 +1,39 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
-import DataTable from '../../../components/table/DataTable';
 import OptionForm from '../../../components/form/OptionForm';
 import ProfessorCounselRequestModal from './CounselRequestModal';
 import '../../../assets/css/MyRiskStudent.css';
+
+// 컴포넌트 3개로 분리
+import RiskStudentOverall from './RiskStudentOverall';
+import RiskPending from './RiskPending';
+import RiskCompleted from './RiskCompleted';
 
 export default function MyRiskStudent() {
 	// 데이터용
 	const [pendingList, setPendingList] = useState([]); // 위험학생
 	const [completedList, setCompletedList] = useState([]); // 상담 완료 위험학생
+
+	// 학생 통합(탈락 위험) 목록
+	const [studentList, setStudentList] = useState([]);
+
+	// 학생 선택(아래 과목 위험 테이블 필터용)
+	const [selectedStudentId, setSelectedStudentId] = useState('');
+
+	// 내 교수 id , UserProvider에서 localStorage에 user 저장해두는 경우 대응
+	const myProfessorId = JSON.parse(localStorage.getItem('user') || '{}')?.id ?? localStorage.getItem('userId') ?? null;
+
+	// 우리과 위험학생(통합) 행 클릭
+	// 해당 학생의 위험과목만 아래에 필터링
+	// 같은 행을 다시 클릭하면 선택 해제(접힘)
+	const handleStudentRowClick = (row) => {
+		// studentData에서 숨김키로 __studentId 를 넣어두고 있어서 그걸 우선 사용
+		// 혹시 다른 형태로 넘어와도 대응하도록 studentId도 fallback 처리
+		const id = row?.__studentId ?? row?.studentId;
+		if (!id) return;
+
+		setSelectedStudentId((prev) => (String(prev) === String(id) ? '' : String(id)));
+	};
 
 	// 검색 필터용
 	const [subject, setSubject] = useState('');
@@ -27,6 +52,7 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadRiskStudents();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subject, riskLevel]);
 
 	// 교수의 강의 목록
@@ -44,7 +70,7 @@ export default function MyRiskStudent() {
 		}
 	};
 
-	// 상담 완료/미완료로 분리된 위험학생 목록
+	// 상담 완료/미완료로 분리된 위험학생 목록 + 학생 통합 위험 목록
 	const loadRiskStudents = async () => {
 		try {
 			const params = {};
@@ -52,8 +78,20 @@ export default function MyRiskStudent() {
 			if (riskLevel) params.level = riskLevel;
 
 			const res = await api.get('/risk/list/grouped', { params });
-			setPendingList(res.data?.pending ?? []);
-			setCompletedList(res.data?.resolved ?? []);
+
+			const pending = res.data?.pending ?? [];
+			const resolved = res.data?.resolved ?? [];
+			const students = res.data?.students ?? [];
+
+			setPendingList(pending);
+			setCompletedList(resolved);
+			setStudentList(students);
+
+			// 선택된 학생이 더 이상 없으면 선택 해제
+			if (selectedStudentId) {
+				const exists = students.some((s) => String(s.studentId) === String(selectedStudentId));
+				if (!exists) setSelectedStudentId('');
+			}
 		} catch (e) {
 			alert(e?.response?.data?.message || '에러 발생');
 		}
@@ -98,27 +136,58 @@ export default function MyRiskStudent() {
 		);
 	};
 
-	// 테이블 데이터 변환
+	// 날짜 포맷(백엔드 LocalDateTime 문자열이면 보기 좋게)
+	const fmtDateTime = (v) => {
+		if (!v) return '-';
+		// "2025-12-23T15:00:00" -> "2025-12-23 15:00"
+		return String(v).replace('T', ' ').slice(0, 16);
+	};
+
+	// 학생별 담당교수ID 맵 (버튼 disable 판단용)
+	const assignedByStudentId = useMemo(() => {
+		const m = new Map();
+		(studentList ?? []).forEach((s) => {
+			if (s?.studentId != null) m.set(String(s.studentId), s?.assignedProfessorId ?? null);
+		});
+		return m;
+	}, [studentList]);
+
+	// 테이블 데이터 변환(과목 위험 row)
 	const formatTableData = (list, showConsultButton = false) => {
 		return list.map((r) => {
 			// DETECTED 상태이고
 			// 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
 			// 이미 요청대기/확정 상태면 버튼 막기
+			// 취소(CONSULT_CANCELED)도 재요청 가능으로 처리
 
 			// 버튼 활성화는 consultState 기준으로 판단
 			const isAlreadyPending = r.consultState === 'CONSULT_REQ';
 			const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
 
-			// 재요청은 consultState가 CONSULT_REJECTED면 무조건 가능하게
+			const isRejected = r.consultState === 'CONSULT_REJECTED';
+			const isCanceled = r.consultState === 'CONSULT_CANCELED';
+
+			//  담당교수 아닌 경우 "보이기만" 하고 버튼은 막기
+			const assignedPid = assignedByStudentId.get(String(r.studentId)) ?? null;
+			const assignedToOther =
+				assignedPid != null && myProfessorId != null && String(assignedPid) !== String(myProfessorId);
+
+			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
+			// + 담당교수 아닌 경우 요청 버튼만 막기
 			const canRequest =
 				showConsultButton &&
 				!isAlreadyPending &&
 				!isAlreadyApproved &&
-				(!r.consultState || r.consultState === 'CONSULT_REJECTED');
+				(!r.consultState || isRejected || isCanceled) &&
+				!assignedToOther;
 
-			const requestBtnLabel = r.consultState === 'CONSULT_REJECTED' ? '재요청' : '상담 요청';
+			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
 			return {
+				// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
+				__studentId: r.studentId,
+				__studentName: r.studentName,
+
 				과목: <span className="cell-strong">{r.subjectName ?? '-'}</span>,
 				학생정보: (
 					<div className="student-cell">
@@ -139,7 +208,7 @@ export default function MyRiskStudent() {
 				AI요약: <div className="clamp-2">{r.aiSummary ?? '-'}</div>,
 				교수권장: <div className="clamp-2">{r.aiRecommendation ?? '-'}</div>,
 				태그: renderTags(r.aiReasonTags),
-				업데이트: <span className="muted">{r.updatedAt ?? '-'}</span>,
+				업데이트: <span className="muted">{fmtDateTime(r.updatedAt) ?? '-'}</span>,
 				...(showConsultButton && {
 					상담요청: canRequest ? (
 						<button
@@ -156,8 +225,21 @@ export default function MyRiskStudent() {
 						<span className="status-pill">요청 대기</span>
 					) : r.consultState === 'CONSULT_APPROVED' ? (
 						<span className="status-pill ok">상담 확정</span>
+					) : assignedToOther ? (
+						// 학과 교수 모두에게 "과목은 보이되", 버튼만 막기
+						<button
+							type="button"
+							className="btn btn-disabled"
+							disabled
+							onClick={(ev) => ev.stopPropagation()}
+							title="이미 다른 담당교수가 처리 중입니다."
+						>
+							담당교수 처리중
+						</button>
 					) : r.consultState === 'CONSULT_REJECTED' ? (
 						<span className="status-pill warn">재요청 가능</span>
+					) : r.consultState === 'CONSULT_CANCELED' ? (
+						<span className="status-pill warn">취소됨(재요청 가능)</span>
 					) : (
 						<span className="muted">상태 확인</span>
 					),
@@ -165,8 +247,61 @@ export default function MyRiskStudent() {
 			};
 		});
 	};
-	const pendingData = useMemo(() => formatTableData(pendingList, true), [pendingList]);
+
+	// 학생 선택되면 "과목 위험 테이블"을 해당 학생만 필터링
+	const filteredPendingList = useMemo(() => {
+		if (!selectedStudentId) return pendingList;
+		return (pendingList ?? []).filter((r) => String(r.studentId) === String(selectedStudentId));
+	}, [pendingList, selectedStudentId]);
+
+	const pendingData = useMemo(() => formatTableData(filteredPendingList, true), [filteredPendingList]); // myProfessorId/studentList는 closure로 사용
 	const completedData = useMemo(() => formatTableData(completedList, false), [completedList]);
+
+	// 학생 통합(탈락 위험) 테이블
+	const overallLabel = (lvl) => {
+		if (lvl === 'DANGER') return '탈락위험';
+		if (lvl === 'WARNING') return '주의';
+		return '정상';
+	};
+	const overallBadgeClass = (lvl) => {
+		if (lvl === 'DANGER') return 'badge-danger';
+		if (lvl === 'WARNING') return 'badge-warn';
+		return 'badge-neutral';
+	};
+
+	const studentHeaders = ['학생정보', '통합위험', '위험과목수', '담당교수', '업데이트'];
+
+	const studentData = useMemo(() => {
+		return (studentList ?? []).map((s) => ({
+			// 클릭에서 꺼내 쓸 수 있게 id를 "숨김키 + 일반키" 둘 다 유지
+			__studentId: s.studentId,
+			studentId: s.studentId, // (헤더에 없으니 화면에는 안 보임)
+			__studentName: s.studentName,
+
+			학생정보: (
+				<div className="student-cell">
+					<div className="student-name">{s.studentName ?? '-'}</div>
+					<div className="student-id">{s.studentId ?? ''}</div>
+				</div>
+			),
+			통합위험: <span className={`badge ${overallBadgeClass(s.overallLevel)}`}>{overallLabel(s.overallLevel)}</span>,
+			위험과목수: (
+				<div className="chip-row">
+					<span className="chip">DANGER {s.dangerCount ?? 0}</span>
+					<span className="chip">WARNING {s.warningCount ?? 0}</span>
+				</div>
+			),
+			담당교수: s.assignedProfessorName ? (
+				<div className="assign-cell">
+					<span className="cell-strong">{s.assignedProfessorName}</span>
+					{s.assignedAt ? <span className="muted"> · {fmtDateTime(s.assignedAt)}</span> : null}
+				</div>
+			) : (
+				<span className="muted">미배정</span>
+			),
+			업데이트: <span className="muted">{fmtDateTime(s.updatedAt)}</span>,
+		}));
+	}, [studentList]);
 
 	// 검색 옵션
 	const riskLevelOptions = [
@@ -175,7 +310,7 @@ export default function MyRiskStudent() {
 		{ value: 'WARNING', label: '경고' },
 	];
 
-	// 헤더
+	// 헤더(과목 위험 row)
 	const pendingHeaders = [
 		'과목',
 		'학생정보',
@@ -188,6 +323,13 @@ export default function MyRiskStudent() {
 		'상담요청',
 	];
 	const completedHeaders = ['과목', '학생정보', '위험타입', '위험레벨', 'AI요약', '태그', '업데이트'];
+
+	// 선택된 학생 이름 표시용
+	const selectedStudentName = useMemo(() => {
+		if (!selectedStudentId) return '';
+		const found = (studentList ?? []).find((s) => String(s.studentId) === String(selectedStudentId));
+		return found?.studentName ?? '';
+	}, [selectedStudentId, studentList]);
 
 	return (
 		<div className="risk-wrap">
@@ -227,31 +369,34 @@ export default function MyRiskStudent() {
 				/>
 			</div>
 
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+
+			<hr />
+
 			{/* 미완료 섹션 */}
-			<div className="risk-section">
-				<div className="risk-section-head">
-					<h3>상담이 필요한 학생</h3>
-					{/* <span className="pill pill-dark">총 {pendingList.length}명</span> */}
-				</div>
-				<div className="risk-card">
-					<DataTable headers={pendingHeaders} data={pendingData} />
-					{pendingList.length === 0 && <div className="empty-hint">현재 상담이 필요한 학생이 없습니다.</div>}
-				</div>
-			</div>
+			<RiskPending
+				pendingHeaders={pendingHeaders}
+				pendingData={pendingData}
+				filteredPendingLength={filteredPendingList.length}
+				selectedStudentId={selectedStudentId}
+			/>
 
 			<hr />
 
 			{/* 완료 섹션 */}
-			<div className="risk-section">
-				<div className="risk-section-head">
-					<h3>상담완료된 학생 목록</h3>
-					{/* <span className="pill">총 {completedList.length}명</span> */}
-				</div>
-				<div className="risk-card">
-					<DataTable headers={completedHeaders} data={completedData} />
-					{completedList.length === 0 && <div className="empty-hint">상담 완료 기록이 없습니다.</div>}
-				</div>
-			</div>
+			<RiskCompleted
+				completedHeaders={completedHeaders}
+				completedData={completedData}
+				completedLength={completedList.length}
+			/>
 
 			<ProfessorCounselRequestModal
 				open={openModal}

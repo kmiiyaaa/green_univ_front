@@ -34,6 +34,24 @@ export default function CounselingInfoPop() {
 		}
 	};
 
+	// 교수: 확정(APPROVED) 상담 취소
+	// 백엔드: DELETE /api/reserve/cancel/professor?reserveId=...
+	const cancelApproved = async () => {
+		if (!window.confirm('확정된 상담을 취소하시겠습니까?\n취소 후 해당 시간은 다시 예약 가능해집니다.')) return;
+
+		try {
+			setLoading(true);
+			await api.delete('/reserve/cancel/professor', {
+				params: { reserveId: data.id },
+			});
+			window.close();
+		} catch (e) {
+			alert(e?.response?.data?.message ?? '취소 실패');
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div className="cdoc-wrap">
 			<h2 className="cdoc-title">상담 신청서</h2>
@@ -72,6 +90,7 @@ export default function CounselingInfoPop() {
 
 			<RiskInfoPanel risk={data.dropoutRisk} />
 
+			{/* REQUESTED: 승인/반려 */}
 			{data.approvalState === 'REQUESTED' && (
 				<div className="cdoc-action">
 					<button className="cdoc-btn cdoc-reject" disabled={loading} onClick={() => decide('반려')}>
@@ -79,6 +98,15 @@ export default function CounselingInfoPop() {
 					</button>
 					<button className="cdoc-btn cdoc-approve" disabled={loading} onClick={() => decide('승인')}>
 						승인
+					</button>
+				</div>
+			)}
+
+			{/* APPROVED && 아직 날짜 안 지남(past=false): 취소 버튼 */}
+			{data.approvalState === 'APPROVED' && !data.past && (
+				<div className="cdoc-action">
+					<button className="cdoc-btn cdoc-reject" disabled={loading} onClick={cancelApproved}>
+						상담 취소
 					</button>
 				</div>
 			)}

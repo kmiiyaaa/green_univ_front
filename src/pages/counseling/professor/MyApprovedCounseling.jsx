@@ -56,6 +56,22 @@ export default function MyApprovedCounseling() {
 		}
 	};
 
+	// 교수: 확정(APPROVED) 상담 취소
+	const cancelApproved = async (reserveId) => {
+		if (!window.confirm('확정된 상담을 취소하시겠습니까?')) return;
+
+		try {
+			setLoadingId(reserveId);
+			await api.delete('/reserve/cancel/professor', { params: { reserveId } });
+			await loadAll();
+		} catch (e) {
+			console.error(e);
+			alert(e?.response?.data?.message ?? '취소 실패! 잠시 후 다시 시도해주세요.');
+		} finally {
+			setLoadingId(null);
+		}
+	};
+
 	// 상담요청
 	const headers1 = ['학생', '과목', '상담사유', '상세', '처리'];
 
@@ -133,7 +149,8 @@ export default function MyApprovedCounseling() {
 		return approvedPastList.filter((r) => r.subject?.id === Number(subjectId));
 	}, [approvedPastList, subjectId]);
 
-	const headers2 = ['학생', '과목', '상담일자', '방코드', '상세'];
+	// 상담 취소
+	const headers2 = ['학생', '과목', '상담일자', '방코드', '상세', '취소'];
 
 	const dataUpcoming = useMemo(() => {
 		return filteredUpcoming.map((r) => ({
@@ -153,10 +170,26 @@ export default function MyApprovedCounseling() {
 					보기
 				</button>
 			),
+			취소: (
+				<button
+					type="button"
+					className="cm-btn cm-btn--danger"
+					disabled={loadingId === r.id}
+					onClick={() => {
+						const rid = r.id ?? r.reserveId ?? r.reservationId;
+						console.log('cancel reserveId =', rid, r); //  rid가 숫자인지 확인
+						cancelApproved(rid);
+					}}
+				>
+					취소
+				</button>
+			),
 		}));
-	}, [filteredUpcoming]);
+	}, [filteredUpcoming, loadingId]);
 
-	// 상담완료 테이블
+	// 상담완료 테이블 (과거는 취소 버튼 없음)
+	const headersPast = ['학생', '과목', '상담일자', '방코드', '상세'];
+
 	const dataPast = useMemo(() => {
 		return filteredPast.map((r) => ({
 			학생: r.student?.name ?? '',
@@ -270,7 +303,7 @@ export default function MyApprovedCounseling() {
 					<div className="cm-empty">상담완료 일정이 없습니다.</div>
 				) : (
 					<div className="cm-table">
-						<DataTable headers={headers2} data={dataPast} />
+						<DataTable headers={headersPast} data={dataPast} />
 					</div>
 				)}
 			</section>
