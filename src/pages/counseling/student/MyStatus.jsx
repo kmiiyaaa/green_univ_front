@@ -128,6 +128,7 @@ export default function MyStatus() {
 				상담요청: (
 					<button
 						type="button"
+						className="button"
 						disabled={disabled}
 						onClick={(ev) => {
 							ev.stopPropagation();

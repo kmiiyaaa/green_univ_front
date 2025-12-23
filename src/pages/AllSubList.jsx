@@ -170,6 +170,7 @@ export default function AllSubList() {
 					검색
 				</button>
 				<button
+					className="button"
 					onClick={() =>
 						setSearchForm({
 							type: '', // 강의구분
