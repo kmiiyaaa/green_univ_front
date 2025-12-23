@@ -4,7 +4,7 @@ export default function RiskPending({ pendingHeaders, pendingData, filteredPendi
 	return (
 		<div className="risk-section">
 			<div className="risk-section-head">
-				<h3>상담이 필요한 학생</h3>
+				<h3>상담 필요 학생 목록</h3>
 			</div>
 
 			<div className="risk-card">

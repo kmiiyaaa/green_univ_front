@@ -4,7 +4,7 @@ export default function RiskCompleted({ completedHeaders, completedData, complet
 	return (
 		<div className="risk-section">
 			<div className="risk-section-head">
-				<h3>상담완료된 학생 목록</h3>
+				<h3>상담 완료 학생 목록</h3>
 			</div>
 
 			<div className="risk-card">
