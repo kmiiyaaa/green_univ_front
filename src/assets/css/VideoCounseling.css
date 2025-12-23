@@ -46,6 +46,7 @@
 
 .video-counsel-open:hover {
 	filter: brightness(1.05);
+	cursor: pointer;
 }
 
 /* ✅ 영상 + 메모 패널 2열 */

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import '../../assets/css/VideoCounseling.css';
@@ -7,6 +7,7 @@ import '../../assets/css/VideoCounseling.css';
 export default function VideoCounseling() {
 	const { user, name, userRole } = useContext(UserContext);
 	const [searchParams, setSearchParams] = useSearchParams();
+	const navigate = useNavigate();
 
 	// 메모/상담 식별용 코드 (DB roomCode)
 	const code = searchParams.get('code') || '';
@@ -134,6 +135,10 @@ export default function VideoCounseling() {
 		}
 	};
 
+	const handleEndCounsel = () => {
+		navigate('/professor/counseling/approved', { replace: true });
+	};
+
 	return (
 		<div className="video-counsel-page">
 			<div className="video-counsel-head">
@@ -142,9 +147,9 @@ export default function VideoCounseling() {
 					<div className="video-counsel-sub">교수 · 학생 화상상담</div>
 				</div>
 
-				{/* <a className="video-counsel-open" href={iframeSrc} target="_blank" rel="noreferrer">
-					새 창으로 열기
-				</a> */}
+				<button className="video-counsel-open" onClick={handleEndCounsel}>
+					상담 종료
+				</button>
 			</div>
 
 			<div className="video-counsel-layout">
