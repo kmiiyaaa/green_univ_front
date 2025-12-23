@@ -3,11 +3,11 @@ import api from '../../../api/httpClient';
 import OptionForm from '../../../components/form/OptionForm';
 import ProfessorCounselRequestModal from './CounselRequestModal';
 import '../../../assets/css/MyRiskStudent.css';
+import DataTable from '../../../components/table/DataTable';
 
-// 컴포넌트 3개로 분리
+// 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';
 import RiskPending from './RiskPending';
-import RiskCompleted from './RiskCompleted';
 
 export default function MyRiskStudent() {
 	// 데이터용
@@ -17,6 +17,9 @@ export default function MyRiskStudent() {
 	// 학생 통합(탈락 위험) 목록
 	const [studentList, setStudentList] = useState([]);
 
+	// 우리학과 위험학생 클릭 시, 해당 학생의 "위험 과목 리스트"를 별도로 보관
+	const [deptRiskList, setDeptRiskList] = useState([]);
+
 	// 학생 선택(아래 과목 위험 테이블 필터용)
 	const [selectedStudentId, setSelectedStudentId] = useState('');
 
@@ -24,8 +27,6 @@ export default function MyRiskStudent() {
 	const myProfessorId = JSON.parse(localStorage.getItem('user') || '{}')?.id ?? localStorage.getItem('userId') ?? null;
 
 	// 우리과 위험학생(통합) 행 클릭
-	// 해당 학생의 위험과목만 아래에 필터링
-	// 같은 행을 다시 클릭하면 선택 해제(접힘)
 	const handleStudentRowClick = (row) => {
 		// studentData에서 숨김키로 __studentId 를 넣어두고 있어서 그걸 우선 사용
 		// 혹시 다른 형태로 넘어와도 대응하도록 studentId도 fallback 처리
@@ -48,12 +49,24 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadProfessorSubjects();
+		loadDeptStudents();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		loadRiskStudents();
+		loadMyRiskStudents();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subject, riskLevel]);
+
+	// 선택 학생이 바뀌면 해당 학생의 위험 과목 전체를 백엔드에서 조회
+	useEffect(() => {
+		if (!selectedStudentId) {
+			setDeptRiskList([]);
+			return;
+		}
+		loadDeptStudentRisks(selectedStudentId);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedStudentId]);
 
 	// 교수의 강의 목록
 	const loadProfessorSubjects = async () => {
@@ -70,30 +83,58 @@ export default function MyRiskStudent() {
 		}
 	};
 
-	// 상담 완료/미완료로 분리된 위험학생 목록 + 학생 통합 위험 목록
-	const loadRiskStudents = async () => {
+	// 우리학과 위험학생
+	const loadDeptStudents = async () => {
 		try {
-			const params = {};
-			if (subject) params.subjectId = subject;
-			if (riskLevel) params.level = riskLevel;
-
-			const res = await api.get('/risk/list/grouped', { params });
-
-			const pending = res.data?.pending ?? [];
-			const resolved = res.data?.resolved ?? [];
-			const students = res.data?.students ?? [];
-
-			setPendingList(pending);
-			setCompletedList(resolved);
+			// subject/level 없이 호출 → 우리학과 통합은 항상 동일 기준으로 유지
+			// /risk/list/grouped 에는 students가 더 이상 내려오지 않음
+			// 우리학과 통합 학생 리스트는 /risk/professor/overview 의 departmentStudents 로 받아야 함
+			const res = await api.get('/risk/professor/overview');
+			const students = res.data?.departmentStudents ?? [];
 			setStudentList(students);
 
-			// 선택된 학생이 더 이상 없으면 선택 해제
+			// 선택된 학생이 없으면 선택 해제
 			if (selectedStudentId) {
 				const exists = students.some((s) => String(s.studentId) === String(selectedStudentId));
 				if (!exists) setSelectedStudentId('');
 			}
 		} catch (e) {
+			console.log('우리학과 위험학생(통합) 목록을 불러올 수 없습니다: ', e);
+		}
+	};
+
+	// 내 담당 과목 위험학생(상담 완료/미완료 분리)
+	const loadMyRiskStudents = async () => {
+		try {
+			const params = {};
+			if (subject) params.subjectId = subject;
+			if (riskLevel) params.level = riskLevel;
+
+			// 이 API는 pending/resolved만 내려줌 (students 없음)
+			const res = await api.get('/risk/list/grouped', { params });
+			const pending = res.data?.pending ?? [];
+			const resolved = res.data?.resolved ?? [];
+
+			setPendingList(pending);
+			setCompletedList(resolved);
+		} catch (e) {
 			alert(e?.response?.data?.message || '에러 발생');
+		}
+	};
+
+	// 우리학과 위험학생 클릭 → 해당 학생의 위험 과목 전체 조회
+	const loadDeptStudentRisks = async (studentId) => {
+		try {
+			const params = { studentId };
+			// 필요하면 레벨 필터를 붙일 수도 있음
+			// if (riskLevel) params.level = riskLevel;
+
+			const res = await api.get('/risk/list/department', { params });
+			const list = res.data?.pending ?? [];
+			setDeptRiskList(list);
+		} catch (e) {
+			console.log('선택 학생 위험과목을 불러올 수 없습니다: ', e);
+			setDeptRiskList([]);
 		}
 	};
 
@@ -143,18 +184,15 @@ export default function MyRiskStudent() {
 		return String(v).replace('T', ' ').slice(0, 16);
 	};
 
-	// 학생별 담당교수ID 맵 (버튼 disable 판단용)
-	const assignedByStudentId = useMemo(() => {
-		const m = new Map();
-		(studentList ?? []).forEach((s) => {
-			if (s?.studentId != null) m.set(String(s.studentId), s?.assignedProfessorId ?? null);
-		});
-		return m;
-	}, [studentList]);
+	// 내 과목 여부 판단용: 교수 과목 옵션에 포함되면 "내 과목"
+	const mySubjectIdSet = useMemo(() => {
+		return new Set((subjectOptions ?? []).map((o) => String(o.value)).filter(Boolean));
+	}, [subjectOptions]);
 
 	// 테이블 데이터 변환(과목 위험 row)
-	const formatTableData = (list, showConsultButton = false) => {
-		return list.map((r) => {
+	// dept(선택 학생) 테이블에서는 "내 과목만 상담요청 가능"하게 막기 옵션 추가
+	const formatTableData = (list, showConsultButton = false, onlyMySubjectCanRequest = false) => {
+		return (list ?? []).map((r) => {
 			// DETECTED 상태이고
 			// 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
 			// 이미 요청대기/확정 상태면 버튼 막기
@@ -166,23 +204,18 @@ export default function MyRiskStudent() {
 
 			const isRejected = r.consultState === 'CONSULT_REJECTED';
 			const isCanceled = r.consultState === 'CONSULT_CANCELED';
-			const isNo_Show = r.consultState === 'CONSULT_NO_SHOW';
 
-			//  담당교수 아닌 경우 "보이기만" 하고 버튼은 막기
-			const assignedPid = assignedByStudentId.get(String(r.studentId)) ?? null;
-			const assignedToOther =
-				assignedPid != null && myProfessorId != null && String(assignedPid) !== String(myProfessorId);
+			// [MOD] "내 과목인지" 체크 (선택 학생 위험과목에서는 중요)
+			const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
-			// + 담당교수 아닌 경우 요청 버튼만 막기
-			const canRequest =
-				showConsultButton &&
-				!isAlreadyPending &&
-				!isAlreadyApproved &&
-				(!r.consultState || isRejected || isCanceled || isNo_Show) &&
-				!assignedToOther;
+			// [MOD] onlyMySubjectCanRequest=true면 내 과목일 때만 요청 가능
+			const canRequestBase =
+				showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
 
-			const requestBtnLabel = isRejected || isCanceled || isNo_Show ? '재요청' : '상담 요청';
+			const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
+
+			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
 			return {
 				// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
@@ -210,6 +243,7 @@ export default function MyRiskStudent() {
 				교수권장: <div className="clamp-2">{r.aiRecommendation ?? '-'}</div>,
 				태그: renderTags(r.aiReasonTags),
 				업데이트: <span className="muted">{fmtDateTime(r.updatedAt) ?? '-'}</span>,
+
 				...(showConsultButton && {
 					상담요청: canRequest ? (
 						<button
@@ -222,6 +256,9 @@ export default function MyRiskStudent() {
 						>
 							{requestBtnLabel}
 						</button>
+					) : onlyMySubjectCanRequest && !isMySubject ? (
+						// [MOD] 다른 과목이면 그냥 막아두기
+						<span className="status-pill">내 과목 아님</span>
 					) : r.consultState === 'CONSULT_REQ' ? (
 						<span className="status-pill">요청 대기</span>
 					) : r.consultState === 'CONSULT_APPROVED' ? (
@@ -249,14 +286,12 @@ export default function MyRiskStudent() {
 		});
 	};
 
-	// 학생 선택되면 "과목 위험 테이블"을 해당 학생만 필터링
-	const filteredPendingList = useMemo(() => {
-		if (!selectedStudentId) return pendingList;
-		return (pendingList ?? []).filter((r) => String(r.studentId) === String(selectedStudentId));
-	}, [pendingList, selectedStudentId]);
+	// 내 담당 과목 위험학생 테이블 데이터
+	const pendingData = useMemo(() => formatTableData(pendingList, true, false), [pendingList]);
+	const completedData = useMemo(() => formatTableData(completedList, false, false), [completedList]);
 
-	const pendingData = useMemo(() => formatTableData(filteredPendingList, true), [filteredPendingList]); // myProfessorId/studentList는 closure로 사용
-	const completedData = useMemo(() => formatTableData(completedList, false), [completedList]);
+	// 선택 학생 위험과목 테이블 데이터
+	const deptStudentRiskData = useMemo(() => formatTableData(deptRiskList, true, true), [deptRiskList]);
 
 	// 학생 통합(탈락 위험) 테이블
 	const overallLabel = (lvl) => {
@@ -336,9 +371,7 @@ export default function MyRiskStudent() {
 		<div className="risk-wrap">
 			{/* 상단 헤더 */}
 			<div className="risk-page-head">
-				<div>
-					<h2 className="risk-page-title">(이번 학기) 내 담당 위험학생</h2>
-				</div>
+				<div></div>
 
 				<div className="risk-stat-row">
 					<div className="risk-stat">
@@ -352,6 +385,22 @@ export default function MyRiskStudent() {
 				</div>
 			</div>
 
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+			{selectedStudentId ? (
+				<div className="risk-section">
+					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
+				</div>
+			) : null}
+
+			<hr />
 			{/* 필터 */}
 			<div className="filter-bar">
 				<OptionForm
@@ -370,40 +419,24 @@ export default function MyRiskStudent() {
 				/>
 			</div>
 
-			{/* 탈락 위험 학생(통합) */}
-			<RiskStudentOverall
-				studentHeaders={studentHeaders}
-				studentData={studentData}
-				studentListLength={studentList.length}
-				onRowClick={handleStudentRowClick}
-				selectedStudentId={selectedStudentId}
-				selectedStudentName={selectedStudentName}
-			/>
-
-			<hr />
-
 			{/* 미완료 섹션 */}
 			<RiskPending
 				pendingHeaders={pendingHeaders}
 				pendingData={pendingData}
-				filteredPendingLength={filteredPendingList.length}
+				filteredPendingLength={pendingList.length}
 				selectedStudentId={selectedStudentId}
-			/>
-
-			<hr />
-
-			{/* 완료 섹션 */}
-			<RiskCompleted
-				completedHeaders={completedHeaders}
-				completedData={completedData}
-				completedLength={completedList.length}
 			/>
 
 			<ProfessorCounselRequestModal
 				open={openModal}
 				target={target}
 				onClose={() => setOpenModal(false)}
-				onSuccess={() => loadRiskStudents()}
+				onSuccess={() => {
+					loadMyRiskStudents();
+					// 선택 학생 열려있으면 그 학생 위험과목도 같이 갱신
+					if (selectedStudentId) loadDeptStudentRisks(selectedStudentId);
+					loadDeptStudents();
+				}}
 			/>
 		</div>
 	);
