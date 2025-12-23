@@ -165,9 +165,11 @@ export default function VideoCounseling() {
 					</div>
 				)} */}
 
-				<button className="video-counsel-open" onClick={handleEndCounsel}>
-					상담 종료
-				</button>
+				{userRole === 'professor' && (
+					<button className="video-counsel-open" onClick={handleEndCounsel}>
+						상담 종료
+					</button>
+				)}
 			</div>
 
 			<div className="video-counsel-layout">
