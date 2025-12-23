@@ -159,11 +159,11 @@ export default function VideoCounseling() {
 					<div className="video-counsel-sub">교수 · 학생 화상상담</div>
 				</div>
 
-				{/* {roomCode && (
+				{roomCode && (
 					<div>
-						잔여시간 : <EndTime roomCode={roomCode} />
+						<EndTime roomCode={roomCode} />
 					</div>
-				)} */}
+				)}
 
 				{userRole === 'professor' && (
 					<button className="video-counsel-open" onClick={handleEndCounsel}>

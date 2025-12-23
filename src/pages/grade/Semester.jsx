@@ -24,16 +24,16 @@ const Semester = () => {
 
 	const [loading, setLoading] = useState(true);
 
-	// 이번 학기 수강 과목 강의평가 안 되어있으면 리턴
-	useEffect(() => {
-		api.get('/evaluation/hasEval').then((res) => {
-			console.log(res.data.hasEval);
-			if (!res?.data?.hasEval) {
-				alert('먼저 강의 평가를 완료해주세요');
-				navigate(-1, { replace: true });
-			}
-		});
-	}, []);
+	// // 이번 학기 수강 과목 강의평가 안 되어있으면 리턴
+	// useEffect(() => {
+	// 	api.get('/evaluation/hasEval').then((res) => {
+	// 		console.log(res.data.hasEval);
+	// 		if (!res?.data?.hasEval) {
+	// 			alert('먼저 강의 평가를 완료해주세요');
+	// 			navigate(-1, { replace: true });
+	// 		}
+	// 	});
+	// }, []);
 
 	//옵션
 	const yearOptions = useMemo(
