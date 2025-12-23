@@ -4,7 +4,7 @@ import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
 import CounselingScheduleDetailPage from './CounselingReserveDetail';
 import DataTable from '../../../components/table/DataTable';
-import { toHHMM } from '../../../utils/DateTimeUtil';
+import { endMinus10, toHHMM } from '../../../utils/DateTimeUtil';
 import '../../../assets/css/CounselingReserve.css';
 
 export default function CounselingReserve() {
@@ -36,7 +36,7 @@ export default function CounselingReserve() {
 				return '승인 완료';
 			case 'REJECTED':
 				return '반려';
-			case 'CANCELED': 
+			case 'CANCELED':
 				return '취소';
 			default:
 				return state ?? '';
@@ -163,7 +163,7 @@ export default function CounselingReserve() {
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 			취소: (
 				<button type="button" onClick={() => cancelMyApproved(r.id)}>
@@ -181,7 +181,7 @@ export default function CounselingReserve() {
 			과목: r.subject?.name ?? '',
 			교수: r.counselingSchedule?.professor?.name ?? '',
 			상담일: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'상담 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 			'방 번호': r.roomCode ?? '',
 		}));
 	}, [approvedPastList]);
@@ -196,7 +196,7 @@ export default function CounselingReserve() {
 			상담사유: r.reason ?? '',
 			상태: reservationStatus(r.approvalState),
 			신청일: r.counselingSchedule?.counselingDate ?? '',
-			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${toHHMM(r.counselingSchedule?.endTime)}`,
+			'신청 시간': `${toHHMM(r.counselingSchedule?.startTime)} ~ ${endMinus10(r.counselingSchedule?.endTime)}`,
 		}));
 	}, [myRequestList, reservationStatus]); //
 
@@ -236,7 +236,7 @@ export default function CounselingReserve() {
 			과목: p.subjectName ?? '',
 			교수: p.professorName ?? '',
 			상담일자: p.counselingDate ?? '',
-			시간: p.startTime != null && p.endTime != null ? `${p.startTime}:00 ~ ${p.endTime}:50` : '',
+			시간: p.startTime != null && p.endTime != null ? `${p.startTime}:00 ~ ${p.startTime}:50` : '',
 			요청메시지: p.reason ?? '',
 			처리: (
 				<div style={{ display: 'flex', gap: 8 }}>
