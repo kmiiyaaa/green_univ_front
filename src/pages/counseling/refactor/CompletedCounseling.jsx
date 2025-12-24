@@ -5,26 +5,23 @@ import DataTable from '../../../components/table/DataTable';
 
 export default function CompletedCounseling({ finishedList }) {
 	const { userRole } = useContext(UserContext);
-	const [tableKey, setTablekey] = useState(null);
+	const [tableKey, setTableKey] = useState(null);
 
 	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_FINISHED' : 'STUDENT_FINISHED');
+		setTableKey(userRole === 'professor' ? 'PROFESSOR_FINISHED' : 'STUDENT_FINISHED');
 	}, [userRole]);
 
 	const config = TABLE_CONFIG[tableKey];
-
 	if (!config) return null;
 
 	const handlers = {
-		detail: (
-			r // 교수 - 학생 상담 신청서 조회
-		) => (
+		detail: (r) => (
 			<button
 				type="button"
 				className="cm-btn cm-btn--ghost"
 				onClick={() => {
 					sessionStorage.setItem('counselingDetail', JSON.stringify(r));
-					window.open('/counseling/info', '_blank', 'width=900,height=800,scrollbars=yes');
+					window.open('/counseling/info', '_blank', 'width=900,height=800');
 				}}
 			>
 				보기
@@ -35,13 +32,19 @@ export default function CompletedCounseling({ finishedList }) {
 	const rows = finishedList.map((r) => config.data(r, handlers, r.id));
 
 	return (
-		<div>
-			완료된 상담 목록 - complete
-			{finishedList.length > 0 ? (
-				<DataTable headers={config.headers} data={rows} handlers={handlers} />
+		<section className="cm-card">
+			<div className="cm-card-head">
+				<h3 className="cm-card-title">완료된 상담</h3>
+				<span className="cm-badge">{finishedList.length}건</span>
+			</div>
+
+			{finishedList.length === 0 ? (
+				<div className="cm-empty">완료된 상담이 없습니다.</div>
 			) : (
-				<div>완료된 상담 목록이 없습니다.</div>
+				<div className="cm-table">
+					<DataTable headers={config.headers} data={rows} />
+				</div>
 			)}
-		</div>
+		</section>
 	);
 }
