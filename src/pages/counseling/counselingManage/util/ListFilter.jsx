@@ -25,3 +25,23 @@ export function listFilter(list = []) {
 		finishedList: list.filter((r) => r.approvalState === 'FINISHED'),
 	};
 }
+
+export function listFilterBySubject(list = [], selectedSubject) {
+	if (!Array.isArray(list)) return [];
+	if (!selectedSubject || selectedSubject === '전체 과목') return list;
+
+	return list.filter((r) => r.subject.name === selectedSubject);
+}
+
+export function extractSubjects(listByProfessor = [], listByStudent = []) {
+	const set = new Set();
+
+	[...listByProfessor, ...listByStudent].forEach((r) => {
+		const subjectName = r?.subject?.name;
+		if (subjectName) {
+			set.add(subjectName);
+		}
+	});
+
+	return Array.from(set).map((name) => ({ name }));
+}

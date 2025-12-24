@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/CounselingReserveDetail.css';
 import { useNavigate } from 'react-router-dom';
-import { CounselingRefreshContext } from '../refactor/CounselingRefreshContext';
+import { CounselingRefreshContext } from '../counselingManage/util/CounselingRefreshContext';
 
 const DAY_KR = {
 	MONDAY: '월',

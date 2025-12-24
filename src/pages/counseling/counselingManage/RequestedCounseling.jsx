@@ -1,21 +1,26 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
-import { TABLE_CONFIG } from './TableConfig';
+import { TABLE_CONFIG } from './util/TableConfig';
 import DataTable from '../../../components/table/DataTable';
 import api from '../../../api/httpClient';
-import { listFilter } from './ListFilter';
-import { CounselingRefreshContext } from './CounselingRefreshContext';
+import { listFilter } from './util/ListFilter';
+import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 
 // 요청 받은 상담 목록 조회
 export default function RequestedCounseling({ requestByList }) {
 	const { userRole } = useContext(UserContext);
-	const [tableKey, setTablekey] = useState(null);
+	const [tableKey, setTableKey] = useState(null);
 	const [loadingId, setLoadingId] = useState(null);
 	const { refresh } = useContext(CounselingRefreshContext);
 
 	const { requestedList } = listFilter(requestByList);
 
-	// ============== 함수 ==============
+	useEffect(() => {
+		setTableKey(userRole === 'professor' ? 'PROFESSOR_REQUESTED' : 'STUDENT_REQUESTED');
+	}, [userRole]);
+
+	const config = TABLE_CONFIG[tableKey];
+	if (!config) return null;
 
 	const handleDecision = async ({ role, type, id }) => {
 		try {
@@ -27,9 +32,9 @@ export default function RequestedCounseling({ requestByList }) {
 				});
 			} else {
 				const url = type === '승인' ? '/reserve/pre/accept' : '/reserve/pre/reject';
-
 				await api.post(url, null, { params: { preReserveId: id } });
 			}
+
 			refresh();
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '처리 실패');
@@ -39,18 +44,8 @@ export default function RequestedCounseling({ requestByList }) {
 		}
 	};
 
-	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_REQUESTED' : 'STUDENT_REQUESTED');
-	}, [userRole]);
-
-	const config = TABLE_CONFIG[tableKey];
-
-	if (!config) return null;
-
 	const handlers = {
-		detail: (
-			r // 교수 - 학생 상담 신청서 조회
-		) => (
+		detail: (r) => (
 			<button
 				type="button"
 				onClick={() => {
@@ -62,49 +57,41 @@ export default function RequestedCounseling({ requestByList }) {
 			</button>
 		),
 		decision: (r) => (
-			<div>
+			<div className="cm-btn-group">
 				<button
 					type="button"
 					disabled={loadingId === r.id}
-					onClick={() =>
-						handleDecision({
-							role: userRole,
-							type: '승인',
-							id: r.id,
-						})
-					}
+					onClick={() => handleDecision({ role: userRole, type: '승인', id: r.id })}
 				>
 					승인
 				</button>
 				<button
 					type="button"
 					disabled={loadingId === r.id}
-					onClick={() =>
-						handleDecision({
-							role: userRole,
-							type: '반려',
-							id: r.id,
-						})
-					}
+					onClick={() => handleDecision({ role: userRole, type: '반려', id: r.id })}
 				>
 					반려
 				</button>
 			</div>
 		),
-
-		cancel: (id) => <button>취소</button>,
 	};
 
 	const rows = requestedList.map((r) => config.data(r, handlers, r.id));
 
 	return (
-		<div>
-			요청 받은 상담 목록 - request
-			{requestedList?.length > 0 ? (
-				<DataTable headers={config.headers} data={rows} />
+		<section className="cm-card">
+			<div className="cm-card-head">
+				<h3 className="cm-card-title">요청 받은 상담</h3>
+				<span className="cm-badge">{requestedList.length}건</span>
+			</div>
+
+			{requestedList.length === 0 ? (
+				<div className="cm-empty">요청 받은 상담이 없습니다.</div>
 			) : (
-				<div>요청받은 상담 목록이 없습니다.</div>
+				<div className="cm-table">
+					<DataTable headers={config.headers} data={rows} />
+				</div>
 			)}
-		</div>
+		</section>
 	);
 }
