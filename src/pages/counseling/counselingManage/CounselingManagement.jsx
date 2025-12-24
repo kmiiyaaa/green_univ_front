@@ -9,9 +9,10 @@ import CompletedCounseling from './CompletedCounseling';
 import ReserveForm from './ReserveForm';
 import '../../../assets/css/MyCounselingManage.css';
 
-import { combinedListFilter, extractSubjects, listFilterBySubject } from './ListFilter';
-import { CounselingRefreshContext } from './CounselingRefreshContext';
+import { combinedListFilter, extractSubjects, listFilterBySubject } from './util/ListFilter';
+import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 
+// 상담 관리/ 예약 제일 상위 컴포넌트, 상담 데이터 이용 검색, 데이터 내려주기
 export default function CounselingManageMent() {
 	const { userRole } = useContext(UserContext);
 	const { refreshKey } = useContext(CounselingRefreshContext);

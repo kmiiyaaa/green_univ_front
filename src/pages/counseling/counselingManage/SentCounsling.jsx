@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { TABLE_CONFIG } from './TableConfig';
+import { TABLE_CONFIG } from './util/TableConfig';
 import DataTable from '../../../components/table/DataTable';
 import { UserContext } from '../../../context/UserContext';
 import api from '../../../api/httpClient';

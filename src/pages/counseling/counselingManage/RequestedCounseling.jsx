@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
-import { TABLE_CONFIG } from './TableConfig';
+import { TABLE_CONFIG } from './util/TableConfig';
 import DataTable from '../../../components/table/DataTable';
 import api from '../../../api/httpClient';
-import { listFilter } from './ListFilter';
-import { CounselingRefreshContext } from './CounselingRefreshContext';
+import { listFilter } from './util/ListFilter';
+import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 
 // 요청 받은 상담 목록 조회
 export default function RequestedCounseling({ requestByList }) {

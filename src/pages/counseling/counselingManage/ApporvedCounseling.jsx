@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
-import { TABLE_CONFIG } from './TableConfig';
+import { TABLE_CONFIG } from './util/TableConfig';
 import DataTable from '../../../components/table/DataTable';
 import api from '../../../api/httpClient';
-import { CounselingRefreshContext } from './CounselingRefreshContext';
+import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 
 export default function ApprovedCounseling({ approvedList }) {
 	const { userRole } = useContext(UserContext);

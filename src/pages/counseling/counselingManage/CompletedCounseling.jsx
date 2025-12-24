@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
-import { TABLE_CONFIG } from './TableConfig';
+import { TABLE_CONFIG } from './util/TableConfig';
 import DataTable from '../../../components/table/DataTable';
 
 export default function CompletedCounseling({ finishedList }) {
