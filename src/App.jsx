@@ -61,6 +61,7 @@ import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
 import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/refactor/CounselingManagement';
+import RequestCounseling from './pages/counseling/RequestCounseling';
 
 function App() {
 	// React Query 라이브러리
@@ -161,6 +162,7 @@ function App() {
 							<Route path="/videotest" element={<VideoCounseling />} />
 							<Route path="/counseling/list" element={<CounselingList />} />
 							<Route path="/refactor" element={<CounselingManageMent />} />
+							<Route path="/cc" element={<RequestCounseling />} />
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
 							{' '}

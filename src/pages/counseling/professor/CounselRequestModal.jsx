@@ -56,7 +56,8 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 				api.get('/counseling/professor', { params: { weekStartDate: thisWsd } }),
 				api.get('/counseling/professor', { params: { weekStartDate: nextWsd } }),
 			]);
-
+			console.log('res1.data', res1.data.list);
+			console.log('res2.data', res2.data.list);
 			const list1 = res1.data?.list ?? [];
 			const list2 = res2.data?.list ?? [];
 
