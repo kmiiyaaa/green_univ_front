@@ -137,7 +137,7 @@ export default function AllSubList() {
 	};
 
 	return (
-		<>
+		<div className="form-container">
 			<h2>전체 강의 조회</h2>
 			{/* 검색 폼 */}
 			<div>
@@ -207,6 +207,6 @@ export default function AllSubList() {
 				blockSize={20}
 				onPageChange={handlePageChange}
 			/>
-		</>
+		</div>
 	);
 }

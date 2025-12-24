@@ -76,7 +76,7 @@ export default function ProfessorSubjectList() {
 	}, [subjectList]);
 
 	return (
-		<div>
+		<div className="form-container">
 			{subjectId && listOpen ? (
 				<SubjectStudentList subjectId={subjectId} subName={subName} setListOpen={setListOpen} />
 			) : (
