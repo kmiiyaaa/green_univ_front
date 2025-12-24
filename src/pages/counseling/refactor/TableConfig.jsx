@@ -1,3 +1,5 @@
+import { reservationStatus } from '../ReservationStatus';
+
 // tableConfig.js
 export const TABLE_CONFIG = {
 	// 교수 조회
@@ -15,13 +17,24 @@ export const TABLE_CONFIG = {
 	},
 
 	// 교수 -> 학생 상담요청 확인
-	PROFESSOR_SEND: {
+	PROFESSOR_SENT: {
 		headers: ['학생', '과목', '상담사유', '상세', '처리'],
 		data: (r, handlers, reserveId) => ({
 			학생: r.student?.name ?? '',
 			과목: r.subject?.name ?? '',
 			상담사유: r.reason ?? '',
-			상세: handlers.detail(r),
+			상세: (
+				<button
+					type="button"
+					className="cm-btn cm-btn--ghost"
+					onClick={() => {
+						sessionStorage.setItem('counselingDetail', JSON.stringify(r));
+						window.open('/counseling/info', '_blank');
+					}}
+				>
+					보기
+				</button>
+			),
 			처리: handlers.decision(r, reserveId),
 		}),
 	},
@@ -57,15 +70,15 @@ export const TABLE_CONFIG = {
 		data: (r, handlers) => ({
 			교수: r.professor?.name ?? '',
 			과목: r.subject?.name ?? '',
-			상담일: r.reason ?? '',
-			'상담 시간': r.approvalState,
-			'방 번호': r.approvalState,
+			상담일: r.counselingSchedule.counselingDate ?? '',
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
+			'방 번호': r.roomCode,
 			취소: handlers.cancel(r.id),
 		}),
 	},
 
 	// 완료 상담 조회
-	STUDENT_APPROVED: {
+	STUDENT_DONE: {
 		headers: ['교수', '과목', '상담일', '상담 시간', '방 번호', '취소'],
 		data: (r, handlers) => ({
 			교수: r.professor?.name ?? '',
@@ -78,14 +91,14 @@ export const TABLE_CONFIG = {
 	},
 
 	// 학생 -> 교수 상담 신청 내역 조회
-	STUDENT_SEND: {
-		headers: ['교수', '과목', '상담일', '상담 시간', '방 번호', '취소'],
+	STUDENT_SENT: {
+		headers: ['교수', '과목', '상담일', '상담 시간', '상태', '취소'],
 		data: (r, handlers) => ({
-			교수: r.professor?.name ?? '',
+			교수: r.subject.professor?.name ?? '',
 			과목: r.subject?.name ?? '',
-			상담일: r.reason ?? '',
-			'상담 시간': r.approvalState,
-			'방 번호': r.approvalState,
+			상담일: r.counselingSchedule.counselingDate ?? '',
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
+			상태: reservationStatus(r.approvalState),
 			취소: handlers.cancel(r.id),
 		}),
 	},
@@ -94,9 +107,9 @@ export const TABLE_CONFIG = {
 	STUDENT_REQUESTED: {
 		headers: ['교수', '과목', '상담일', '상담 시간', '방 번호', '취소'],
 		data: (r, handlers) => ({
-			교수: r.professor?.name ?? '',
+			교수: r.subject.professor?.name ?? '',
 			과목: r.subject?.name ?? '',
-			상담일: r.reason ?? '',
+			상담일: r.counselingSchedule.counselingDate ?? '',
 			'상담 시간': r.approvalState,
 			'방 번호': r.approvalState,
 			취소: handlers.cancel(r.id),

@@ -124,7 +124,7 @@ export default function MyApprovedCounseling() {
 			과목: r.subject?.name ?? '',
 			상담사유: r.reason ?? '',
 			상담일자: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.endTime ?? ''}:50`,
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
 		}));
 	}, [requestedByProfessor]);
 
