@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
-
+import CounselingReserveDetail from '../student/CounselingReserveDetail';
+// 상담 예약 폼 컴포넌트
 export default function ReserveForm() {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
@@ -30,7 +31,6 @@ export default function ReserveForm() {
 		fetchCounselingSchedules(selectedSubjectId);
 	}, [selectedSubjectId, fetchCounselingSchedules]);
 
-
 	const fetchMyReserveList = useCallback(async () => {
 		const res = await api.get('/reserve/list');
 		setList(res.data ?? []);
@@ -48,7 +48,7 @@ export default function ReserveForm() {
 			{/* 과목 선택 시 상담 일정 표시 */}
 			{selectedSubjectId && (
 				<div className="reserve-schedule">
-					<CounselingScheduleDetailPage
+					<CounselingReserveDetail
 						counselingSchedule={schedules}
 						subId={selectedSubjectId}
 						subName={subName}

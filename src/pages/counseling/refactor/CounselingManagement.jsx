@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/UserContext';
 import api from '../../../api/httpClient';
-import SentedCounseling from './SentedCounsling';
+import SentCounseling from './SentCounsling';
 import RequsetedCounseling from './RequestedCounseling';
 import ApprovedCounseling from './ApporvedCounseling';
 import CompletedCounseling from './CompletedCounseling';
@@ -49,13 +49,15 @@ export default function CounselingManageMent() {
 				<button>새로고침</button>
 			</div>
 
-			<div>
-				{/* 상담 예약 - 학생 전용 */}
-				<ReserveForm />
-			</div>
+			{userRole === 'student' && (
+				<div>
+					{/* 상담 예약 - 학생 전용 */}
+					<ReserveForm />
+				</div>
+			)}
 
 			<div>
-				<SentedCounseling />
+				<SentCounseling />
 			</div>
 
 			<div>

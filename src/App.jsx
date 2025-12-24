@@ -154,12 +154,12 @@ function App() {
 								<Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} />
 								<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
-								<Route path="/refactor" element={<CounselingManageMent />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
 							<Route path="/counseling" element={<CounselingEntry />} />
 							<Route path="/videotest" element={<VideoCounseling />} />
+							<Route path="/refactor" element={<CounselingManageMent />} />
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
 							{' '}
