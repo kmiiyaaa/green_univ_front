@@ -54,13 +54,13 @@ import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
 import MyStatus from './pages/counseling/student/MyStatus';
 import CounselingRequestList from './pages/counseling/student/CounselingRequestList';
 import CounselingReserve from './pages/counseling/student/CounselingReserve';
-import CounselingReserveDetail from './pages/counseling/student/CounselingReserveDetail';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
 import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/refactor/CounselingManagement';
+import { CounselingRefreshProvider } from './pages/counseling/refactor/CounselingRefreshProvider';
 
 function App() {
 	// React Query 라이브러리
@@ -161,7 +161,14 @@ function App() {
 							<Route path="/counseling" element={<CounselingEntry />} />
 							<Route path="/videotest" element={<VideoCounseling />} />
 							<Route path="/counseling/list" element={<CounselingList />} />
-							<Route path="/refactor" element={<CounselingManageMent />} />
+							<Route
+								path="/refactor"
+								element={
+									<CounselingRefreshProvider>
+										<CounselingManageMent />
+									</CounselingRefreshProvider>
+								}
+							/>
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
 							{' '}

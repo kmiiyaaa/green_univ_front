@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/CounselingReserveDetail.css';
 import { useNavigate } from 'react-router-dom';
+import { CounselingRefreshContext } from '../refactor/CounselingRefreshContext';
 
 const DAY_KR = {
 	MONDAY: '월',
@@ -16,6 +17,7 @@ const DAY_KR = {
 export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
+	const { refresh } = useContext(CounselingRefreshContext);
 	const navigate = useNavigate();
 
 	const professor = counselingSchedule[0]?.professor;
@@ -43,6 +45,7 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 			onReserveSuccess?.(); // 예약 목록 새로고침
 			setSelected(null);
 			setReason('');
+			refresh();
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '상담 신청 실패');
 			setSelected(null);
