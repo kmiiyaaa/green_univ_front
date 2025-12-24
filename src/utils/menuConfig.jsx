@@ -122,6 +122,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/approved' },
 			{ key: 'MY_COUNSELING', label: '상담 시간 설정', path: '/professor/counseling/schedule' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
+			{ key: 'REFACTOR', label: '상담 리팩터링 (임시)', path: '/refactor' },
 		],
 	},
 };

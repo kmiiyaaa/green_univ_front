@@ -59,6 +59,7 @@ import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
+import CounselingManageMent from './pages/counseling/refactor/CounselingManagement';
 
 function App() {
 	// React Query 라이브러리
@@ -153,6 +154,7 @@ function App() {
 								<Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} />
 								<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
+								<Route path="/refactor" element={<CounselingManageMent />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
