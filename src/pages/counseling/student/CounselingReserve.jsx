@@ -7,6 +7,7 @@ import DataTable from '../../../components/table/DataTable';
 import { endMinus10, toHHMM } from '../../../utils/DateTimeUtil';
 import '../../../assets/css/CounselingReserve.css';
 
+// 학생의 상담 예약/관리에서 보여지는 것들
 export default function CounselingReserve() {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');

@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import '../../../assets/css/MyCounselingManage.css';
 
+// 교수의 상담 관리에서 보여지는 것들
 export default function MyApprovedCounseling() {
 	const [allList, setAllList] = useState([]);
 	const [loadingId, setLoadingId] = useState(null);
@@ -103,10 +104,6 @@ export default function MyApprovedCounseling() {
 						승인
 					</button>
 					<button
-						type="button"
-						className="cm-btn cm-btn--danger"
-						disabled={loadingId === r.id}
-						onClick={() => handleDecision(r.id, '반려')}
 					>
 						반려
 					</button>
@@ -123,7 +120,7 @@ export default function MyApprovedCounseling() {
 			과목: r.subject?.name ?? '',
 			상담사유: r.reason ?? '',
 			상담일자: r.counselingSchedule?.counselingDate ?? '',
-			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.endTime ?? ''}:50`,
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
 		}));
 	}, [requestedByProfessor]);
 

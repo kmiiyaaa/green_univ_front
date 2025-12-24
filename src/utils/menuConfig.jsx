@@ -63,6 +63,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약/관리', path: '/counseling/reserve' },
 			{ key: 'MY_COUNSELING', label: '상담 신청 내역', path: '/counseling/schedule', hidden: true },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
+			{ key: 'COUNSELING_MANEGE', label: '상담 관리', path: '/counseling/manage' },
 		],
 	},
 
@@ -122,6 +123,7 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'COUNSELING_MANAGEMENT', label: '상담 관리', path: '/professor/counseling/approved' },
 			{ key: 'MY_COUNSELING', label: '상담 시간 설정', path: '/professor/counseling/schedule' },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
+			{ key: 'COUNSELING_MANEGE', label: '상담 관리', path: '/counseling/manage' },
 		],
 	},
 };
