@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import DataTable from '../../../components/table/DataTable';
 import '../../../assets/css/MyCounselingManage.css';
 
+// 교수의 상담 관리에서 보여지는 것들
 export default function MyApprovedCounseling() {
 	const [allList, setAllList] = useState([]);
 	const [loadingId, setLoadingId] = useState(null);

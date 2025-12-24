@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import RiskInfoPanel from '../RiskInfoPanel';
 import '../../../assets/css/CounselingInfoPop.css';
 
+// 학생이 교수에게 보낸 상담 신청서를 교수가 확인하는 팝업창
 export default function CounselingInfoPop() {
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(false);
