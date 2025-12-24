@@ -1,8 +1,5 @@
-/* MyRiskStudent.css */
-
-/* 페이지 래퍼 (너가 원한 넓이 유지) */
 .risk-wrap {
-	max-width: 95%;
+	max-width: 1400px;
 	margin: 0 auto;
 	padding: 28px 24px;
 }
@@ -361,7 +358,7 @@
 	margin: 24px 0;
 }
 
-/* ✅ 학생 통합 섹션: 선택바 */
+/* 학생 통합 섹션: 선택바 */
 .selected-student-bar {
 	margin-top: 10px;
 	display: flex;
@@ -402,7 +399,6 @@
 .btn.btn-ghost:hover {
 	background: #f9fafb;
 }
-
 
 /* 반응형 */
 @media (max-width: 900px) {

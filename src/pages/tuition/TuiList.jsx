@@ -48,7 +48,7 @@ export default function TuiList() {
 	}, [tuiList]);
 
 	return (
-		<div>
+		<div className="form-container">
 			<h2>등록금 내역 조회</h2>
 			<div className="split--div"></div>
 
