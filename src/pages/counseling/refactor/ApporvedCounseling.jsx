@@ -26,7 +26,11 @@ export default function ApprovedCounseling({ approvedList }) {
 	return (
 		<div>
 			확정된 상담 목록
-			<DataTable headers={config.headers} data={rows} />
+			{approvedList.length > 0 ? (
+				<DataTable headers={config.headers} data={rows} />
+			) : (
+				<div>확정된 상담 목록이 없습니다.</div>
+			)}
 		</div>
 	);
 }

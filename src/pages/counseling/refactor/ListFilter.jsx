@@ -1,4 +1,7 @@
 export function listFilter(listByProfessor = [], listByStudent = []) {
+	
+	// approvalState 값으로 필터링 한 리스트들
+
 	if (!Array.isArray(listByProfessor)) listByProfessor = [];
 	if (!Array.isArray(listByStudent)) listByStudent = [];
 

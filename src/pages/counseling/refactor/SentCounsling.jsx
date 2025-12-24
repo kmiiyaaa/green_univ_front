@@ -26,7 +26,11 @@ export default function SentCounseling({ sentList }) {
 	return (
 		<div>
 			내가 요청한 상담 목록
-			<DataTable headers={config.headers} data={rows} />
+			{sentList.length > 0 ? (
+				<DataTable headers={config.headers} data={rows} />
+			) : (
+				<div>요청한 상담 목록이 없습니다.</div>
+			)}
 		</div>
 	);
 }

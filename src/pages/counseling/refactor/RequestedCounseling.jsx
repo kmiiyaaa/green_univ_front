@@ -26,7 +26,11 @@ export default function RequsetedCounseling({ requestList }) {
 	return (
 		<div>
 			요청받은 상담 목록
-			<DataTable headers={config.headers} data={rows} />
+			{requestList?.length > 0 ? (
+				<DataTable headers={config.headers} data={rows} />
+			) : (
+				<div>요청받은 상담 목록이 없습니다.</div>
+			)}
 		</div>
 	);
 }

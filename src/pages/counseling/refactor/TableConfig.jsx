@@ -1,6 +1,6 @@
 import { reservationStatus } from '../ReservationStatus';
 
-// tableConfig.js
+// 필요한 데이터 테이블 헤더의 형식, 출력할 데이터 형식 지정한 유틸
 export const TABLE_CONFIG = {
 	// 교수 조회
 
