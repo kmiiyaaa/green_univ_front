@@ -29,7 +29,6 @@ export default function MyRiskStudent() {
 		// 혹시 다른 형태로 넘어와도 대응하도록 studentId도 fallback 처리
 		const id = row?.__studentId ?? row?.studentId;
 		if (!id) return;
-
 		setSelectedStudentId((prev) => (String(prev) === String(id) ? '' : String(id)));
 	};
 
@@ -55,7 +54,7 @@ export default function MyRiskStudent() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subject, riskLevel]);
 
-	// 선택 학생이 바뀌면 해당 학생의 위험 과목 전체를 백엔드에서 조회
+	// 선택 학생이 바뀌면 해당 학생의 위험 과목 조회
 	useEffect(() => {
 		if (!selectedStudentId) {
 			setDeptRiskList([]);
@@ -83,9 +82,6 @@ export default function MyRiskStudent() {
 	// 우리학과 위험학생
 	const loadDeptStudents = async () => {
 		try {
-			// subject/level 없이 호출 → 우리학과 통합은 항상 동일 기준으로 유지
-			// /risk/list/grouped 에는 students가 더 이상 내려오지 않음
-			// 우리학과 통합 학생 리스트는 /risk/professor/overview 의 departmentStudents 로 받아야 함
 			const res = await api.get('/risk/professor/overview');
 			const students = res.data?.departmentStudents ?? [];
 			setStudentList(students);
@@ -146,7 +142,7 @@ export default function MyRiskStudent() {
 		setOpenModal(true);
 	};
 
-	// 임시: 레벨/ 태그 처리
+	// 레벨/ 태그 처리
 	const levelLabel = (lvl) => {
 		if (lvl === 'DANGER') return '위험';
 		if (lvl === 'WARNING') return '경고';
@@ -181,37 +177,29 @@ export default function MyRiskStudent() {
 		return String(v).replace('T', ' ').slice(0, 16);
 	};
 
-	// 내 과목 여부 판단용: 교수 과목 옵션에 포함되면 "내 과목"
+	// 내 과목 여부 판단용
 	const mySubjectIdSet = useMemo(() => {
 		return new Set((subjectOptions ?? []).map((o) => String(o.value)).filter(Boolean));
 	}, [subjectOptions]);
 
-	// 테이블 데이터 변환(과목 위험 row)
-	// dept(선택 학생) 테이블에서는 "내 과목만 상담요청 가능"하게 막기 옵션 추가
+	// 선택 학생 테이블에서는 내 과목만 상담요청 가능하게 막기
 	const formatTableData = (list, showConsultButton = false, onlyMySubjectCanRequest = false) => {
 		return (list ?? []).map((r) => {
-			// DETECTED 상태이고
-			// 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
-			// 이미 요청대기/확정 상태면 버튼 막기
-			// 취소(CONSULT_CANCELED)도 재요청 가능으로 처리
-
-			// 버튼 활성화는 consultState 기준으로 판단
+			// DETECTED 상태이고 + consultState null + CONSULT_REJECTED 버튼나오게
+			// 이미 요청대기/확정 상태면 버튼 막기 , CONSULT_CANCELED도 재요청 가능으로 처리
 			const isAlreadyPending = r.consultState === 'CONSULT_REQ';
 			const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
-
 			const isRejected = r.consultState === 'CONSULT_REJECTED';
 			const isCanceled = r.consultState === 'CONSULT_CANCELED';
 
-			// [MOD] "내 과목인지" 체크 (선택 학생 위험과목에서는 중요)
+			// 내 과목인지 확인
 			const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
-			// [MOD] onlyMySubjectCanRequest=true면 내 과목일 때만 요청 가능
 			const canRequestBase =
 				showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
 
 			const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
-
 			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
 			return {
@@ -254,8 +242,7 @@ export default function MyRiskStudent() {
 							{requestBtnLabel}
 						</button>
 					) : onlyMySubjectCanRequest && !isMySubject ? (
-						// [MOD] 다른 과목이면 그냥 막아두기
-						<span className="status-pill">내 과목 아님</span>
+						<span className="status-pill"></span>
 					) : r.consultState === 'CONSULT_REQ' ? (
 						<span className="status-pill">요청 대기</span>
 					) : r.consultState === 'CONSULT_APPROVED' ? (
@@ -292,7 +279,6 @@ export default function MyRiskStudent() {
 	};
 
 	const studentHeaders = ['학생정보', '통합위험', '위험과목수', '담당교수', '업데이트'];
-
 	const studentData = useMemo(() => {
 		return (studentList ?? []).map((s) => ({
 			// 클릭에서 꺼내 쓸 수 있게 id를 "숨김키 + 일반키" 둘 다 유지
@@ -333,7 +319,17 @@ export default function MyRiskStudent() {
 	];
 
 	// 헤더(과목 위험 row)
-	const pendingHeaders = ['과목', '학생정보', '위험타입', '위험레벨', 'AI요약', '교수권장', '태그', '업데이트', '상담요청'];
+	const pendingHeaders = [
+		'과목',
+		'학생정보',
+		'위험타입',
+		'위험레벨',
+		'AI요약',
+		'교수권장',
+		'태그',
+		'업데이트',
+		'상담요청',
+	];
 	const completedHeaders = ['과목', '학생정보', '위험타입', '위험레벨', 'AI요약', '태그', '업데이트'];
 
 	// 선택된 학생 이름 표시용
@@ -347,8 +343,7 @@ export default function MyRiskStudent() {
 		<div className="risk-wrap">
 			{/* 상단 헤더 */}
 			<div className="risk-page-head">
-				<div>
-				</div>
+				<div></div>
 
 				<div className="risk-stat-row">
 					<div className="risk-stat">
@@ -362,22 +357,22 @@ export default function MyRiskStudent() {
 				</div>
 			</div>
 
-				{/* 탈락 위험 학생(통합) */}
-				<RiskStudentOverall
-					studentHeaders={studentHeaders}
-					studentData={studentData}
-					studentListLength={studentList.length}
-					onRowClick={handleStudentRowClick}
-					selectedStudentId={selectedStudentId}
-					selectedStudentName={selectedStudentName}
-				/>
-				{selectedStudentId ? (
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+			{selectedStudentId ? (
 				<div className="risk-section">
 					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
 				</div>
 			) : null}
-			
-<hr />
+
+			<hr />
 			{/* 필터 */}
 			<div className="filter-bar">
 				<OptionForm
