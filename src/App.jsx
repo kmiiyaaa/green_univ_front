@@ -59,6 +59,7 @@ import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
+import Direction from './pages/map/Direction';
 
 function App() {
 	// React Query 라이브러리
@@ -83,6 +84,7 @@ function App() {
 						>
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
