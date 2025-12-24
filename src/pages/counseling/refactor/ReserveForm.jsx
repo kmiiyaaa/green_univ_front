@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
 import CounselingReserveDetail from '../student/CounselingReserveDetail';
+import SelectDateForCounseling from '../SelectDateForCounseling';
+
 // 상담 예약 폼 컴포넌트
 export default function ReserveForm() {
 	const [subjects, setSubjects] = useState([]);
@@ -48,7 +50,7 @@ export default function ReserveForm() {
 			{/* 과목 선택 시 상담 일정 표시 */}
 			{selectedSubjectId && (
 				<div className="reserve-schedule">
-					<CounselingReserveDetail
+					{/* <CounselingReserveDetail
 						counselingSchedule={schedules}
 						subId={selectedSubjectId}
 						subName={subName}
@@ -56,7 +58,8 @@ export default function ReserveForm() {
 							await fetchMyReserveList(); // 기존: 목록 갱신
 							setSelectedSubjectId(''); // 추가: 과목 선택 초기화 → UI 닫힘
 						}}
-					/>
+					/> */}
+					<SelectDateForCounseling mode="student" subjectId={selectedSubjectId} onSelectSlot />
 				</div>
 			)}
 		</div>

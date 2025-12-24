@@ -8,7 +8,7 @@ export default function CompletedCounseling({ finishedList }) {
 	const [tableKey, setTablekey] = useState(null);
 
 	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_SENT' : 'STUDENT_FINISHED');
+		setTablekey(userRole === 'professor' ? 'PROFESSOR_FINISHED' : 'STUDENT_FINISHED');
 	}, [userRole]);
 
 	const config = TABLE_CONFIG[tableKey];
@@ -16,16 +16,27 @@ export default function CompletedCounseling({ finishedList }) {
 	if (!config) return null;
 
 	const handlers = {
-		detail: (r) => <button>상세</button>,
-		decision: (r, id) => <button>처리</button>,
-		cancel: (id) => <button>취소</button>,
+		detail: (
+			r // 교수 - 학생 상담 신청서 조회
+		) => (
+			<button
+				type="button"
+				className="cm-btn cm-btn--ghost"
+				onClick={() => {
+					sessionStorage.setItem('counselingDetail', JSON.stringify(r));
+					window.open('/counseling/info', '_blank', 'width=900,height=800,scrollbars=yes');
+				}}
+			>
+				보기
+			</button>
+		),
 	};
 
 	const rows = finishedList.map((r) => config.data(r, handlers, r.id));
 
 	return (
 		<div>
-			완료된 상담 목록
+			완료된 상담 목록 - complete
 			{finishedList.length > 0 ? (
 				<DataTable headers={config.headers} data={rows} handlers={handlers} />
 			) : (

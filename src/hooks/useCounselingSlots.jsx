@@ -1,4 +1,4 @@
-// hooks/useCounselingSlots.js
+// hooks/useCounselingSlots.js 복붙만 하고 못 쓰겠음 ㅠ
 import { useState, useEffect } from 'react';
 import api from '../api/httpClient';
 
