@@ -38,7 +38,6 @@ export default function ReserveForm() {
 
 	return (
 		<div>
-			<h2>상담 예약</h2>
 			{/* 과목 선택 */}
 			<SubjectSelect
 				subjects={subjects}

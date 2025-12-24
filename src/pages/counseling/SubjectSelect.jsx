@@ -11,7 +11,7 @@ export default function SubjectSelect({ label = '과목', subjects = [], value, 
 
 	subjects.forEach((s) => {
 		options.push({
-			value: s.id,
+			value: s?.id ?? s.subjectName,
 			label: s.name,
 		});
 	});
