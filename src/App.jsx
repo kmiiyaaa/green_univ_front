@@ -59,6 +59,7 @@ import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
+import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/refactor/CounselingManagement';
 
 function App() {
@@ -159,6 +160,7 @@ function App() {
 							<Route path="/subject/list" element={<AllsubList />} />
 							<Route path="/counseling" element={<CounselingEntry />} />
 							<Route path="/videotest" element={<VideoCounseling />} />
+							<Route path="/counseling/list" element={<CounselingList />} />
 							<Route path="/refactor" element={<CounselingManageMent />} />
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
