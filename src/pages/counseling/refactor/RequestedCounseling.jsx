@@ -8,7 +8,7 @@ export default function RequsetedCounseling({ requestList }) {
 	const [tableKey, setTablekey] = useState(null);
 
 	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_SENT' : 'STUDENT_SENT');
+		setTablekey(userRole === 'professor' ? 'PROFESSOR_REQUESTED' : 'STUDENT_REQUESTED');
 	}, [userRole]);
 
 	const config = TABLE_CONFIG[tableKey];
@@ -22,7 +22,7 @@ export default function RequsetedCounseling({ requestList }) {
 	};
 
 	const rows = requestList.map((r) => config.data(r, handlers, r.id));
-
+	console.log(requestList);
 	return (
 		<div>
 			요청받은 상담 목록

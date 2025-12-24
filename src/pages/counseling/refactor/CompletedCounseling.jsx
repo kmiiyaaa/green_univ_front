@@ -8,7 +8,7 @@ export default function CompletedCounseling({ finishedList }) {
 	const [tableKey, setTablekey] = useState(null);
 
 	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_SENT' : 'STUDENT_SENT');
+		setTablekey(userRole === 'professor' ? 'PROFESSOR_SENT' : 'STUDENT_FINISHED');
 	}, [userRole]);
 
 	const config = TABLE_CONFIG[tableKey];
@@ -25,8 +25,12 @@ export default function CompletedCounseling({ finishedList }) {
 
 	return (
 		<div>
-			확정된 상담 목록
-			<DataTable headers={config.headers} data={rows} />
+			완료된 상담 목록
+			{finishedList.length > 0 ? (
+				<DataTable headers={config.headers} data={rows} handlers={handlers} />
+			) : (
+				<div>완료된 상담 목록이 없습니다.</div>
+			)}
 		</div>
 	);
 }

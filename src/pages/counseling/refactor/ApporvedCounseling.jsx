@@ -8,7 +8,7 @@ export default function ApprovedCounseling({ approvedList }) {
 	const [tableKey, setTablekey] = useState(null);
 
 	useEffect(() => {
-		setTablekey(userRole === 'professor' ? 'PROFESSOR_SENT' : 'STUDENT_SENT');
+		setTablekey(userRole === 'professor' ? 'PROFESSOR_APPROVED' : 'STUDENT_APPROVED');
 	}, [userRole]);
 
 	const config = TABLE_CONFIG[tableKey];

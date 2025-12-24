@@ -25,7 +25,7 @@ export default function SentCounseling({ sentList }) {
 
 	return (
 		<div>
-			요청한 상담 목록
+			내가 요청한 상담 목록
 			<DataTable headers={config.headers} data={rows} />
 		</div>
 	);

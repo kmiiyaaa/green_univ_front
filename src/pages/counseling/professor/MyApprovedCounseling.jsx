@@ -104,10 +104,6 @@ export default function MyApprovedCounseling() {
 						승인
 					</button>
 					<button
-						type="button"
-						className="cm-btn cm-btn--danger"
-						disabled={loadingId === r.id}
-						onClick={() => handleDecision(r.id, '반려')}
 					>
 						반려
 					</button>
