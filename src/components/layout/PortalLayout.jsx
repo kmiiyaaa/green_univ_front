@@ -12,14 +12,18 @@ function PortalLayout() {
 	const { pathname } = useLocation();
 	const { logout } = useContext(UserContext);
 
-	// 포탈 홈(대문)에서는 사이드바 숨김
-	const hideSidebar = pathname === '/portal'; // 필요하면 '/'도 추가
+	const isPortalHome = pathname === '/portal';
 
 	return (
-		<div className="portal-layout">
+		<div className={`portal-layout ${isPortalHome ? 'portal-home' : ''}`}>
 			<Header handleLogout={logout} />
-			<div className={`main-container ${hideSidebar ? 'no-sidebar' : ''}`}>
-				{!hideSidebar && <Navigation />}
+			<div className={`main-container ${isPortalHome ? 'no-sidebar' : ''}`}>
+				{!isPortalHome && (
+					<div className="sidebar-wrap">
+						<Navigation />
+					</div>
+				)}
+
 				<main className="content">
 					<Outlet />
 					<Chat />
