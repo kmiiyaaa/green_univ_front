@@ -174,7 +174,7 @@ export default function MyRiskStudent() {
 
 			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
 			// + 담당교수 아닌 경우 요청 버튼만 막기
-			const canRequest =
+			const canRequestBase =
 				showConsultButton &&
 				!isAlreadyPending &&
 				!isAlreadyApproved &&
@@ -248,14 +248,12 @@ export default function MyRiskStudent() {
 		});
 	};
 
-	// 학생 선택되면 "과목 위험 테이블"을 해당 학생만 필터링
-	const filteredPendingList = useMemo(() => {
-		if (!selectedStudentId) return pendingList;
-		return (pendingList ?? []).filter((r) => String(r.studentId) === String(selectedStudentId));
-	}, [pendingList, selectedStudentId]);
+	// 내 담당 과목 위험학생 테이블 데이터
+	const pendingData = useMemo(() => formatTableData(pendingList, true, false), [pendingList]);
+	const completedData = useMemo(() => formatTableData(completedList, false, false), [completedList]); // myProfessorId/studentList는 closure로 사용
 
-	const pendingData = useMemo(() => formatTableData(filteredPendingList, true), [filteredPendingList]); // myProfessorId/studentList는 closure로 사용
-	const completedData = useMemo(() => formatTableData(completedList, false), [completedList]);
+	// 선택 학생 위험과목 테이블 데이터
+	const deptStudentRiskData = useMemo(() => formatTableData(deptRiskList, true, true), [deptRiskList]);
 
 	// 학생 통합(탈락 위험) 테이블
 	const overallLabel = (lvl) => {
@@ -392,7 +390,7 @@ export default function MyRiskStudent() {
 			<hr />
 
 			{/* 완료 섹션 */}
-			<RiskCompleted
+			<RiskCompletedS
 				completedHeaders={completedHeaders}
 				completedData={completedData}
 				completedLength={completedList.length}

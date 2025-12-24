@@ -11,8 +11,7 @@ export default function RiskStudentOverall({
 	return (
 		<div className="risk-section">
 			<div className="risk-section-head">
-				<h3>우리 학과 탈락 위험 학생</h3>
-				<span className="muted">학과 기준 통합 위험도</span>
+				<h3>학과 중도 이탈 위험 학생</h3>
 			</div>
 
 			<div className="risk-card">
