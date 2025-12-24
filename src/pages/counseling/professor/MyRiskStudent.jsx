@@ -23,9 +23,6 @@ export default function MyRiskStudent() {
 	// 학생 선택(아래 과목 위험 테이블 필터용)
 	const [selectedStudentId, setSelectedStudentId] = useState('');
 
-	// 내 교수 id , UserProvider에서 localStorage에 user 저장해두는 경우 대응
-	const myProfessorId = JSON.parse(localStorage.getItem('user') || '{}')?.id ?? localStorage.getItem('userId') ?? null;
-
 	// 우리과 위험학생(통합) 행 클릭
 	const handleStudentRowClick = (row) => {
 		// studentData에서 숨김키로 __studentId 를 넣어두고 있어서 그걸 우선 사용
@@ -250,17 +247,6 @@ export default function MyRiskStudent() {
 						<span className="status-pill">요청 대기</span>
 					) : r.consultState === 'CONSULT_APPROVED' ? (
 						<span className="status-pill ok">상담 확정</span>
-					) : assignedToOther ? (
-						// 학과 교수 모두에게 "과목은 보이되", 버튼만 막기
-						<button
-							type="button"
-							className="btn btn-disabled"
-							disabled
-							onClick={(ev) => ev.stopPropagation()}
-							title="이미 다른 담당교수가 처리 중입니다."
-						>
-							담당교수 처리중
-						</button>
 					) : r.consultState === 'CONSULT_REJECTED' ? (
 						<span className="status-pill warn">재요청 가능</span>
 					) : r.consultState === 'CONSULT_CANCELED' ? (
