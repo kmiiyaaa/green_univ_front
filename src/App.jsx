@@ -137,7 +137,6 @@ function App() {
 								<Route path="/break/list" element={<BreakAppListStudent />} />
 								{/* 학생 상담 */}
 								<Route path="/status" element={<MyStatus />} />
-								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
 								<Route path="/counseling/reserve" element={<CounselingReserve />} />
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />

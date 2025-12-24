@@ -15,11 +15,13 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 	const getThisAndNextWeekStartDates = () => {
 		const today = new Date();
 		const thisMonday = getMonday(today);
+		console.log('thisMonday', getMonday(new Date()));
 		const nextMonday = getMonday(new Date(thisMonday.getTime() + 7 * 24 * 60 * 60 * 1000));
-
+		console.log('nextMonday', getMonday(new Date(getMonday(new Date()).getTime() + 7 * 24 * 60 * 60 * 1000)));
 		const thisWsd = getWeekDates(thisMonday)[0];
+		console.log('thisWsd', thisWsd);
 		const nextWsd = getWeekDates(nextMonday)[0];
-
+		console.log('nextWsd', nextWsd);
 		return { thisWsd, nextWsd };
 	};
 

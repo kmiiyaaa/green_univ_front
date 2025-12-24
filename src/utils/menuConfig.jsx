@@ -61,7 +61,6 @@ export const SIDEBAR_BY_HEADER = {
 		COUNSELING: [
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
 			{ key: 'COUNSELING_RESERVE', label: '상담 예약/관리', path: '/counseling/reserve' },
-			{ key: 'MY_COUNSELING', label: '상담 신청 내역', path: '/counseling/schedule', hidden: true },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},

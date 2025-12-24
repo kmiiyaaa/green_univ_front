@@ -5,6 +5,7 @@ import '../../../assets/css/WeeklyCounselingScheduleForm.css';
 
 const TIMES = [15, 16, 17, 18, 19];
 
+// 교수가 상담 시간 설정하는 폼
 export default function WeeklyCounselingScheduleForm() {
 	const [dates, setDates] = useState([]);
 	const [initialSlots, setInitialSlots] = useState({});

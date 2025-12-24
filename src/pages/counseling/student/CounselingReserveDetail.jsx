@@ -13,6 +13,7 @@ const DAY_KR = {
 	SUNDAY: '일',
 };
 
+// 학생이 과목 선택해서 교수에게 상담 요청 보낼 때 뜨는 컴포넌트
 export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
