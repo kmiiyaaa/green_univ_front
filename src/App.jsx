@@ -61,6 +61,7 @@ import UserCreate from './pages/user/create/UserCreate';
 import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
+import Direction from './pages/map/Direction';
 
 function App() {
 	// React Query 라이브러리
@@ -88,6 +89,7 @@ function App() {
 							{/* ================= 공통 (로그인만 필요) ================= */}
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
