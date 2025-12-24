@@ -16,13 +16,9 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 		const today = new Date();
 		const thisMonday = getMonday(today);
 		console.log('thisMonday', getMonday(new Date()));
-		const nextMonday = getMonday(new Date(thisMonday.getTime() + 7 * 24 * 60 * 60 * 1000));
-		console.log('nextMonday', getMonday(new Date(getMonday(new Date()).getTime() + 7 * 24 * 60 * 60 * 1000)));
 		const thisWsd = getWeekDates(thisMonday)[0];
 		console.log('thisWsd', thisWsd);
-		const nextWsd = getWeekDates(nextMonday)[0];
-		console.log('nextWsd', nextWsd);
-		return { thisWsd, nextWsd };
+		return { thisWsd };
 	};
 
 	// 지난 날짜/시간 슬롯 제외
@@ -42,27 +38,22 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 		setSelectedSlotId('');
 		setReason('');
 
-		const { thisWsd, nextWsd } = getThisAndNextWeekStartDates();
-		loadSlots(thisWsd, nextWsd);
+		const { thisWsd } = getThisAndNextWeekStartDates();
+		loadSlots(thisWsd);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
 	// 이번주 + 다음주 슬롯을 합쳐서 불러오기
-	const loadSlots = async (thisWsd, nextWsd) => {
+	const loadSlots = async (thisWsd) => {
 		try {
 			setLoading(true);
 
-			const [res1, res2] = await Promise.all([
-				api.get('/counseling/professor', { params: { weekStartDate: thisWsd } }),
-				api.get('/counseling/professor', { params: { weekStartDate: nextWsd } }),
-			]);
-			console.log('res1.data', res1.data.list);
-			console.log('res2.data', res2.data.list);
-			const list1 = res1.data?.list ?? [];
-			const list2 = res2.data?.list ?? [];
+			const [res] = await Promise.all([api.get('/counseling/professor', { params: { weekStartDate: thisWsd } })]);
+			console.log('res.data', res.data);
+			const list = res.data ?? [];
 
 			// 중복 제거 (다음주가 res1/res2에 동시에 포함될 수 있음)
-			const merged = [...list1, ...list2];
+			const merged = [...list];
 			const unique = Array.from(new Map(merged.map((s) => [String(s.id), s])).values());
 
 			// 예약 안된 슬롯만 + 지난 날짜 슬롯 안보여주기

@@ -61,6 +61,31 @@ export function getWeekDates(monday) {
 	return dates;
 }
 
+// 이번 주 + 다음 주 평일만 (최대 10개, 주말 제외)
+export function generateWeekdays(startDateStr) {
+	const weekdays = [];
+	const start = new Date(startDateStr);
+	let current = new Date(start);
+	const endDate = new Date(start);
+	endDate.setDate(start.getDate() + 13); // 2주 범위(월~일 * 2)
+
+	while (current <= endDate) {
+		const day = current.getDay();
+
+		// 평일만 추가 (1~5 = 월~금)
+		if (day >= 1 && day <= 5) {
+			const yyyy = current.getFullYear();
+			const mm = String(current.getMonth() + 1).padStart(2, '0');
+			const dd = String(current.getDate()).padStart(2, '0');
+			weekdays.push(`${yyyy}-${mm}-${dd}`);
+		}
+
+		current.setDate(current.getDate() + 1);
+	}
+
+	return weekdays;
+}
+
 // 로컬 기준 YYYY-MM-DD (KST에서도 안전)
 // 위에꺼 UTC 기준이라, 한국시간 새벽에 날짜가 하루 밀려 보일 가능성
 export function formatDateLocal(input) {

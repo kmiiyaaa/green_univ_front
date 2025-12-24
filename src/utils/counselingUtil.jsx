@@ -1,4 +1,4 @@
-// 날짜 그룹 함수, 지난 시간 체크 함수
+// 상담 시 필요한
 
 import { getMonday, getWeekDates } from './DateTimeUtil';
 
@@ -11,7 +11,6 @@ export const isPastSlot = (date, startTime) => {
 // 날짜별로 그룹 만드는 함수
 export const groupByDate = (schedules) => {
 	const result = {};
-
 	schedules.forEach((schedule) => {
 		const date = schedule.counselingDate;
 		if (!result[date]) result[date] = [];
