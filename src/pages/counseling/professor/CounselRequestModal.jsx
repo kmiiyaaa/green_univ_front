@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import OptionForm from '../../../components/form/OptionForm';
-import { getMonday, getWeekDates } from '../../../utils/DateTimeUtil';
+import { getThisAndNextWeekStartDates, isPastSlot } from '../../../utils/counselingUtil';
+import { endMinus10, formatDayOfWeek, toHHMM } from '../../../utils/DateTimeUtil';
 import '../../../assets/css/ProfessorCounselRequestModal.css';
 
 // 교수가 학생에게 상담 요청 보낼 때 뜨는 모달
@@ -11,26 +12,6 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 	const [reason, setReason] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	// 이번 주 + 다음 주 weekStartDate 계산
-	const getThisAndNextWeekStartDates = () => {
-		const today = new Date();
-		const thisMonday = getMonday(today);
-		console.log('thisMonday', getMonday(new Date()));
-		const thisWsd = getWeekDates(thisMonday)[0];
-		console.log('thisWsd', thisWsd);
-		return { thisWsd };
-	};
-
-	// 지난 날짜/시간 슬롯 제외
-	const isPastSlot = (s) => {
-		const date = s?.counselingDate; // "YYYY-MM-DD"
-		const startTime = s?.startTime; // 15, 16
-		if (!date || startTime == null) return true;
-
-		const slotTime = new Date(`${date}T${String(startTime).padStart(2, '0')}:00:00`);
-		return slotTime <= new Date(); // 지금 포함해서 이전은 제외
-	};
-
 	// 모달 열릴 때: weekly에서 저장한 가능한 슬롯만 불러오게 처리
 	useEffect(() => {
 		if (!open) return;
@@ -38,32 +19,27 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 		setSelectedSlotId('');
 		setReason('');
 
-		const { thisWsd } = getThisAndNextWeekStartDates();
-		loadSlots(thisWsd);
+		const weekStartDate = getThisAndNextWeekStartDates();
+		loadSlots(weekStartDate);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
 	// 이번주 + 다음주 슬롯을 합쳐서 불러오기
-	const loadSlots = async (thisWsd) => {
+	const loadSlots = async (weekStartDate) => {
 		try {
 			setLoading(true);
-
-			const [res] = await Promise.all([api.get('/counseling/professor', { params: { weekStartDate: thisWsd } })]);
-			console.log('res.data', res.data);
+			const res = await api.get('/counseling/professor', { params: { weekStartDate } });
 			const list = res.data ?? [];
 
-			// 중복 제거 (다음주가 res1/res2에 동시에 포함될 수 있음)
-			const merged = [...list];
-			const unique = Array.from(new Map(merged.map((s) => [String(s.id), s])).values());
-
 			// 예약 안된 슬롯만 + 지난 날짜 슬롯 안보여주기
-			const available = unique.filter((s) => s.reserved === false).filter((s) => !isPastSlot(s));
-
-			available.sort((a, b) => {
-				const d = String(a.counselingDate).localeCompare(String(b.counselingDate));
-				if (d !== 0) return d;
-				return Number(a.startTime ?? 0) - Number(b.startTime ?? 0);
-			});
+			const available = list
+				.filter((s) => s?.reserved === false)
+				.filter((s) => !isPastSlot(s?.counselingDate, s?.startTime))
+				.sort((a, b) => {
+					const d = String(a?.counselingDate ?? '').localeCompare(String(b?.counselingDate ?? ''));
+					if (d !== 0) return d;
+					return Number(a?.startTime ?? 0) - Number(b?.startTime ?? 0);
+				});
 
 			setSlotList(available);
 		} catch (e) {
@@ -74,19 +50,20 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 			setLoading(false);
 		}
 	};
+
 	const slotOptions = useMemo(() => {
 		const base = [{ value: '', label: loading ? '불러오는 중...' : '시간을 선택하세요' }];
 
 		const opts = (slotList ?? []).map((s) => {
-			const date = s.counselingDate ?? '';
-			const h = s.startTime != null ? Number(s.startTime) : null;
+			const date = s?.counselingDate ?? '';
+			const dateLabel = formatDayOfWeek(date, s?.dayOfWeek);
 
-			const start = h != null ? `${String(h).padStart(2, '0')}:00` : '';
-			const end = h != null ? `${String(h).padStart(2, '0')}:50` : '';
+			const start = toHHMM(Number(s?.startTime));
+			const end = s?.endTime != null ? endMinus10(Number(s.endTime)) : endMinus10(Number(s?.startTime ?? 0) + 1);
 
 			return {
 				value: String(s.id),
-				label: `${date}  ${start} ~ ${end}`,
+				label: `${dateLabel}  ${start} ~ ${end}`,
 			};
 		});
 
@@ -165,7 +142,7 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 						<button type="button" className="pcm-btn" onClick={onClose}>
 							취소
 						</button>
-						<button type="button" className="pcm-btn pcm-btn-primary" onClick={submit} disabled={!selectedSlotId}>
+						<button type="button" className="pcm-btn pcm-btn-primary" onClick={submit} disabled={!selectedSlotId || loading}>
 							요청 보내기
 						</button>
 					</div>
