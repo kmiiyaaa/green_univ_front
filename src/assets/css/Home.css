@@ -213,8 +213,9 @@
 
 .public-login-button:hover {
 	filter: brightness(1.03);
-	box-shadow: 0 14px 30px rgba(22, 163, 74, 0.55);
+	box-shadow: 0 14px 30px #16a34a8c;
 	transform: translateY(-1px);
+	background: linear-gradient(90deg, #237a43, #146d34);
 }
 
 .public-login-button:active {
@@ -355,12 +356,12 @@
 }
 
 .public-notice-list li.empty-row {
-  grid-template-columns: 170px 1fr; /* schedule과 동일 */
+	grid-template-columns: 170px 1fr; /* schedule과 동일 */
 }
 
 /* (선택) 3번째 칸은 필요 없으니 숨기기 */
 .public-notice-list li.empty-row .public-notice-date {
-  display: none;
+	display: none;
 }
 
 .public-notice-list li:last-child {

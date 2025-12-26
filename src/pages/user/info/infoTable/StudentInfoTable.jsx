@@ -40,13 +40,7 @@ export default function StudentInfoTable({ userInfo, stustatList }) {
 			{stustatList.length > 0 && (
 				<>
 					<h3>학적 변동 내역</h3>
-					<DataTable
-						headers={header2}
-						data={stustatList}
-						onRowClick={(row) => {
-							console.log('선택된 변동내역:', row.원본데이터);
-						}}
-					/>
+					<DataTable headers={header2} data={stustatList} />
 				</>
 			)}
 		</div>

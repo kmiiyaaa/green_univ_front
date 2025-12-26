@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { replace, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import { comma } from '../../utils/FmtMoney';
@@ -50,6 +50,7 @@ export default function Payment() {
 			await api.post('/tuition/payment');
 			alert('등록금이 성공적으로 납부되었습니다!');
 			setTuition((prev) => (prev ? { ...prev, status: true } : prev));
+			navigate('/tuition', { replace: true });
 		} catch (e) {
 			console.error('등록금 납부 실패' + e);
 			alert('등록금 납부에 실패했습니다. 관리자에게 문의해주세요.');

@@ -9,10 +9,10 @@ button {
 	padding: 6px 10px;
 }
 
-button:hover {
+/* button:hover {
 	background: rgb(255, 255, 255);
 	border-color: rgba(15, 23, 42, 0.28);
-}
+} */
 
 button:disabled {
 	cursor: not-allowed;
