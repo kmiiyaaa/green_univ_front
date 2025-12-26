@@ -63,6 +63,7 @@ import CounselingManageMent from './pages/counseling/counselingManage/Counseling
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
 import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
+import SubjectStudentList from './pages/professor/SubjectStudentList';
 
 function App() {
 	// React Query 라이브러리
@@ -164,10 +165,11 @@ function App() {
 							{/* ================= PROFESSOR 전용 ================= */}
 							<Route element={<ProtectedRoute allowedRoles={['professor']} />}>
 								<Route path="/professor/subject" element={<ProfessorSubjectList />} />
+								{/* TODO: 성적 입력 및 분석 부분 따로 접근성과 편리성을 위해서 넣어둠? */}
+								<Route path="/professor/ai" element={<SubjectStudentList />} />
 								<Route path="/professor/evaluation" element={<MyEvaluation />} />
 
 								{/* 교수 상담 */}
-								{/* <Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} /> */}
 								<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
