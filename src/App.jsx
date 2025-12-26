@@ -139,7 +139,7 @@ function App() {
 								{/* 학생 상담 */}
 								<Route path="/status" element={<MyStatus />} />
 								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
-								<Route path="/counseling/reserve" element={<CounselingReserve />} />
+								{/* <Route path="/counseling/reserve" element={<CounselingReserve />} /> */}
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
@@ -152,10 +152,11 @@ function App() {
 								<Route path="/professor/evaluation" element={<MyEvaluation />} />
 
 								{/* 교수 상담 */}
-								<Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} />
+								{/* <Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} /> */}
 								<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
+							{/* ================= 학생, 교수 전용 (비디오룸, 상담 관리) ================= */}
 							<Route element={<ProtectedRoute allowedRoles={['professor', 'student']} />}>
 								<Route
 									path="/counseling/manage"
@@ -165,12 +166,12 @@ function App() {
 										</CounselingRefreshProvider>
 									}
 								/>
+								<Route path="/counseling" element={<CounselingEntry />} />
+								<Route path="/videotest" element={<VideoCounseling />} />
+								<Route path="/counseling/list" element={<CounselingList />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
-							<Route path="/counseling" element={<CounselingEntry />} />
-							<Route path="/videotest" element={<VideoCounseling />} />
-							<Route path="/counseling/list" element={<CounselingList />} />
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
 							{' '}

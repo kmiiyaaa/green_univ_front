@@ -260,7 +260,7 @@ export default function Portal() {
 								{/* [Professor 전용] */}
 								{userRole === 'professor' && token && (
 									<ProfessorAlert
-										onGoPending={() => navigate('/professor/counseling/approved')}
+										onGoPending={() => navigate('/counseling/manage')}
 										onGoToday={() => navigate('/videotest')}
 									/>
 								)}
@@ -269,8 +269,8 @@ export default function Portal() {
 								{userRole === 'student' && token && (
 									<StudentAlerts
 										onGoRisk={() => navigate('/status')}
-										onGoRequest={() => navigate('/counseling/reserve')}
-										onGoUpcoming={() => navigate('/counseling/reserve')}
+										onGoRequest={() => navigate('/counseling/manage')}
+										onGoUpcoming={() => navigate('/counseling/manage')}
 									/>
 								)}
 							</div>
