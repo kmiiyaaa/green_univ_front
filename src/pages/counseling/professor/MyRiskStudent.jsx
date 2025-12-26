@@ -258,9 +258,9 @@ export default function MyRiskStudent() {
 					),
 					위험타입: r.riskType ? <span className="chip">{r.riskType}</span> : <span className="muted">-</span>,
 					위험레벨: <span className={`badge ${badgeClassByLevel(r.riskLevel)}`}>{levelLabel(r.riskLevel)}</span>,
-					AI요약: <div className="clamp-2">{r.aiSummary ?? '-'}</div>,
+					// AI요약: <div className="clamp-2">{r.aiSummary ?? '-'}</div>,
 					교수권장: <div className="clamp-2">{r.aiRecommendation ?? '-'}</div>,
-					태그: renderTags(r.aiReasonTags),
+					'AI요약(태그)': renderTags(r.aiReasonTags),
 					업데이트: <span className="muted">{fmtDateTime(r.updatedAt) ?? '-'}</span>,
 
 					...(showConsultButton && {
@@ -350,9 +350,9 @@ export default function MyRiskStudent() {
 		'학생정보',
 		'위험타입',
 		'위험레벨',
-		'AI요약',
+		// 'AI요약',
 		'교수권장',
-		'태그',
+		'AI요약(태그)',
 		'업데이트',
 		'상담요청',
 	];
