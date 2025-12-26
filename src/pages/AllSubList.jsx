@@ -8,7 +8,7 @@ import InputForm from '../components/form/InputForm';
 import OptionForm from '../components/form/OptionForm';
 import PaginationForm from '../components/form/PaginationForm';
 
-// 전체 강의 조회 (검색 부분 구현 다시 해야함)
+// 전체 강의 조회
 export default function AllSubList() {
 	const { user, token, userRole } = useContext(UserContext);
 	const [subjectList, setSubjectList] = useState([]);
@@ -55,7 +55,7 @@ export default function AllSubList() {
 				학점: sub.credits,
 				수강인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: sub.syllabus ? '없음' : '조회', // 강의 계획서 이 부분 수정해야함
+				강의계획서: sub.syllabus ? '없음' : '🔎 조회',
 			}));
 			setSubjectList(formattedData);
 			setCurrentPage(res.data.currentPage);
@@ -136,6 +136,14 @@ export default function AllSubList() {
 		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
 	};
 
+	// enter 검색
+	const onKeyDown = (e) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSearch();
+		}
+	};
+
 	return (
 		<>
 			<h2>전체 강의 조회</h2>
@@ -155,6 +163,7 @@ export default function AllSubList() {
 					type="text"
 					value={searchForm.deptName}
 					onChange={handleChange}
+					onKeyDown={onKeyDown}
 					placeholder="학과 입력"
 				/>
 
@@ -163,6 +172,7 @@ export default function AllSubList() {
 					name="name"
 					value={searchForm.name}
 					onChange={handleChange}
+					onKeyDown={onKeyDown}
 					placeholder="강의명 검색"
 				/>
 

@@ -144,7 +144,6 @@ function App() {
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
 								<Route path="/grade/total" element={<TotalGrade />} />
-								<Route path="/grade/policy" element={<GradePolicy />} />
 							</Route>
 							{/* ================= PROFESSOR 전용 ================= */}
 							<Route element={<ProtectedRoute allowedRoles={['professor']} />}>
@@ -157,6 +156,7 @@ function App() {
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
 							{/* ================= 학생, 교수 전용 (비디오룸, 상담 관리) ================= */}
+							<Route path="/grade/policy" element={<GradePolicy />} />
 							<Route element={<ProtectedRoute allowedRoles={['professor', 'student']} />}>
 								<Route
 									path="/counseling/manage"
