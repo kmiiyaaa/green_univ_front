@@ -14,7 +14,13 @@ const DAY_KR = {
 	SUNDAY: '일',
 };
 
-export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
+export default function CounselingReserveDetail({
+	counselingSchedule,
+	subId,
+	subName,
+	onReserveSuccess,
+	setSelectedSubjectId,
+}) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
 	const { refresh } = useContext(CounselingRefreshContext);
@@ -45,6 +51,7 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 			onReserveSuccess?.(); // 예약 목록 새로고침
 			setSelected(null);
 			setReason('');
+			setSelectedSubjectId(null);
 			refresh();
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '상담 신청 실패');

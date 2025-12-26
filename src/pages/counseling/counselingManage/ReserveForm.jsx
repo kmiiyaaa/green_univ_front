@@ -3,7 +3,7 @@ import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
 import CounselingReserveDetail from '../student/CounselingReserveDetail';
 // 상담 예약 폼 컴포넌트
-export default function ReserveForm() {
+export default function ReserveForm({ paramId }) {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const [schedules, setSchedules] = useState([]);
@@ -18,6 +18,10 @@ export default function ReserveForm() {
 	useEffect(() => {
 		fetchSubjectsThisSemester();
 	}, [fetchSubjectsThisSemester]);
+
+	useEffect(() => {
+		if (paramId) setSelectedSubjectId(paramId);
+	}, [paramId]);
 
 	// 과목 선택 시 상담 일정 조회
 	const fetchCounselingSchedules = useCallback(async (subjectId) => {
@@ -50,6 +54,7 @@ export default function ReserveForm() {
 					<CounselingReserveDetail
 						counselingSchedule={schedules}
 						subId={selectedSubjectId}
+						setSelectedSubjectId={setSelectedSubjectId}
 						subName={subName}
 						onReserveSuccess={async () => {
 							await fetchMyReserveList(); // 기존: 목록 갱신
