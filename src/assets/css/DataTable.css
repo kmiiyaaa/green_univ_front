@@ -48,7 +48,7 @@
 }
 
 .data-table tbody tr:nth-child(even) {
-	background-color: #f9fafb;
+	background-color: #f9fbf9;
 }
 
 .data-table tbody tr:hover {
@@ -58,7 +58,7 @@
 }
 
 .data-table tbody tr:hover td:first-child {
-	border-left: 3px solid var(--primary-green);
+	background-color: #f3ecec;
 }
 
 .data-table tbody tr.rowClick {

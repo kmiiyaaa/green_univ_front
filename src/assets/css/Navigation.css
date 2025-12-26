@@ -1,154 +1,220 @@
-/* =========================
-   Navigation.css
-   SIDEBAR (왼쪽 사이드바) - 버튼형 카드 스타일
-
-   ✅ 컨셉
-   - "쭉 깔린 패널" 제거
-   - 메뉴 개수만큼만 버튼처럼
-   - 배경 초록 + 글씨 흰색
-   - 아이콘 위 / 라벨 아래 (세로 스택)
-   - 글씨/아이콘 컴팩트
-   - 메뉴 묶음 위치 아래로 내림
-========================= */
-
 :root {
 	--primary-green: #15803d;
 	--primary-green-dark: #0f6b3a;
 
-	--border-soft: #e5e7eb;
-
+	--border-soft: rgba(15, 23, 42, 0.1);
+	--shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.06);
+	--header-accent: rgba(21, 128, 61, 0.28);
 	--text-main: #111827;
 	--text-sub: #6b7280;
 
-	/* ✅ 사이드바 메뉴 전체를 아래로 내리는 값 */
-	--sidebar-menu-offset: 70px; /* 60~80px 사이에서 취향 조절 */
+	--radius-lg: 16px;
+	--radius-md: 12px;
+
+	--header-h: 104px;
+	--sidebar-w: 252px;
 }
 
 /* =========================
-   SIDEBAR 컨테이너
+   SIDEBAR (레이아웃 그리드 안에서 자연스럽게)
 ========================= */
-
 .sidebar {
-	width: 240px;
-	background: transparent;
-	color: var(--text-main);
-
-	/* ✅ '패널처럼 길게' 보이는 느낌 제거 */
-	height: auto;
-
-	/* ✅ 스크롤 시 따라다니게 유지 */
-	position: sticky;
-	top: 104px;
-
-	border: none;
-	box-shadow: none;
-
-	overflow: visible;
+	width: var(--sidebar-w);
 	flex-shrink: 0;
+
+	position: sticky;
+	top: var(--header-h);
+
+	align-self: start;
 }
 
 /* =========================
-   메뉴 묶음
+   패널 카드 (길게 깔린 느낌 X)
 ========================= */
+.sidebar-panel {
+	background: #fff;
+	border: 1px solid var(--border-soft);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-soft);
 
+	padding: 12px;
+}
+
+/* 메뉴 묶음 */
 .sidebar-nav {
 	display: flex;
 	flex-direction: column;
-
-	gap: 10px;
-	padding: 6px 0;
-
-	/* ✅ 보라색 위치 -> 빨간색 위치로 내려주는 핵심 */
-	margin-top: var(--sidebar-menu-offset);
+	gap: 8px;
 }
 
 /* =========================
-   메뉴 버튼(카드)
-   - 배경: 초록
-   - 글씨/아이콘: 흰색
-   - 아이콘 위 / 라벨 아래
+   메뉴 버튼 (기능성/가독성 강화)
+   - Active: 좌측 인디케이터 + 은은한 초록 배경
 ========================= */
-
 .sidebar-item {
-	/* ✅ 세로 스택 */
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	gap: 2px;
+	gap: 10px;
 
-	/* ✅ 버튼 크기 정돈 */
-	padding: 14px 10px;
-	min-height: 64px;
-
-	/* ✅ 색상 반전 */
-	background: rgb(43, 73, 46);
-	color: #ffffff;
-
-	/* 테두리도 초록 계열로 깔끔하게 */
-	border: 1.3px solid rgba(68, 68, 68, 0.815);
-	border-radius: 12px;
+	padding: 25px;
+	border-radius: var(--radius-md);
 
 	text-decoration: none;
+	color: var(--text-main);
 
-	font-size: 12.5px;
-	font-weight: 650;
+	border: 1px solid transparent;
+	background: transparent;
 
-	box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
-
-	transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.08s ease,
-		filter 0.12s ease;
+	transition: background 0.16s ease, border-color 0.16s ease, transform 0.08s ease, box-shadow 0.16s ease;
+	position: relative;
 }
 
-/* Material Icon */
+/* 좌측 인디케이터(Active에서만 보임) */
+.sidebar-item::before {
+	content: '';
+	position: absolute;
+	left: 8px;
+	width: 4px;
+	height: 18px;
+	border-radius: 999px;
+	background: transparent;
+}
+
+/* 아이콘: 원형 배지 */
 .sidebar-item .material-symbols-rounded {
-	font-size: 17.5px;
-	color: #ffffff;
+	font-size: 18px;
 	line-height: 1;
+
+	width: 30px;
+	height: 30px;
+	border-radius: 999px;
+
+	display: grid;
+	place-items: center;
+
+	background: #f3f4f6;
+	color: #374151;
+
+	flex: 0 0 30px;
 }
 
 /* 라벨 */
 .sidebar-label {
-	font-size: 12px;
-	font-weight: 700;
-	color: #ffffff;
-	text-align: center;
+	font-size: 15px;
+	font-weight: 750;
+	line-height: 1.2;
+	color: var(--text-main);
 
-	/* ✅ 긴 문구 줄바꿈 안전 처리 */
+	/* 긴 텍스트 대응 */
 	white-space: normal;
 	word-break: keep-all;
-	line-height: 1.25;
 }
 
-/* =========================
-   Hover / Active
-========================= */
-
+/* hover */
 .sidebar-item:hover {
-	filter: brightness(1.05);
-	border-color: rgba(255, 255, 255, 0.35);
-	box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+	background: #f3f4f6;
+	border-color: rgba(15, 23, 42, 0.1);
 	transform: translateY(-1px);
 }
 
-/* 활성은 조금 더 진하게 */
+/* active */
 .sidebar-item.active {
-	background: rgb(40, 94, 65);
-	border-color: rgba(255, 255, 255, 0.45);
-	border: 1px solid rgb(255, 255, 255);
-	font-weight: 800;
-	box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
+	background: rgba(21, 128, 61, 0.1);
+	border-color: rgba(21, 128, 61, 0.2);
+	box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
-.sidebar-item.active .material-symbols-rounded,
-.sidebar-item.active .sidebar-label {
-	color: #ffffff;
+.sidebar-item.active::before {
+	background: var(--primary-green);
 }
 
-/* =========================
-   반응형
-========================= */
+.sidebar-item.active .material-symbols-rounded {
+	background: rgba(21, 128, 61, 0.14);
+	color: var(--primary-green-dark);
+}
 
+/* 기존 .sidebar 유지 (데스크탑) */
+.sidebar {
+	width: var(--sidebar-w, 252px);
+	position: sticky;
+	top: var(--header-h, 104px);
+	align-self: start;
+}
+
+/* 모바일: sidebar를 숨기지 말고, 상단 가로 메뉴로 바꿈 */
+@media (max-width: 768px) {
+	.sidebar {
+		width: 100%;
+		position: sticky;
+		top: var(--header-h, 104px);
+		z-index: 20;
+
+		/* 좌측 레이아웃 느낌 제거 */
+		align-self: stretch;
+	}
+
+	/* 패널을 가로 스크롤 바 형태로 */
+	.sidebar-panel {
+		padding: 10px 10px;
+		border-radius: 14px;
+	}
+
+	/* 세로 리스트 → 가로 스크롤 */
+	.sidebar-nav {
+		flex-direction: row;
+		gap: 8px;
+		overflow-x: auto;
+		overflow-y: hidden;
+		padding-bottom: 2px;
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* 스크롤바 너무 튀면 */
+	.sidebar-nav::-webkit-scrollbar {
+		height: 6px;
+	}
+	.sidebar-nav::-webkit-scrollbar-thumb {
+		background: rgba(15, 23, 42, 0.18);
+		border-radius: 999px;
+	}
+
+	/* 버튼을 칩 형태로 */
+	.sidebar-item {
+		flex: 0 0 auto;
+		padding: 20px 12px;
+		border-radius: 999px;
+
+		/* 칩 느낌 */
+		background: #f3f4f6;
+		border: 1px solid rgba(15, 23, 42, 0.1);
+		scroll-snap-align: start;
+	}
+
+	/* 아이콘은 모바일에서 빼도 깔끔(원하면 유지 가능) */
+	.sidebar-item .material-symbols-rounded {
+		display: none;
+	}
+
+	.sidebar-label {
+		font-size: 12.5px;
+		font-weight: 900;
+		white-space: nowrap;
+	}
+
+	/* active 칩 */
+	.sidebar-item.active {
+		background: rgba(21, 128, 61, 0.12);
+		border-color: rgba(21, 128, 61, 0.28);
+		box-shadow: none;
+	}
+
+	.sidebar-item::before {
+		display: none;
+	}
+}
+
+/* 모바일에서는 기존처럼 숨김 */
 @media (max-width: 768px) {
 	.sidebar {
 		display: none;

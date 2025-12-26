@@ -31,6 +31,7 @@ export default function Navigation() {
 					<NavLink
 						key={item.key}
 						to={item.path}
+						end={(item.path === '/sugang', '/tuition')} // 정확매칭(=list에서 같이 active 안 됨) css 때문에 추가
 						className={({ isActive }) => (isActive ? 'sidebar-item active' : 'sidebar-item')}
 					>
 						{item.icon && <span className="material-symbols-rounded">{item.icon}</span>}

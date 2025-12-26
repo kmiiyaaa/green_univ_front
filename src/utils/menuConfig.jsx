@@ -7,7 +7,7 @@ const HEADER_ORDER = {
 		{ key: 'ENROLL', label: '수강신청' },
 		{ key: 'GRADE', label: '성적' },
 		{ key: 'INFO', label: '학사 정보' },
-		{ key: 'COUNSELING', label: '학생 지원' },
+		{ key: 'COUNSELING', label: '학업지원·상담' },
 	],
 	staff: [
 		{ key: 'HOME', label: '홈' },
@@ -21,7 +21,7 @@ const HEADER_ORDER = {
 		{ key: 'MY', label: 'MY' },
 		{ key: 'COURSE', label: '수업' },
 		{ key: 'INFO', label: '학사 정보' },
-		{ key: 'COUNSELING_MANAGEMENT', label: '학생 관리' },
+		{ key: 'COUNSELING_MANAGEMENT', label: '모니터링·상담' },
 	],
 };
 

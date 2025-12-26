@@ -3,6 +3,7 @@ import api from '../../../api/httpClient';
 import OptionForm from '../../../components/form/OptionForm';
 import ProfessorCounselRequestModal from './CounselRequestModal';
 import '../../../assets/css/MyRiskStudent.css';
+import DataTable from '../../../components/table/DataTable';
 
 // 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';
@@ -16,18 +17,17 @@ export default function MyRiskStudent() {
 	// 학생 통합(탈락 위험) 목록
 	const [studentList, setStudentList] = useState([]);
 
+	// 우리학과 위험학생 클릭 시, 해당 학생의 "위험 과목 리스트"를 별도로 보관
+	const [deptRiskList, setDeptRiskList] = useState([]);
+
 	// 학생 선택(아래 과목 위험 테이블 필터용)
 	const [selectedStudentId, setSelectedStudentId] = useState('');
-
-	// 내 교수 id , UserProvider에서 localStorage에 user 저장해두는 경우 대응
-	const myProfessorId = JSON.parse(localStorage.getItem('user') || '{}')?.id ?? localStorage.getItem('userId') ?? null;
 
 	const handleStudentRowClick = (row) => {
 		// studentData에서 숨김키로 __studentId 를 넣어두고 있어서 그걸 우선 사용
 		// 혹시 다른 형태로 넘어와도 대응하도록 studentId도 fallback 처리
 		const id = row?.__studentId ?? row?.studentId;
 		if (!id) return;
-
 		setSelectedStudentId((prev) => (String(prev) === String(id) ? '' : String(id)));
 	};
 
@@ -44,13 +44,25 @@ export default function MyRiskStudent() {
 
 	useEffect(() => {
 		loadProfessorSubjects();
+		loadDeptStudents();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		loadRiskStudents();
+		loadMyRiskStudents();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subject, riskLevel]);
+
+	// 선택 학생이 바뀌면 해당 학생의 위험 과목 조회
+	useEffect(() => {
+		if (!selectedStudentId) {
+			setDeptRiskList([]);
+			return;
+		}
+		loadDeptStudentRisks(selectedStudentId);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedStudentId]);
 
 	// 교수의 강의 목록
 	const loadProfessorSubjects = async () => {
@@ -73,6 +85,75 @@ export default function MyRiskStudent() {
 
 	// 레벨/ 태그 처리
 	const levelLabel = (lvl) => LEVEL_LABEL[lvl] ?? (lvl || '-');
+	// 우리학과 위험학생
+	const loadDeptStudents = async () => {
+		try {
+			const res = await api.get('/risk/professor/overview');
+			const students = res.data?.departmentStudents ?? [];
+			setStudentList(students);
+
+			// 선택된 학생이 없으면 선택 해제
+			if (selectedStudentId) {
+				const exists = students.some((s) => String(s.studentId) === String(selectedStudentId));
+				if (!exists) setSelectedStudentId('');
+			}
+		} catch (e) {
+			console.log('우리학과 위험학생(통합) 목록을 불러올 수 없습니다: ', e);
+		}
+	};
+
+	// 내 담당 과목 위험학생(상담 완료/미완료 분리)
+	const loadMyRiskStudents = async () => {
+		try {
+			const params = {};
+			if (subject) params.subjectId = subject;
+			if (riskLevel) params.level = riskLevel;
+
+			// 이 API는 pending/resolved만 내려줌 (students 없음)
+			const res = await api.get('/risk/list/grouped', { params });
+			const pending = res.data?.pending ?? [];
+			const resolved = res.data?.resolved ?? [];
+
+			setPendingList(pending);
+			setCompletedList(resolved);
+		} catch (e) {
+			alert(e?.response?.data?.message || '에러 발생');
+		}
+	};
+
+	// 우리학과 위험학생 클릭 → 해당 학생의 위험 과목 전체 조회
+	const loadDeptStudentRisks = async (studentId) => {
+		try {
+			const params = { studentId };
+			// 필요하면 레벨 필터를 붙일 수도 있음
+			// if (riskLevel) params.level = riskLevel;
+
+			const res = await api.get('/risk/list/department', { params });
+			const list = res.data?.pending ?? [];
+			setDeptRiskList(list);
+		} catch (e) {
+			console.log('선택 학생 위험과목을 불러올 수 없습니다: ', e);
+			setDeptRiskList([]);
+		}
+	};
+
+	// 상담요청 모달 열기
+	const handleOpenModal = (r) => {
+		setTarget({
+			studentId: r.studentId,
+			studentName: r.studentName,
+			subjectId: r.subjectId,
+			subjectName: r.subjectName,
+		});
+		setOpenModal(true);
+	};
+
+	// 레벨/ 태그 처리
+	const levelLabel = (lvl) => {
+		if (lvl === 'DANGER') return '위험';
+		if (lvl === 'WARNING') return '경고';
+		return lvl || '-';
+	};
 
 	const renderTags = (tags) => {
 		const arr = Array.isArray(tags)
@@ -153,127 +234,148 @@ export default function MyRiskStudent() {
 		setOpenModal(true);
 	};
 
-	// 학생별 담당교수ID 맵 (버튼 disable 판단용)
-	const assignedByStudentId = useMemo(() => {
-		const m = new Map();
-		(studentList ?? []).forEach((s) => {
-			if (s?.studentId != null) m.set(String(s.studentId), s?.assignedProfessorId ?? null);
+	// 우리과 위험학생(통합) 뱃지 처리
+	const overallLabel = (lvl) => OVERALL_LABEL[lvl] ?? '정상';
+	const overallBadgeClass = (lvl) => {
+		if (lvl === 'DANGER') return 'badge-danger';
+		if (lvl === 'WARNING') return 'badge-warn';
+		return 'badge-neutral';
+	};
+
+	// 상담 완료/미완료로 분리된 위험학생 목록 + 학생 통합 위험 목록
+	const loadRiskStudents = useCallback(async () => {
+		try {
+			const params = {};
+			if (subject) params.subjectId = subject;
+			if (riskLevel) params.level = riskLevel;
+
+			const [resFiltered, resAll] = await Promise.all([
+				api.get('/risk/list/grouped', { params }),
+				api.get('/risk/list/grouped'),
+			]);
+
+			const pending = resFiltered.data?.pending ?? [];
+			const resolved = resFiltered.data?.resolved ?? [];
+
+			const allStudents = resAll.data?.students ?? [];
+			const students = (allStudents ?? []).filter((s) => s?.overallLevel === 'DANGER' || s?.overallLevel === 'WARNING');
+
+			setPendingList(pending);
+			setCompletedList(resolved);
+			setStudentList(students);
+
+			// 선택된 학생이 더 이상 없으면 선택 해제
+			if (selectedStudentId) {
+				const exists = students.some((s) => String(s.studentId) === String(selectedStudentId));
+				if (!exists) setSelectedStudentId('');
+			}
+		} catch (e) {
+			alert(e?.response?.data?.message || '에러 발생');
+		}
+	}, [riskLevel, selectedStudentId, subject]);
+
+	// 상담요청 모달 열기
+	const handleOpenModal = (r) => {
+		setTarget({
+			studentId: r.studentId,
+			studentName: r.studentName,
+			subjectId: r.subjectId,
+			subjectName: r.subjectName,
 		});
-		return m;
-	}, [studentList]);
+		setOpenModal(true);
+	};
 
-	// 테이블 데이터 변환(과목 위험 row)
-	const formatTableData = useCallback(
-		(list, showConsultButton = false) => {
-			return (list ?? []).map((r) => {
-				// DETECTED 상태이고
-				// 아직 요청이 없거나(consultState null/undefined), 거절돼서 재요청 가능(CONSULT_REJECTED)이면 버튼 노출
-				// 이미 요청대기/확정 상태면 버튼 막기
-				const state = r.consultState;
+	// 내 과목 여부 판단용
+	const mySubjectIdSet = useMemo(() => {
+		return new Set((subjectOptions ?? []).map((o) => String(o.value)).filter(Boolean));
+	}, [subjectOptions]);
 
-				// 버튼 활성화는 consultState 기준으로 판단
-				const isAlreadyPending = state === 'CONSULT_REQ';
-				const isAlreadyApproved = state === 'CONSULT_APPROVED';
+	// 선택 학생 테이블에서는 내 과목만 상담요청 가능하게 막기
+	const formatTableData = (list, showConsultButton = false, onlyMySubjectCanRequest = false) => {
+		return (list ?? []).map((r) => {
+			// DETECTED 상태이고 + consultState null + CONSULT_REJECTED 버튼나오게
+			// 이미 요청대기/확정 상태면 버튼 막기 , CONSULT_CANCELED도 재요청 가능으로 처리
+			const isAlreadyPending = r.consultState === 'CONSULT_REQ';
+			const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
+			const isRejected = r.consultState === 'CONSULT_REJECTED';
+			const isCanceled = r.consultState === 'CONSULT_CANCELED';
 
-				const isRejected = state === 'CONSULT_REJECTED';
-				const isCanceled = state === 'CONSULT_CANCELED';
-				const isNo_Show = state === 'CONSULT_NO_SHOW';
+			// 내 과목인지 확인
+			const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
-				//  담당교수 아닌 경우 "보이기만" 하고 버튼은 막기
-				const assignedPid = assignedByStudentId.get(String(r.studentId)) ?? null;
-				const assignedToOther =
-					assignedPid != null && myProfessorId != null && String(assignedPid) !== String(myProfessorId);
+			// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
+			const canRequestBase =
+				showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
 
-				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
-				// + 담당교수 아닌 경우 요청 버튼만 막기
-				const canRequest =
-					showConsultButton &&
-					!isAlreadyPending &&
-					!isAlreadyApproved &&
-					(!state || isRejected || isCanceled || isNo_Show) &&
-					!assignedToOther;
+			const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
+			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
-				const requestBtnLabel = isRejected || isCanceled || isNo_Show ? '재요청' : '상담 요청';
+			return {
+				// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
+				__studentId: r.studentId,
+				__studentName: r.studentName,
 
-				return {
-					// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
-					__studentId: r.studentId,
-					__studentName: r.studentName,
+				과목: <span className="cell-strong">{r.subjectName ?? '-'}</span>,
+				학생정보: (
+					<div className="student-cell">
+						<div className="student-name">{r.studentName ?? '-'}</div>
+						<div className="student-id">{r.studentId ?? ''}</div>
+					</div>
+				),
+				위험타입: r.riskType ? <span className="chip">{r.riskType}</span> : <span className="muted">-</span>,
+				위험레벨: (
+					<span
+						className={`badge ${
+							r.riskLevel === 'DANGER' ? 'badge-danger' : r.riskLevel === 'WARNING' ? 'badge-warn' : 'badge-neutral'
+						}`}
+					>
+						{levelLabel(r.riskLevel)}
+					</span>
+				),
+				AI요약: <div className="clamp-2">{r.aiSummary ?? '-'}</div>,
+				교수권장: <div className="clamp-2">{r.aiRecommendation ?? '-'}</div>,
+				태그: renderTags(r.aiReasonTags),
+				업데이트: <span className="muted">{fmtDateTime(r.updatedAt) ?? '-'}</span>,
 
-					과목: <span className="cell-strong">{r.subjectName ?? '-'}</span>,
-					학생정보: (
-						<div className="student-cell">
-							<div className="student-name">{r.studentName ?? '-'}</div>
-							<div className="student-id">{r.studentId ?? ''}</div>
-						</div>
-					),
-					위험타입: r.riskType ? <span className="chip">{r.riskType}</span> : <span className="muted">-</span>,
-					위험레벨: (
-						<span
-							className={`badge ${
-								r.riskLevel === 'DANGER' ? 'badge-danger' : r.riskLevel === 'WARNING' ? 'badge-warn' : 'badge-neutral'
-							}`}
+				...(showConsultButton && {
+					상담요청: canRequest ? (
+						<button
+							type="button"
+							className="btn btn-primary"
+							onClick={(ev) => {
+								ev.stopPropagation();
+								handleOpenModal(r);
+							}}
 						>
-							{levelLabel(r.riskLevel)}
-						</span>
+							{requestBtnLabel}
+						</button>
+					) : onlyMySubjectCanRequest && !isMySubject ? (
+						<span className="status-pill"></span>
+					) : r.consultState === 'CONSULT_REQ' ? (
+						<span className="status-pill">요청 대기</span>
+					) : r.consultState === 'CONSULT_APPROVED' ? (
+						<span className="status-pill ok">상담 확정</span>
+					) : r.consultState === 'CONSULT_REJECTED' ? (
+						<span className="status-pill warn">재요청 가능</span>
+					) : r.consultState === 'CONSULT_CANCELED' ? (
+						<span className="status-pill warn">취소됨(재요청 가능)</span>
+					) : (
+						<span className="muted">상태 확인</span>
 					),
-					AI요약: <div className="clamp-2">{r.aiSummary ?? '-'}</div>,
-					교수권장: <div className="clamp-2">{r.aiRecommendation ?? '-'}</div>,
-					태그: renderTags(r.aiReasonTags),
-					업데이트: <span className="muted">{fmtDateTime(r.updatedAt) ?? '-'}</span>,
-					...(showConsultButton && {
-						상담요청: canRequest ? (
-							<button
-								type="button"
-								className="btn btn-primary"
-								onClick={(ev) => {
-									ev.stopPropagation();
-									handleOpenModal(r);
-								}}
-							>
-								{requestBtnLabel}
-							</button>
-						) : isAlreadyPending ? (
-							<span className="status-pill">요청 대기</span>
-						) : isAlreadyApproved ? (
-							<span className="status-pill ok">상담 확정</span>
-						) : assignedToOther ? (
-							// 학과 교수 모두에게 "과목은 보이되", 버튼만 막기
-							<button
-								type="button"
-								className="btn btn-disabled"
-								disabled
-								onClick={(ev) => ev.stopPropagation()}
-								title="이미 다른 담당교수가 처리 중입니다."
-							>
-								담당교수 처리중
-							</button>
-						) : isRejected ? (
-							<span className="status-pill warn">재요청 가능</span>
-						) : isCanceled ? (
-							<span className="status-pill warn">취소됨(재요청 가능)</span>
-						) : (
-							<span className="muted">상태 확인</span>
-						),
-					}),
-				};
-			});
-		},
-		[assignedByStudentId, myProfessorId]
-	);
+				}),
+			};
+		});
+	};
 
-	// 학생 선택되면 과목 위험 테이블을 해당 학생만 필터링
-	const filteredPendingList = useMemo(() => {
-		if (!selectedStudentId) return pendingList;
-		return (pendingList ?? []).filter((r) => String(r.studentId) === String(selectedStudentId));
-	}, [pendingList, selectedStudentId]);
+	// 내 담당 과목 위험학생 테이블 데이터
+	const pendingData = useMemo(() => formatTableData(pendingList, true, false), [pendingList]);
+	const completedData = useMemo(() => formatTableData(completedList, false, false), [completedList]);
 
-	const pendingData = useMemo(() => formatTableData(filteredPendingList, true), [filteredPendingList, formatTableData]);
-	const completedData = useMemo(() => formatTableData(completedList, false), [completedList, formatTableData]);
+	// 선택 학생 위험과목 테이블 데이터
+	const deptStudentRiskData = useMemo(() => formatTableData(deptRiskList, true, true), [deptRiskList]);
 
 	// 학생 통합(탈락 위험) 테이블
 	const studentHeaders = ['학생정보', '통합위험', '위험과목수', '담당교수', '업데이트'];
-
 	const studentData = useMemo(() => {
 		return (studentList ?? []).map((s) => ({
 			// 클릭에서 꺼내 쓸 수 있게 id를 "숨김키 + 일반키" 둘 다 유지
@@ -338,9 +440,7 @@ export default function MyRiskStudent() {
 		<div className="risk-wrap">
 			{/* 상단 헤더 */}
 			<div className="risk-page-head">
-				<div>
-					<h2 className="risk-page-title">(이번 학기) 내 담당 위험학생</h2>
-				</div>
+				<div></div>
 
 				<div className="risk-stat-row">
 					<div className="risk-stat">
@@ -354,6 +454,22 @@ export default function MyRiskStudent() {
 				</div>
 			</div>
 
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+			{selectedStudentId ? (
+				<div className="risk-section">
+					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
+				</div>
+			) : null}
+
+			<hr />
 			{/* 필터 */}
 			<div className="filter-bar">
 				<OptionForm
@@ -372,32 +488,33 @@ export default function MyRiskStudent() {
 				/>
 			</div>
 
-			{/* 탈락 위험 학생(통합) */}
-			<RiskStudentOverall
-				studentHeaders={studentHeaders}
-				studentData={studentData}
-				studentListLength={studentList.length}
-				onRowClick={handleStudentRowClick}
-				selectedStudentId={selectedStudentId}
-				selectedStudentName={selectedStudentName}
-			/>
-
-			<hr />
-
 			{/* 미완료 섹션 */}
 			<RiskPending
 				pendingHeaders={pendingHeaders}
 				pendingData={pendingData}
-				filteredPendingLength={filteredPendingList.length}
+				filteredPendingLength={pendingList.length}
 				selectedStudentId={selectedStudentId}
 			/>
 
 			<hr />
+
+			{/* 완료 섹션 */}
+			<RiskCompleted
+				completedHeaders={completedHeaders}
+				completedData={completedData}
+				completedLength={completedList.length}
+			/>
+
 			<ProfessorCounselRequestModal
 				open={openModal}
 				target={target}
 				onClose={() => setOpenModal(false)}
-				onSuccess={() => loadRiskStudents()}
+				onSuccess={() => {
+					loadMyRiskStudents();
+					// 선택 학생 열려있으면 그 학생 위험과목도 같이 갱신
+					if (selectedStudentId) loadDeptStudentRisks(selectedStudentId);
+					loadDeptStudents();
+				}}
 			/>
 		</div>
 	);
