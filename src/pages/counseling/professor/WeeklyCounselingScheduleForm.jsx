@@ -115,8 +115,6 @@ export default function WeeklyCounselingScheduleForm() {
 			await api.post('/counseling/professor', {
 				weekStartDate: dates[0], // 이번 주 월요일
 				slots,
-				subYear: 2025,
-				semester: 1,
 			});
 
 			alert('상담 일정이 저장되었습니다.');
