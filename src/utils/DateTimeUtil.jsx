@@ -98,7 +98,7 @@ export function formatDateLocal(input) {
 	return `${yyyy}-${mm}-${dd}`;
 }
 
-const DAY_KR = {
+export const DAY_KR = {
 	SUNDAY: '일',
 	MONDAY: '월',
 	TUESDAY: '화',
