@@ -9,16 +9,16 @@ export const isPastSlot = (date, startTime) => {
 };
 
 // 날짜별로 그룹 만드는 함수
-export const groupByDate = (schedules) => {
-	const result = {};
-	schedules.forEach((schedule) => {
-		const date = schedule.counselingDate;
-		if (!result[date]) result[date] = [];
-		result[date].push(schedule);
-	});
+// export const groupByDate = (schedules) => {
+// 	const result = {};
+// 	schedules.forEach((schedule) => {
+// 		const date = schedule.counselingDate;
+// 		if (!result[date]) result[date] = [];
+// 		result[date].push(schedule);
+// 	});
 
-	return result;
-};
+// 	return result;
+// };
 
 // 오늘 날짜 기준으로 weekStartDate 계산
 export const getThisAndNextWeekStartDates = () => {

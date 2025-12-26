@@ -46,9 +46,7 @@ import MyEvaluation from './pages/evaluation/MyEvaluation';
 import Timetable from './pages/stuSub/Timetable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
-import CounselingEntry from './pages/CounselingEntry';
 import VideoCounseling from './pages/video/VideoCounseling';
-import MyApprovedCounseling from './pages/counseling/professor/MyApprovedCounseling';
 import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCounselingScheduleForm';
 import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
 import MyStatus from './pages/counseling/student/MyStatus';
@@ -62,7 +60,6 @@ import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
-import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
 import SubjectStudentList from './pages/professor/SubjectStudentList';
 
 function App() {
@@ -184,7 +181,6 @@ function App() {
 										</CounselingRefreshProvider>
 									}
 								/>
-								<Route path="/counseling" element={<CounselingEntry />} />
 								<Route path="/videotest" element={<VideoCounseling />} />
 								<Route path="/counseling/list" element={<CounselingList />} />
 							</Route>

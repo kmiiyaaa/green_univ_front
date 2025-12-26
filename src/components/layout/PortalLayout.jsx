@@ -29,7 +29,7 @@ function PortalLayout() {
 					<Chat />
 				</main>
 			</div>
-			<Footer />
+			<Footer className="portal-footer" />
 		</div>
 	);
 }

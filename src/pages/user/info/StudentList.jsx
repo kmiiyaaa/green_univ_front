@@ -67,7 +67,7 @@ export default function StudentList() {
 		searchStudent(0); // 즉시 검색
 	};
 
-	console.log(lists);
+	// console.log(lists);
 
 	const tableData = useMemo(() => {
 		return lists.map((s) => ({
@@ -84,6 +84,13 @@ export default function StudentList() {
 		}));
 	}, [lists]);
 
+	const onKeyDown = (e) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSearchSubmit(e);
+		}
+	};
+
 	return (
 		<div className="list-page">
 			<div className="list-card">
@@ -96,8 +103,20 @@ export default function StudentList() {
 
 				<div className="filters">
 					<form className="filters-form" onSubmit={handleSearchSubmit}>
-						<InputForm label="학번" name="studentId" placeholder="검색어를 입력하세요" onChange={handleChange} />
-						<InputForm label="학과 번호" name="deptId" placeholder="검색어를 입력하세요" onChange={handleChange} />
+						<InputForm
+							label="학번"
+							name="studentId"
+							placeholder="검색어를 입력하세요"
+							onChange={handleChange}
+							onKeyDown={onKeyDown}
+						/>
+						<InputForm
+							label="학과 번호"
+							name="deptId"
+							placeholder="검색어를 입력하세요"
+							onChange={handleChange}
+							onKeyDown={onKeyDown}
+						/>
 
 						<div className="filters-actions">
 							<button className="btn-primary" type="submit">

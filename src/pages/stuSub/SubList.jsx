@@ -140,6 +140,14 @@ export default function SubList() {
 		{ value: '교양', label: '교양' },
 	];
 
+	// enter 검색
+	const onKeyDown = (e) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSearch();
+		}
+	};
+
 	return (
 		<>
 			<h2>강의 시간표 조회</h2>
@@ -159,6 +167,7 @@ export default function SubList() {
 					type="text"
 					value={searchForm.deptName}
 					onChange={handleChange}
+					onKeyDown={onKeyDown}
 					placeholder="학과 입력"
 				/>
 
@@ -167,6 +176,7 @@ export default function SubList() {
 					name="name"
 					value={searchForm.name}
 					onChange={handleChange}
+					onKeyDown={onKeyDown}
 					placeholder="강의명 검색"
 				/>
 

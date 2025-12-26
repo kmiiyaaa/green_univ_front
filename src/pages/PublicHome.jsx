@@ -4,27 +4,13 @@ import '../assets/css/Home.css';
 import Login from './user/Login';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/httpClient';
+import { formatDateLocal } from '../utils/DateTimeUtil';
+import Footer from '../components/layout/Footer';
 
 function PublicHome() {
 	const navigate = useNavigate();
 	const [latestNotices, setLatestNotices] = useState([]); // 최신 공지
 	const [latestSchedules, setLatestSchedules] = useState([]); // 최신 학사 일정
-
-	// 날짜 표시 유틸(백에서 createdTimeFormatted 주면 그걸 우선 사용)
-	const formatDate = (n) => {
-		if (!n) return '';
-		if (n.createdTimeFormatted) return n.createdTimeFormatted;
-
-		const raw = n.createdTime;
-		if (!raw) return '';
-		const d = new Date(raw);
-		if (Number.isNaN(d.getTime())) return String(raw);
-
-		const yyyy = d.getFullYear();
-		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		const dd = String(d.getDate()).padStart(2, '0');
-		return `${yyyy}-${mm}-${dd}`;
-	};
 
 	const loadLatestNotices = async () => {
 		try {
@@ -45,7 +31,7 @@ function PublicHome() {
 
 	const loadLatestSchedules = async () => {
 		try {
-			const res = await api.get('/schedule'); // 또는 '/schedule/list'
+			const res = await api.get('/schedule');
 			const list = res.data.schedules || [];
 
 			// 시작일 기준 가까운 순 정렬(선택)
@@ -91,10 +77,7 @@ function PublicHome() {
 					</div>
 
 					{/* 왼쪽 푸터 */}
-					<footer className="public-left-footer">
-						<p>서울시 마포구 신촌로 176 그린대학교</p>
-						<p>Copyright © GREEN UNIVERSITY. All Rights Reserved.</p>
-					</footer>
+					<Footer className="public-left-footer" />
 				</div>
 			</section>
 
@@ -132,7 +115,7 @@ function PublicHome() {
 												{(n.category || '').replace('[', '').replace(']', '')}
 											</span>
 											<span className="public-notice-title">{n.title}</span>
-											<span className="public-notice-date">{formatDate(n)}</span>
+											<span className="public-notice-date">{formatDateLocal(n.createdTime)}</span>
 										</li>
 									))}
 								</ul>
