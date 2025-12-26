@@ -14,6 +14,7 @@ export default function ReserveForm({ paramId }) {
 	const [selectedSlot, setSelectedSlot] = useState(null);
 	const [reason, setReason] = useState('');
 	const { refresh } = useContext(CounselingRefreshContext);
+	const [loading, setLoading] = useState(false);
 
 	// 학생 수강 과목 조회
 	const fetchSubjectsThisSemester = useCallback(async () => {
@@ -47,6 +48,7 @@ export default function ReserveForm({ paramId }) {
 		}
 
 		try {
+			setLoading(true);
 			await api.post('/reserve', {
 				counselingScheduleId: selectedSlot.id,
 				subjectId: selectedSubjectId,
@@ -61,37 +63,38 @@ export default function ReserveForm({ paramId }) {
 		} catch (e) {
 			console.error(e);
 			alert(e?.response?.data?.message ?? '상담 신청 실패');
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
-		<div>
+		<div className="reserve-schedule">
 			{/* 과목 선택 */}
 			<SubjectSelect
 				subjects={subjects}
 				value={selectedSubjectId}
 				onChange={(e) => setSelectedSubjectId(e.target.value)}
 			/>
+
 			{/* 과목 선택 시 상담 일정 표시 */}
 			{selectedSubjectId && (
 				<div className="reserve-schedule">
 					{/* 과목 선택 시 날짜 선택 표시 */}
 					<SelectDateForCounseling userRole="student" subjectId={selectedSubjectId} onSelectSlot={handleSlotSelect} />
 
-					{/* 상담 사유 입력 */}
 					<div className="rf-reason-section">
 						<label className="rf-label">상담 사유</label>
 						<textarea
 							className="rf-textarea"
 							value={reason}
 							onChange={(e) => setReason(e.target.value)}
-							placeholder="상담 사유를 입력하세요"
+							placeholder="예) 성적 관련 상담이 필요합니다."
 							rows={4}
 						/>
 					</div>
 
-					{/* 신청 버튼 */}
-					<button className="rf-submit-btn" disabled={!selectedSlot || !reason.trim()} onClick={submit}>
+					<button className="rf-submit-btn" disabled={!selectedSlot || !reason.trim() || loading} onClick={submit}>
 						상담 신청
 					</button>
 				</div>

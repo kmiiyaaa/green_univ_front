@@ -1,50 +1,71 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/CounselingReserveDetail.css';
-import { useNavigate } from 'react-router-dom';
 import { CounselingRefreshContext } from '../counselingManage/util/CounselingRefreshContext';
 
-// 학생이 과목 선택해서 교수에게 상담 요청 보낼 때 뜨는 컴포넌트
+const DAY_KR = {
+	MONDAY: '월',
+	TUESDAY: '화',
+	WEDNESDAY: '수',
+	THURSDAY: '목',
+	FRIDAY: '금',
+	SATURDAY: '토',
+	SUNDAY: '일',
+};
+
 export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
-	const { refresh } = useContext(CounselingRefreshContext);
-	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 
-	const professor = counselingSchedule[0]?.professor;
+	// Provider 밖에서도 안 터지게 안전 처리
+	const ctx = useContext(CounselingRefreshContext);
+	const refresh = ctx?.refresh;
+
+	// 예약된 슬롯/지난 슬롯 제외
+	const visibleSchedule = useMemo(() => {
+		const arr = Array.isArray(counselingSchedule) ? counselingSchedule : [];
+		return arr.filter((s) => s?.reserved !== true).filter((s) => !isPastSlot(s?.counselingDate, s?.startTime));
+	}, [counselingSchedule]);
+
+	const professor = visibleSchedule[0]?.professor;
 
 	// 날짜별 그룹핑
 	const groupedByDate = useMemo(() => {
-		return counselingSchedule.reduce((acc, cur) => {
+		return visibleSchedule.reduce((acc, cur) => {
 			const date = cur.counselingDate;
 			if (!acc[date]) acc[date] = [];
 			acc[date].push(cur);
 			return acc;
 		}, {});
-	}, [counselingSchedule]);
+	}, [visibleSchedule]);
 
 	const submit = async () => {
-		if (!selected || !reason) return;
+		if (!selected || !reason || loading) return;
 
 		try {
+			setLoading(true);
+
 			await api.post('/reserve', {
 				counselingScheduleId: selected.id,
 				subjectId: subId,
 				reason,
 			});
+
 			alert('상담 신청 완료');
 			onReserveSuccess?.(); // 예약 목록 새로고침
 			setSelected(null);
 			setReason('');
-			setSelectedSubjectId(null);
-			refresh();
+			refresh?.(); // Provider 없어도 안전
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '상담 신청 실패');
 			setSelected(null);
+		} finally {
+			setLoading(false);
 		}
 	};
 
-	if (!Array.isArray(counselingSchedule) || counselingSchedule.length === 0) {
+	if (!Array.isArray(counselingSchedule) || visibleSchedule.length === 0) {
 		return <div className="crd-empty">상담 가능 일정이 없습니다.</div>;
 	}
 
@@ -65,20 +86,28 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 				<div className="crd-date-row">
 					{Object.entries(groupedByDate).map(([date, slots]) => (
 						<div key={date} className="crd-date-col">
-							<div className="crd-date-title">
-								{date} ({DAY_KR[slots[0]?.dayOfWeek]})
-							</div>
+							<div className="crd-date-title">{formatDayOfWeek(date, slots[0]?.dayOfWeek)}</div>
 
 							<div className="crd-time-col">
-								{slots.map((s) => (
-									<button
-										key={s.id}
-										className={`crd-time-btn ${selected?.id === s.id ? 'crd-active' : ''}`}
-										onClick={() => setSelected(s)}
-									>
-										{s.startTime}:00 ~ {s.endTime}:00
-									</button>
-								))}
+								{slots
+									.slice()
+									.sort((a, b) => Number(a?.startTime ?? 0) - Number(b?.startTime ?? 0))
+									.map((s) => {
+										const start = toHHMM(Number(s?.startTime));
+										const end =
+											s?.endTime != null ? endMinus10(Number(s.endTime)) : endMinus10(Number(s?.startTime ?? 0) + 1);
+
+										return (
+											<button
+												key={s.id}
+												type="button"
+												className={`crd-time-btn ${selected?.id === s.id ? 'crd-active' : ''}`}
+												onClick={() => setSelected(s)}
+											>
+												{start} ~ {end}
+											</button>
+										);
+									})}
 							</div>
 						</div>
 					))}
@@ -95,7 +124,7 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 				/>
 			</div>
 
-			<button className="crd-submit-btn" disabled={!selected || !reason} onClick={submit}>
+			<button className="crd-submit-btn" disabled={!selected || !reason || loading} onClick={submit}>
 				상담 신청
 			</button>
 		</div>

@@ -2,9 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import '../../assets/css/SelectDateForCounseling.css';
 import api from '../../api/httpClient';
 import { getThisAndNextWeekStartDates, isPastSlot } from '../../utils/counselingUtil';
-import { DAY_KR, endMinus10 } from '../../utils/DateTimeUtil';
+import { DAY_KR, endMinus10, toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
-import { toHHMM } from './../../utils/DateTimeUtil';
 
 /**
  * 교수/학생이 상담 가능한 날짜/시간 선택하는 컴포넌트
@@ -24,12 +23,14 @@ export default function SelectDateForCounseling({ userRole, subjectId, onSelectS
 			const weekStartDate = getThisAndNextWeekStartDates();
 			const res = await api.get('/counseling/professor', { params: { weekStartDate } });
 			// 과거 시간 슬롯 필터링
-			const rawData = res.data ?? [];
-			const futureSlots = rawData.filter((slot) => slot && !isPastSlot(slot.counselingDate, slot.startTime));
-			setAvailableList(futureSlots);
+			// const rawData = res.data ?? [];
+			// const futureSlots = rawData.filter((slot) => slot && !isPastSlot(slot.counselingDate, slot.startTime));
+			// setAvailableList(futureSlots);
+			setAvailableList(res.data ?? []); // 필터링은 아래 useMemo에서
 			console.log('requestToStudent', res.data);
 		} catch (e) {
 			console.error(e);
+			setAvailableList([]);
 		} finally {
 			setLoading(false);
 		}
@@ -41,29 +42,40 @@ export default function SelectDateForCounseling({ userRole, subjectId, onSelectS
 			setLoading(true);
 			const res = await api.get('/counseling/schedule', { params: { subjectId } });
 			// 과거 시간 슬롯 필터링
-			const rawData = res.data?.scheduleList ?? [];
-			const futureSlots = rawData.filter((slot) => slot && !isPastSlot(slot.counselingDate, slot.startTime));
-			setAvailableList(futureSlots);
+			// const rawData = res.data?.scheduleList ?? [];
+			// const futureSlots = rawData.filter((slot) => slot && !isPastSlot(slot.counselingDate, slot.startTime));
+			// setAvailableList(futureSlots);
+			setAvailableList(res.data?.scheduleList ?? []); // 필터링은 아래 useMemo에서
 			console.log('requestToProfessor', res.data.scheduleList);
 		} catch (e) {
 			console.error(e);
+			setAvailableList([]);
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
+		setSelectedSlot(null);
+		onSelectSlot?.(null); // 과목 바뀌거나 mode 바뀔 때 부모가 이전 slotId 잡고 있다가 잘못 POST할 수 있음
 		if (userRole === 'professor') {
 			requestToStudent();
 		} else if (userRole === 'student' && subjectId) {
 			requestToProfessor();
+		} else {
+			setAvailableList([]);
 		}
 	}, [userRole, subjectId]);
+
+	// 지난 날짜/시간 필터링 (실시간으로 계속 체크)
+	const filteredList = useMemo(() => {
+		return (availableList ?? []).filter((slot) => slot && !isPastSlot(slot.counselingDate, slot.startTime));
+	}, [availableList]);
 
 	// 교수용: OptionForm에 쓸 드롭다운 옵션
 	const slotOptions = useMemo(() => {
 		const base = [{ value: '', label: loading ? '불러오는 중...' : '시간을 선택하세요' }];
-		const opts = availableList.map((s) => {
+		const opts = filteredList.map((s) => {
 			const date = s.counselingDate ?? '';
 			const start = toHHMM(s.startTime);
 			const end = endMinus10(s.endTime);
@@ -73,35 +85,36 @@ export default function SelectDateForCounseling({ userRole, subjectId, onSelectS
 			};
 		});
 		return [...base, ...opts];
-	}, [availableList, loading]);
+	}, [filteredList, loading]);
 
 	// 교수용: OptionForm onChange 핸들러
 	const handleOptionChange = (e) => {
 		const slotId = e.target.value;
-		const slot = availableList.find((s) => String(s.id) === slotId);
+		const slot = filteredList.find((s) => String(s.id) === slotId);
 		setSelectedSlot(slot || null);
 		onSelectSlot?.(slot || null);
 	};
 
 	// 학생용: 날짜별 그룹핑
 	const groupedByDate = useMemo(() => {
-		return availableList.reduce((acc, slot) => {
+		return filteredList.reduce((acc, slot) => {
 			const date = slot.counselingDate;
 			if (!acc[date]) acc[date] = [];
 			acc[date].push(slot);
 			return acc;
 		}, {});
-	}, [availableList]);
+	}, [filteredList]);
 
 	// 학생용: 버튼 클릭 핸들러
 	const handleSlotClick = (slot) => {
+		console.log('clicked slot =>', slot);
 		setSelectedSlot(slot);
 		onSelectSlot?.(slot);
 	};
 
 	if (loading) return <div className="sdc-loading">불러오는 중...</div>;
 
-	if (!availableList.length) {
+	if (!filteredList.length) {
 		return <div className="sdc-empty">가능한 상담 시간이 없습니다.</div>;
 	}
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../assets/css/Chat.css';
 import api from '../../api/httpClient';
@@ -6,26 +6,51 @@ import api from '../../api/httpClient';
 import mascotFace from '../../assets/images/gu_mascot_face.png';
 import mascotFull from '../../assets/images/mascot.png';
 
-// 컴포넌트 분리
 import ChatLauncher from './ChatLauncher';
 import { QUICK_ACTIONS } from './ChatContent';
 import ChatContentList from './ChatContentList';
 import ChatPopup from './ChatPopup';
 
-// 메시지 id 만들기용(간단 버전)
+import { UserContext } from '../../context/UserContext'; // 권한 가져오기
+
 const uid = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 export default function Chat({ variant = 'mono' }) {
-	const [open, setOpen] = useState(false); // 챗봇 패널 열림/닫힘
-	const [showNotice, setShowNotice] = useState(false); // 유의사항 팝업(overlay) 표시 여부
-	const [messages, setMessages] = useState([]); // 채팅 메시지 목록(봇/사용자)
-	const [input, setInput] = useState(''); // 입력창 값
-	const [loading, setLoading] = useState(false); // 답변 생성 중 표시
+	const { userRole } = useContext(UserContext); //  'student' | 'professor' | 'staff'
+	const role = userRole ?? 'guest';
 
-	const listRef = useRef(null); // 채팅 스크롤 영역 ref
-	const navigate = useNavigate(); // 내부 라우팅 이동용
+	const [open, setOpen] = useState(false);
+	const [showNotice, setShowNotice] = useState(false);
+	const [messages, setMessages] = useState([]);
+	const [input, setInput] = useState('');
+	const [loading, setLoading] = useState(false);
 
-	// 웰컴 메세지
+	const listRef = useRef(null);
+	const navigate = useNavigate();
+
+	// 권한별 퀵액션만 노출
+	const quickActions = useMemo(() => {
+		return QUICK_ACTIONS.filter((a) => !a.roles || a.roles.includes(role));
+	}, [role]);
+
+	// ✅ 이동 가능한 경로 allowlist (여기가 크래시 원인이었음)
+	// - quickActions의 links를 실제로 순회해서 set에 담는다
+	const allowedPaths = useMemo(() => {
+		const set = new Set();
+
+		for (const a of quickActions) {
+			for (const l of a.links ?? []) {
+				const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
+				if (typeof to === 'string' && to.startsWith('/')) set.add(to);
+			}
+		}
+
+		// 필요하면 권한별로 추가 허용 경로를 여기서 더 등록 가능
+		// if (role === 'staff') set.add('/notice/new');
+
+		return set;
+	}, [quickActions, role]);
+
 	const welcome = useMemo(
 		() => ({
 			id: uid(),
@@ -39,41 +64,25 @@ export default function Chat({ variant = 'mono' }) {
 		[]
 	);
 
-	// 화면에서 런처 클릭
-	// 채팅창 열기 + 동시에 팝업 overlay로 띄우기
-	const handleLauncherClick = () => {
-		const next = !open;
-		setOpen(next);
-
-		if (next) {
-			// 개발용 항상 뜨게
-			setShowNotice(true);
-
-			// 한번만 뜨게(배포용)
-			// const seen = localStorage.getItem('AI_GU_NOTICE_SEEN');
-			// if (!seen) setShowNotice(true);
-		} else {
-			setShowNotice(false);
-		}
+	const toggleOpen = () => {
+		setOpen((prev) => {
+			const next = !prev;
+			setShowNotice(next);
+			return next;
+		});
 	};
 
-	// 팝업 확인 클릭
 	const acceptNotice = () => {
-		// 한번만 뜨게
 		localStorage.setItem('AI_GU_NOTICE_SEEN', '1');
-
-		// 팝업 닫기
 		setShowNotice(false);
 	};
 
-	// 채팅 입장시 웰컴 메세지 세팅
 	useEffect(() => {
 		if (!open) return;
 		if (messages.length === 0) setMessages([welcome]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
-	// 메세지 변경시 자동 스크롤 아래로
 	useEffect(() => {
 		if (!open) return;
 		const el = listRef.current;
@@ -81,70 +90,76 @@ export default function Chat({ variant = 'mono' }) {
 		el.scrollTop = el.scrollHeight;
 	}, [messages, loading, open]);
 
-	// 메세지 추가 헬퍼들
 	const pushBot = (text) => setMessages((p) => [...p, { id: uid(), role: 'bot', type: 'text', text }]);
 	const pushLinks = (links) => setMessages((p) => [...p, { id: uid(), role: 'bot', type: 'links', links }]);
 
-	// 퀵버튼 클릭
-	// reply(안내 문구) + links(바로가기 버튼들) 메시지로 채팅에 쌓음
-	const handleQuick = (a) => {
-		pushBot(a.reply);
-
-		// ✅ QUICK_ACTIONS도 path/href 키가 섞여있을 수 있어서 통일
-		const normalized = (a.links ?? [])
+	// 공통 normalize: source(quick/ai) 붙여서 나중에 클릭 정책 분기
+	const normalizeLinks = (rawLinks, source) => {
+		return (rawLinks ?? [])
 			.map((l) => {
 				const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
 				const label = l?.label ?? l?.title ?? l?.name ?? '바로가기';
 				if (!to) return null;
-
-				// ChatContentList가 path로 읽든 href로 읽든 안전하게 둘 다 제공
-				return { label, path: to, href: to };
+				return { label, path: to, href: to, source };
 			})
 			.filter(Boolean);
+	};
 
+	const handleQuick = (a) => {
+		pushBot(a.reply);
+		const normalized = normalizeLinks(a.links, 'quick');
 		if (normalized.length > 0) pushLinks(normalized);
 	};
 
-	// 링크 버튼 클릭시 이동
-	const openLink = (href) => {
-		if (!href) return;
+	// 내부 경로(/로 시작)만 취급
+	// allowlist(권한별 허용경로)에 없으면 차단
+	// AI가 준 링크는 confirm(사용자 확인) 후 이동
+	const openLink = (href, source = 'quick') => {
+		if (!href || typeof href !== 'string') return;
+
+		// 내부 라우트만 허용
+		if (!href.startsWith('/')) {
+			pushBot('외부 링크는 챗봇에서 바로 열 수 없어요.');
+			return;
+		}
+
+		// 권한/허용 경로 체크
+		if (!allowedPaths.has(href)) {
+			pushBot('해당 기능은 현재 권한에서 바로 이동할 수 없어요. (또는 지원되지 않는 경로예요)');
+			return;
+		}
+
+		// AI가 준 링크는 확인 거치기
+		if (source === 'ai') {
+			const ok = window.confirm('해당 페이지로 이동할까요?');
+			if (!ok) return;
+		}
+
 		navigate(href);
 	};
 
-	// 메세지 전송 - 백엔드 ai 호출
 	const send = async () => {
 		const text = input.trim();
 		if (!text || loading) return;
 
-		// 사용자 메시지 추가
 		setMessages((p) => [...p, { id: uid(), role: 'user', type: 'text', text }]);
 		setInput('');
 		setLoading(true);
 
 		try {
-			const res = await api.post('/ai/chat', { message: text });
+			// role 같이 보내면 백엔드도 권한별 답변/링크 제한하기 좋음
+			const res = await api.post('/ai/chat', { message: text, userRole: role });
 			const data = res.data;
 
-			// 봇 답변
 			const answer = data?.answer ?? '답변을 생성하지 못했어요. 다시 시도해 주세요.';
 			const refs = Array.isArray(data?.references) ? data.references : [];
 			const refText = refs.length ? `\n\n📌 참고 경로\n- ${refs.join('\n- ')}` : '';
 
 			pushBot(answer + refText);
 
-			// 링크 이동
+			// AI가 준 links는 “추천 링크”일 뿐, allowlist/confirm을 통과해야 이동 가능
 			if (Array.isArray(data?.links) && data.links.length > 0) {
-				// {label, path}로 주든, 프론트가 href를 기대하든 둘 다 맞춰서 내려보냄
-				const normalized = data.links
-					.map((l) => {
-						const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
-						const label = l?.label ?? l?.title ?? l?.name ?? '바로가기';
-						if (!to) return null;
-
-						return { label, path: to, href: to };
-					})
-					.filter(Boolean);
-
+				const normalized = normalizeLinks(data.links, 'ai');
 				if (normalized.length > 0) pushLinks(normalized);
 			}
 		} catch (e) {
@@ -155,7 +170,6 @@ export default function Chat({ variant = 'mono' }) {
 		}
 	};
 
-	// enter 전송
 	const onKeyDown = (e) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
@@ -165,13 +179,10 @@ export default function Chat({ variant = 'mono' }) {
 
 	return (
 		<div className={`gu-cb ${variant}`}>
-			{/* 오른쪽 아래 런처(얼굴 + GU BOT 라벨) */}
-			<ChatLauncher onClick={handleLauncherClick} faceSrc={mascotFace} />
+			<ChatLauncher onClick={toggleOpen} faceSrc={mascotFace} />
 
-			{/* 패널(챗봇) */}
 			{open && (
 				<div className="gu-cb__panelWrap">
-					{/* overlay 팝업: 패널을 덮어쓰기 */}
 					<ChatPopup open={showNotice} onClose={() => setShowNotice(false)} onAccept={acceptNotice} />
 
 					<div className="gu-cb__panel" role="dialog" aria-label="chatbot panel">
@@ -185,12 +196,9 @@ export default function Chat({ variant = 'mono' }) {
 							</div>
 
 							<div className="gu-cb__headerRight">
-								{/* 채팅 초기화(웰컴으로 리셋) */}
 								<button className="gu-cb__iconBtn" onClick={() => setMessages([welcome])} title="초기화">
 									↺
 								</button>
-
-								{/* 패널 닫기 */}
 								<button className="gu-cb__iconBtn" onClick={() => setOpen(false)} title="닫기">
 									✕
 								</button>
@@ -198,9 +206,8 @@ export default function Chat({ variant = 'mono' }) {
 						</div>
 
 						<div className="gu-cb__body" ref={listRef}>
-							{/* 퀵버튼 영역 */}
 							<div className="gu-cb__quickGrid">
-								{QUICK_ACTIONS.map((a) => (
+								{quickActions.map((a) => (
 									<button key={a.key} className="gu-cb__quick" onClick={() => handleQuick(a)}>
 										<div className="q1">{a.label}</div>
 										<div className="q2">{a.desc}</div>
@@ -208,11 +215,9 @@ export default function Chat({ variant = 'mono' }) {
 								))}
 							</div>
 
-							{/* 메시지 출력(봇/유저 말풍선 + 링크 버튼들) */}
 							<ChatContentList messages={messages} loading={loading} onOpenLink={openLink} />
 						</div>
 
-						{/* 입력창 */}
 						<div className="gu-cb__inputBar">
 							<textarea
 								className="gu-cb__input"

@@ -209,7 +209,7 @@ export default function MyApprovedCounseling() {
 	}, [filteredPast]);
 
 	return (
-		<div className="cm-page">
+		<div className="form-container">
 			<div className="cm-header">
 				<div>
 					<h2 className="cm-title">내 상담 관리</h2>

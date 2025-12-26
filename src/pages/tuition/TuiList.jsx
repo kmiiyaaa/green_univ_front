@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/httpClient';
+import '../../assets/css/TuiList.css';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import DataTable from '../../components/table/DataTable';
@@ -48,11 +49,11 @@ export default function TuiList() {
 	}, [tuiList]);
 
 	return (
-		<div>
-			<h2>등록금 내역 조회</h2>
+		<div className="form-container">
+			<h3>등록금 내역 조회</h3>
 			<div className="split--div"></div>
 
-			{tuiList.length > 0 ? <DataTable headers={headers} data={tableData} /> : '등록금 납부 내역이 없습니다!'}
+			{tuiList.length > 0 ? <DataTable headers={headers} data={tableData} /> : <p>등록금 납부 내역이 없습니다!</p>}
 		</div>
 	);
 }
