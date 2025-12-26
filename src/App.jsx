@@ -62,6 +62,7 @@ import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
+import Direction from './pages/map/Direction';
 
 function App() {
 	// React Query 라이브러리
@@ -89,6 +90,19 @@ function App() {
 							{/* ================= 공통 (로그인만 필요) ================= */}
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
+							{/* 등록금 */}
+							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
+							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
+							{/* 등록금 고지서 생성 (관리자) */}
+							<Route
+								path="/tuition/bill"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreatePayment />
+									</ProtectedRoute>
+								}
+							/>
 							<Route path="/direction" element={<Direction />} />
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
