@@ -143,7 +143,7 @@ export default function VideoCounseling() {
 		try {
 			await api.get('/risk/counseling/done', { params: { roomCode } });
 			alert('상담이 종료되었습니다.');
-			navigate('/professor/counseling/approved', { replace: true });
+			navigate('/counseling/manage', { replace: true });
 		} catch (e) {
 			console.error(e.response?.data?.message || '서버 오류');
 		} finally {

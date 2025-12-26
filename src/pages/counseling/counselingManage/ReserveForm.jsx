@@ -4,7 +4,7 @@ import SubjectSelect from '../SubjectSelect';
 import SelectDateForCounseling from '../SelectDateForCounseling';
 
 // 상담 예약 폼 컴포넌트
-export default function ReserveForm() {
+export default function ReserveForm({ paramId }) {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 
@@ -21,6 +21,10 @@ export default function ReserveForm() {
 	useEffect(() => {
 		fetchSubjectsThisSemester();
 	}, [fetchSubjectsThisSemester]);
+
+	useEffect(() => {
+		if (paramId) setSelectedSubjectId(paramId);
+	}, [paramId]);
 
 	// 과목 바뀌면 선택/메시지 초기화
 	useEffect(() => {

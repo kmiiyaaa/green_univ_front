@@ -20,11 +20,12 @@ export const TABLE_CONFIG = {
 
 	// 교수 -> 학생 상담요청 확인 - sent
 	PROFESSOR_SENT: {
-		headers: ['학생', '과목', '상담 사유', '상담 시간', '상태'],
+		headers: ['학생', '과목', '상담 사유', '상담일', '상담 시간', '상태'],
 		data: (r) => ({
 			학생: r.student?.name ?? '',
 			과목: r.subject?.name ?? '',
 			'상담 사유': r.reason ?? '',
+			상담일: r.counselingSchedule.counselingDate ?? '',
 			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
 			'방 번호': r.roomCode,
 			상태: reservationStatus(r.approvalState),

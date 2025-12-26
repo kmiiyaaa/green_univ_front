@@ -27,8 +27,8 @@ export default function EndTime({ roomCode }) {
 					alert('상담 시간이 종료되었습니다.');
 
 					userRole === 'professor'
-						? navigate('/professor/counseling/approved', { replace: true })
-						: navigate('/counseling/reserve', { replace: true });
+						? navigate('/counseling/manage', { replace: true })
+						: navigate('/counseling/manage', { replace: true });
 
 					return;
 				}

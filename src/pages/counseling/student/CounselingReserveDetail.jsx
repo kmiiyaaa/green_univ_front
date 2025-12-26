@@ -2,10 +2,17 @@ import { useContext, useMemo, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/CounselingReserveDetail.css';
 import { CounselingRefreshContext } from '../counselingManage/util/CounselingRefreshContext';
-import { endMinus10, formatDayOfWeek, toHHMM } from '../../../utils/DateTimeUtil';
-import { isPastSlot } from '../../../utils/counselingUtil';
 
-// 학생이 과목 선택해서 교수에게 상담 요청 보낼 때 뜨는 컴포넌트
+const DAY_KR = {
+	MONDAY: '월',
+	TUESDAY: '화',
+	WEDNESDAY: '수',
+	THURSDAY: '목',
+	FRIDAY: '금',
+	SATURDAY: '토',
+	SUNDAY: '일',
+};
+
 export default function CounselingReserveDetail({ counselingSchedule, subId, subName, onReserveSuccess }) {
 	const [selected, setSelected] = useState(null);
 	const [reason, setReason] = useState('');
