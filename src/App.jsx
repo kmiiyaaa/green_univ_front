@@ -62,6 +62,7 @@ import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
+import Direction from './pages/map/Direction';
 import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
 
 function App() {
@@ -90,6 +91,7 @@ function App() {
 							{/* ================= 공통 (로그인만 필요) ================= */}
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
 							<Route path="/direction" element={<Direction />} />
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}

@@ -4,6 +4,7 @@ import OptionForm from '../../../components/form/OptionForm';
 import ProfessorCounselRequestModal from './CounselRequestModal';
 import '../../../assets/css/MyRiskStudent.css';
 import DataTable from '../../../components/table/DataTable';
+import DataTable from '../../../components/table/DataTable';
 
 // 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';
@@ -234,11 +235,15 @@ export default function MyRiskStudent() {
 				const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
-				const canRequestBase =
-					showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
+				// + 담당교수 아닌 경우 요청 버튼만 막기
+				const canRequest =
+					showConsultButton &&
+					!isAlreadyPending &&
+					!isAlreadyApproved &&
+					(!r.consultState || isRejected || isCanceled || isNo_Show) &&
+					!assignedToOther;
 
-				const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
-				const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
+				const requestBtnLabel = isRejected || isCanceled || isNo_Show ? '재요청' : '상담 요청';
 
 				return {
 					// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
@@ -397,6 +402,41 @@ export default function MyRiskStudent() {
 
 			<hr />
 
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+
+			{/* 선택 학생의 전체 위험과목 리스트 */}
+			{selectedStudentId ? (
+				<div className="risk-section">
+					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
+				</div>
+			) : null}
+
+			<hr />
+
+			{/* 탈락 위험 학생(통합) */}
+			<RiskStudentOverall
+				studentHeaders={studentHeaders}
+				studentData={studentData}
+				studentListLength={studentList.length}
+				onRowClick={handleStudentRowClick}
+				selectedStudentId={selectedStudentId}
+				selectedStudentName={selectedStudentName}
+			/>
+			{selectedStudentId ? (
+				<div className="risk-section">
+					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
+				</div>
+			) : null}
+
+			<hr />
 			{/* 필터 */}
 			<div className="filter-bar">
 				<OptionForm
