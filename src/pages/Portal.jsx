@@ -296,6 +296,20 @@ export default function Portal() {
 					)}
 				</div>
 			</div>
+			<div></div>
+			{/* [NEW] 찾아오시는길 CTA (포탈에서 바로 이동) */}
+			<div className="portal-direction-cta">
+				<div className="portal-direction-card">
+					<div className="portal-direction-left">
+						<div className="portal-direction-title">그린대학교 오시는 길</div>
+						<div className="portal-direction-desc">📍서울시 마포구 신촌로 176</div>
+					</div>
+
+					<button type="button" className="portal-direction-btn" onClick={() => navigate('/direction')}>
+						찾아오시는 길 →
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 }

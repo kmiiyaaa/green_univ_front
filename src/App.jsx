@@ -61,6 +61,8 @@ import UserCreate from './pages/user/create/UserCreate';
 import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
+import Direction from './pages/map/Direction';
+import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
 
 function App() {
 	// React Query 라이브러리
@@ -88,6 +90,20 @@ function App() {
 							{/* ================= 공통 (로그인만 필요) ================= */}
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
+							<Route path="/direction" element={<Direction />} />
+							{/* 등록금 */}
+							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
+							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
+							{/* 등록금 고지서 생성 (관리자) */}
+							<Route
+								path="/tuition/bill"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreatePayment />
+									</ProtectedRoute>
+								}
+							/>
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
@@ -144,7 +160,6 @@ function App() {
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
 								<Route path="/grade/total" element={<TotalGrade />} />
-								<Route path="/grade/policy" element={<GradePolicy />} />
 							</Route>
 							{/* ================= PROFESSOR 전용 ================= */}
 							<Route element={<ProtectedRoute allowedRoles={['professor']} />}>
@@ -157,6 +172,7 @@ function App() {
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
 							{/* ================= 학생, 교수 전용 (비디오룸, 상담 관리) ================= */}
+							<Route path="/grade/policy" element={<GradePolicy />} />
 							<Route element={<ProtectedRoute allowedRoles={['professor', 'student']} />}>
 								<Route
 									path="/counseling/manage"

@@ -51,7 +51,7 @@ export default function BreakAppListStaff() {
 	if (loading) return <p>불러오는중 ...</p>;
 
 	return (
-		<div className="list-page">
+		<div className="form-container">
 			<div className="list-card">
 				<div className="list-head">
 					<div>

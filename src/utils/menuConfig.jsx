@@ -7,7 +7,7 @@ const HEADER_ORDER = {
 		{ key: 'ENROLL', label: '수강신청' },
 		{ key: 'GRADE', label: '성적' },
 		{ key: 'INFO', label: '학사 정보' },
-		{ key: 'COUNSELING', label: '학생 지원' },
+		{ key: 'COUNSELING', label: '학업지원·상담' },
 	],
 	staff: [
 		{ key: 'HOME', label: '홈' },
@@ -21,7 +21,7 @@ const HEADER_ORDER = {
 		{ key: 'MY', label: 'MY' },
 		{ key: 'COURSE', label: '수업' },
 		{ key: 'INFO', label: '학사 정보' },
-		{ key: 'COUNSELING_MANAGEMENT', label: '학생 관리' },
+		{ key: 'COUNSELING_MANAGEMENT', label: '모니터링·상담' },
 	],
 };
 
@@ -62,7 +62,6 @@ export const SIDEBAR_BY_HEADER = {
 			{ key: 'MY_STATUS', label: '내 학업 상태', path: '/status' },
 			{ key: 'COUNSELING_MANEGE', label: '상담 관리', path: '/counseling/manage' },
 			// { key: 'COUNSELING_RESERVE', label: '상담 예약/관리', path: '/counseling/reserve' },
-			{ key: 'MY_COUNSELING', label: '상담 신청 내역', path: '/counseling/schedule', hidden: true },
 			{ key: 'VIDEO', label: '상담 바로가기', path: '/videotest' },
 		],
 	},

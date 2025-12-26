@@ -57,7 +57,11 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 		...(subNumOfStudent < 20 || relative ? { 등급: s.letterGrade || '-' } : {}),
 		경고여부: s.status || '-',
 		점수기입: (
-			<button onClick={() => handleOpenGrade(s)} disabled={s.finalized || aiStatus === 'SUCCESS'}>
+			<button
+				onClick={() => handleOpenGrade(s)}
+				className="syllabus-btn"
+				disabled={s.finalized || aiStatus === 'SUCCESS'}
+			>
 				{s.finalized || aiStatus === 'SUCCESS' ? '확정완료' : '점수기입'}
 			</button>
 		),
@@ -116,7 +120,9 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 					</h4>
 					{stuNum >= 20 && <button onClick={calculateGrade}>전체 학생 등급 산출</button>}
 					<p>* 직접 수정한 등급도 전체 등급 재산출 시 자동 등급으로 변경됩니다.</p>
-					<button onClick={() => setListOpen(false)}>내 강의 목록</button>
+					<button onClick={() => setListOpen(false)} className="syllabus-btn">
+						내 강의 목록
+					</button>
 					<DataTable headers={headers} data={tableData} />
 				</>
 			) : (
