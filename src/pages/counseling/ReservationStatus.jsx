@@ -5,5 +5,6 @@ export function reservationStatus(status) {
 	if (status === 'REJECTED') return '반려';
 	if (status === 'FINISHED') return '상담 완료';
 	if (status === 'CANCELED') return '상담 취소';
+	if (status === 'NO_SHOW') return '노쇼';
 	return '';
 }

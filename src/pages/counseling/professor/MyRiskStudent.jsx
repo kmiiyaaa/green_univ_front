@@ -166,6 +166,7 @@ export default function MyRiskStudent() {
 
 			const isRejected = r.consultState === 'CONSULT_REJECTED';
 			const isCanceled = r.consultState === 'CONSULT_CANCELED';
+			const isNo_Show = r.consultState === 'CONSULT_NO_SHOW';
 
 			//  담당교수 아닌 경우 "보이기만" 하고 버튼은 막기
 			const assignedPid = assignedByStudentId.get(String(r.studentId)) ?? null;
@@ -178,10 +179,10 @@ export default function MyRiskStudent() {
 				showConsultButton &&
 				!isAlreadyPending &&
 				!isAlreadyApproved &&
-				(!r.consultState || isRejected || isCanceled) &&
+				(!r.consultState || isRejected || isCanceled || isNo_Show) &&
 				!assignedToOther;
 
-			const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
+			const requestBtnLabel = isRejected || isCanceled || isNo_Show ? '재요청' : '상담 요청';
 
 			return {
 				// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
