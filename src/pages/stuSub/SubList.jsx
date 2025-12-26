@@ -45,10 +45,10 @@ export default function SubList() {
 			if (currentFilters.deptName) params.deptName = currentFilters.deptName;
 			if (currentFilters.name) params.name = currentFilters.name;
 
-			console.log('🔍 API 요청 파라미터:', params); // 디버깅용
+			// console.log('🔍 API 요청 파라미터:', params);
 
 			const res = await api.get('/sugang/subjectList', { params });
-			console.log('학생이 확인하는 강의 목록', res.data);
+			// console.log('학생이 확인하는 강의 목록', res.data);
 			// currentpage현재페이지:0, listCount:총개수, lists:데이터들, totalPages총페이지수:2
 			const rawData = res.data.lists; // 데이터만 추출
 			const formattedData = rawData.map((sub) => ({
@@ -63,13 +63,17 @@ export default function SubList() {
 				'요일시간 (강의실)': `${sub.subDay}, ${toHHMM(sub.startTime)}-${toHHMM(sub.endTime)} (${sub.roomId})`,
 				현재인원: sub.numOfStudent,
 				정원: sub.capacity,
-				강의계획서: <button className="syllabus-btn" onClick={() => handleSubDetail(sub.id)}>강의계획서</button>,
+				강의계획서: (
+					<button className="syllabus-btn" onClick={() => handleSubDetail(sub.id)}>
+						강의계획서
+					</button>
+				),
 			}));
 			SetSubTimeTable(formattedData);
 			setCurrentPage(res.data.currentPage);
 			setTotalPages(res.data.totalPages);
 			setTotalCount(res.data.listCount);
-			console.log('가공된 데이터:', formattedData);
+			// console.log('가공된 데이터:', formattedData);
 		} catch (e) {
 			console.error('강의 목록 조회 실패: ', e);
 		}
@@ -81,7 +85,7 @@ export default function SubList() {
 		const type = searchParams.get('type') || '';
 		const deptName = searchParams.get('deptName') || '';
 		const name = searchParams.get('name') || '';
-		console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
+		// console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
 		// URL에서 검색 조건 복원
 		setSearchForm({ type, deptName, name });
 		// URL에서 읽은 값을 직접 전달
