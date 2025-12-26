@@ -99,6 +99,11 @@
 	color: var(--mypage-text-main);
 }
 
+.mypage-card .data-table th {
+	font-weight: 600;
+	color: #ffffff;
+}
+
 /* ===========================
    하단 '정보 수정하기' 버튼
    =========================== */
