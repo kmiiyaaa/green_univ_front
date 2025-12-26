@@ -1,45 +1,61 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/httpClient';
 import DataTable from '../../components/table/DataTable';
+import OptionForm from '../../components/form/OptionForm';
 
 export default function MyEvaluation() {
 	// 교수 - 내 강의 평가 조회 + 담당 강의 옵션으로 검색 (페이징 x)
-	const [subName, setSubName] = useState(null); // 선택한 학과이름
+	const [subName, setSubName] = useState(''); // 선택한 학과이름
 	const [evalList, setEvalList] = useState([]); // 강의평가 리스트
 	const [subNameList, setSubNameList] = useState([]); // 교수의 과목 리스트
 
-	const loadMyEvaluation = async () => {
+	const loadMyEvaluation = async (selectedSubName = subName) => {
 		try {
-			// 검색 값 있을 때
-			let subject_Name = null;
-			if (subName !== null) {
-				subject_Name = subName;
+			const params = {};
+			if (selectedSubName && selectedSubName !== '') {
+				params.subject_Name = selectedSubName;
 			}
-			const res = await api.get('/evaluation/read', {
-				params: {
-					subject_Name: subject_Name,
-				},
-			});
-			setSubNameList(res.data.subNames);
+			// if (subName && subName !== '과목 선택') {
+			// 	params.subject_Name = subName;
+			// }
+			const res = await api.get('/evaluation/read', { params });
+			// 백엔드에서 받은 과목 리스트를 OptionForm 형식으로 변환
+			const formattedOptions = res.data.subNames.map((sub) => ({
+				value: sub.name,
+				label: sub.name,
+			}));
+			setSubNameList(formattedOptions);
 			setEvalList(res.data.eval);
 		} catch (e) {
-			alert(e.response.data.message);
+			alert(e.response?.data?.message || '강의 평가 조회 실패');
 		}
 	};
 
 	useEffect(() => {
-		// 처음 로딩
 		loadMyEvaluation();
 	}, []);
 
+	// select 변경 시 바로 검색 실행
+	const handleSubNameChange = (e) => {
+		const newSubName = e.target.value;
+		console.log('e.target.value', e.target.value);
+		setSubName(newSubName);
+		loadMyEvaluation(newSubName); // 바로 API 호출
+	};
+
+	// OptionForm에 넘길 옵션 (전체 + 과목 목록)
+	const subjectOptions = useMemo(() => {
+		return [{ value: '', label: '전체' }, ...subNameList];
+	}, [subNameList]);
+
 	// 테이블 데이터
-	const headers = ['과목 이름', '	총 평가 점수', '건의 사항'];
+	const headers = ['과목 이름', '총 평가 점수', '건의 사항'];
 
 	const tableData = useMemo(() => {
 		return evalList.map((p) => ({
-			'과목 이름': p.name ?? '',
-			'	총 평가 점수': p.answerSum ?? '',
-			'건의 사항': p.improvements ?? '',
+			'과목 이름': p.name ?? '-',
+			'총 평가 점수': p.answerSum ?? '-',
+			'건의 사항': p.improvements ?? '-',
 		}));
 	}, [evalList]);
 
@@ -50,17 +66,22 @@ export default function MyEvaluation() {
 
 			{evalList.length > 0 ? (
 				<div>
-					<select name="subName" value={subName ?? '과목 선택'} onChange={(e) => setSubName(e.target.value)}>
-						{subNameList.map((sub, idx) => (
-							<option key={idx}>{sub.name}</option>
-						))}
-					</select>
-					<button onClick={() => loadMyEvaluation()}>검색</button>
+					<OptionForm
+						label="강의 목록"
+						name="subName"
+						value={subName ?? '과목 선택'}
+						onChange={handleSubNameChange}
+						options={subjectOptions}
+					/>
+
+					{/* <button onClick={() => loadMyEvaluation()} className="button">
+						검색
+					</button> */}
 
 					<DataTable headers={headers} data={tableData} />
 				</div>
 			) : (
-				'아직 등록된 강의 평가가 없습니다.'
+				<div className="eval-empty">아직 등록된 강의 평가가 없습니다. </div>
 			)}
 		</div>
 	);

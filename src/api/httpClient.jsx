@@ -5,18 +5,31 @@ const api = axios.create({
 	withCredentials: true,
 });
 
-// 요청 인터셉터 추가
+// 전역 플래그 (HMR/중복 인터셉터에도 1번만 뜨게)
+globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__ ??= false;
+
 api.interceptors.request.use(
 	(config) => {
-		// localStorage에서 토큰 가져오기 (로그인 시 저장했다고 가정)
 		const token = localStorage.getItem('token');
-		if (token) {
-			// 토큰이 있으면 헤더에 추가
-			config.headers.Authorization = `Bearer ${token}`;
-		}
+		if (token) config.headers.Authorization = `Bearer ${token}`;
 		return config;
 	},
+	(error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+	(res) => res,
 	(error) => {
+		const status = error?.response?.status;
+		const msg = error?.response?.data?.message;
+
+		if (status === 401 && msg === '로그인 토큰만료' && !globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__) {
+			globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__ = true;
+
+			alert('로그인 토큰만료');
+			window.location.href = '/login';
+		}
+
 		return Promise.reject(error);
 	}
 );

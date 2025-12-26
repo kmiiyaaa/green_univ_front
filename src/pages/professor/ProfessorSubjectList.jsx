@@ -70,8 +70,16 @@ export default function ProfessorSubjectList() {
 			학수번호: s.id ?? '',
 			강의명: s.name ?? '',
 			강의시간: s.subDay + ' ' + toHHMM(s.startTime) + '-' + toHHMM(s.endTime) + ' (' + s.roomId + ')',
-			강의계획서: <button onClick={() => handleSubDetail(s.id)}>강의계획서</button>,
-			학생목록: <button onClick={() => handleStudentList(s.id, s.name)}>학생 목록</button>,
+			강의계획서: (
+				<button onClick={() => handleSubDetail(s.id)} className="syllabus-btn">
+					강의계획서
+				</button>
+			),
+			학생목록: (
+				<button onClick={() => handleStudentList(s.id, s.name)} className="syllabus-btn">
+					학생 목록
+				</button>
+			),
 		}));
 	}, [subjectList]);
 

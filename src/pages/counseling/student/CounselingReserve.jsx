@@ -51,6 +51,7 @@ export default function CounselingReserve() {
 
 	const fetchCounselingSchedules = useCallback(async (subjectId) => {
 		const res = await api.get('/counseling/schedule', { params: { subjectId } });
+		console.log('학생 상담 예약 관리 - 과목 선택 후 가능 시간 보여주는 res.data', res.data);
 		setSchedules(res.data?.scheduleList ?? []);
 		setSubName(res.data?.subjectName ?? '');
 	}, []);
