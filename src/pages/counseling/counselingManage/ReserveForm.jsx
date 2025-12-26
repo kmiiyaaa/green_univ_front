@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import SubjectSelect from '../SubjectSelect';
-import CounselingReserveDetail from '../student/CounselingReserveDetail';
+import SelectDateForCounseling from '../SelectDateForCounseling';
+
 // 상담 예약 폼 컴포넌트
 export default function ReserveForm({ paramId }) {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
-	const [schedules, setSchedules] = useState([]);
-	const [subName, setSubName] = useState('');
+
+	const [selectedSlot, setSelectedSlot] = useState(null);
+	const [reason, setReason] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	// 학생 수강 과목 조회
 	const fetchSubjectsThisSemester = useCallback(async () => {
@@ -23,45 +26,58 @@ export default function ReserveForm({ paramId }) {
 		if (paramId) setSelectedSubjectId(paramId);
 	}, [paramId]);
 
-	// 과목 선택 시 상담 일정 조회
-	const fetchCounselingSchedules = useCallback(async (subjectId) => {
-		const res = await api.get('/counseling/schedule', { params: { subjectId } });
-		setSchedules(res.data?.scheduleList ?? []);
-		setSubName(res.data?.subjectName ?? '');
-	}, []);
-
+	// 과목 바뀌면 선택/메시지 초기화
 	useEffect(() => {
-		if (!selectedSubjectId) return;
-		fetchCounselingSchedules(selectedSubjectId);
-	}, [selectedSubjectId, fetchCounselingSchedules]);
+		setSelectedSlot(null);
+		setReason('');
+	}, [selectedSubjectId]);
 
-	const fetchMyReserveList = useCallback(async () => {
-		const res = await api.get('/reserve/list');
-		setList(res.data ?? []);
-	}, []);
+	const submit = async () => {
+		if (!selectedSubjectId || !selectedSlot?.id) return;
+
+		try {
+			setLoading(true);
+			await api.post('/reserve', {
+				subjectId: Number(selectedSubjectId),
+				counselingScheduleId: Number(selectedSlot.id),
+				reason: reason || '',
+			});
+
+			alert('상담 요청을 보냈습니다.');
+			setSelectedSlot(null);
+			setReason('');
+		} catch (e) {
+			console.error(e);
+			alert(e?.response?.data?.message ?? '상담 요청 실패');
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
-		<div>
+		<div className="reserve-schedule">
 			{/* 과목 선택 */}
 			<SubjectSelect
 				subjects={subjects}
 				value={selectedSubjectId}
 				onChange={(e) => setSelectedSubjectId(e.target.value)}
 			/>
+
 			{/* 과목 선택 시 상담 일정 표시 */}
 			{selectedSubjectId && (
-				<div className="reserve-schedule">
-					<CounselingReserveDetail
-						counselingSchedule={schedules}
-						subId={selectedSubjectId}
-						setSelectedSubjectId={setSelectedSubjectId}
-						subName={subName}
-						onReserveSuccess={async () => {
-							await fetchMyReserveList(); // 기존: 목록 갱신
-							setSelectedSubjectId(''); // 추가: 과목 선택 초기화 → UI 닫힘
-						}}
+				<>
+					<SelectDateForCounseling mode="student" subjectId={selectedSubjectId} onSelectSlot={setSelectedSlot} />
+
+					<textarea
+						value={reason}
+						onChange={(e) => setReason(e.target.value)}
+						placeholder="예) 성적 관련 상담이 필요합니다."
 					/>
-				</div>
+
+					<button type="button" onClick={submit} disabled={!selectedSlot?.id || loading} style={{ marginTop: 10 }}>
+						상담 요청
+					</button>
+				</>
 			)}
 		</div>
 	);

@@ -60,7 +60,7 @@ export default function MyEvaluation() {
 	}, [evalList]);
 
 	return (
-		<div>
+		<div className="form-container">
 			<h2>내 강의 평가</h2>
 			<br></br>
 
