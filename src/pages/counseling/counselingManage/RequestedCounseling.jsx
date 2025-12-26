@@ -48,6 +48,7 @@ export default function RequestedCounseling({ requestByList }) {
 		detail: (r) => (
 			<button
 				type="button"
+				className="cm-btn cm-btn--ghost"
 				onClick={() => {
 					sessionStorage.setItem('counselingDetail', JSON.stringify(r));
 					window.open('/counseling/info', '_blank', 'width=900,height=800,scrollbars=yes');
@@ -60,6 +61,7 @@ export default function RequestedCounseling({ requestByList }) {
 			<div className="cm-btn-group">
 				<button
 					type="button"
+					className="cm-btn cm-btn--ghost"
 					disabled={loadingId === r.id}
 					onClick={() => handleDecision({ role: userRole, type: '승인', id: r.id })}
 				>
@@ -67,6 +69,7 @@ export default function RequestedCounseling({ requestByList }) {
 				</button>
 				<button
 					type="button"
+					className="cm-btn cm-btn--ghost"
 					disabled={loadingId === r.id}
 					onClick={() => handleDecision({ role: userRole, type: '반려', id: r.id })}
 				>

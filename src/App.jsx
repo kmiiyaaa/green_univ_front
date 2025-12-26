@@ -51,16 +51,15 @@ import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCou
 import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
 import MyStatus from './pages/counseling/student/MyStatus';
 import CounselingRequestList from './pages/counseling/student/CounselingRequestList';
-import CounselingReserve from './pages/counseling/student/CounselingReserve';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
-import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
 import SubjectStudentList from './pages/professor/SubjectStudentList';
+import ProfessorAiGrade from './pages/professor/ProfessorAiGrade';
 
 function App() {
 	// React Query 라이브러리
@@ -163,7 +162,7 @@ function App() {
 							<Route element={<ProtectedRoute allowedRoles={['professor']} />}>
 								<Route path="/professor/subject" element={<ProfessorSubjectList />} />
 								{/* TODO: 성적 입력 및 분석 부분 따로 접근성과 편리성을 위해서 넣어둠? */}
-								<Route path="/professor/ai" element={<SubjectStudentList />} />
+								<Route path="/professor/ai" element={<ProfessorAiGrade />} />
 								<Route path="/professor/evaluation" element={<MyEvaluation />} />
 
 								{/* 교수 상담 */}
@@ -182,7 +181,6 @@ function App() {
 									}
 								/>
 								<Route path="/videotest" element={<VideoCounseling />} />
-								<Route path="/counseling/list" element={<CounselingList />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
