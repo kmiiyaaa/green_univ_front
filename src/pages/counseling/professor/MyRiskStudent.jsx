@@ -4,7 +4,6 @@ import OptionForm from '../../../components/form/OptionForm';
 import ProfessorCounselRequestModal from './CounselRequestModal';
 import '../../../assets/css/MyRiskStudent.css';
 import DataTable from '../../../components/table/DataTable';
-import DataTable from '../../../components/table/DataTable';
 
 // 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';
@@ -61,6 +60,7 @@ export default function MyRiskStudent() {
 		if (lvl === 'WARNING') return 'badge-warn';
 		return 'badge-neutral';
 	};
+
 	const parseTags = (tags) => {
 		return Array.isArray(tags)
 			? tags
@@ -161,6 +161,9 @@ export default function MyRiskStudent() {
 			}
 
 			const params = { studentId };
+			// 필요하면 레벨 필터를 붙일 수도 있음
+			// if (riskLevel) params.level = riskLevel;
+
 			const res = await api.get('/risk/list/department', { params });
 			const list = res.data?.pending ?? [];
 			setDeptRiskList(list);
@@ -235,15 +238,11 @@ export default function MyRiskStudent() {
 				const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
-				// + 담당교수 아닌 경우 요청 버튼만 막기
-				const canRequest =
-					showConsultButton &&
-					!isAlreadyPending &&
-					!isAlreadyApproved &&
-					(!r.consultState || isRejected || isCanceled || isNo_Show) &&
-					!assignedToOther;
+				const canRequestBase =
+					showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
 
-				const requestBtnLabel = isRejected || isCanceled || isNo_Show ? '재요청' : '상담 요청';
+				const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
+				const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
 
 				return {
 					// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
@@ -277,7 +276,7 @@ export default function MyRiskStudent() {
 								{requestBtnLabel}
 							</button>
 						) : onlyMySubjectCanRequest && !isMySubject ? (
-							// 내과목 아닌건 버튼 막기
+							// ✅ "내 과목 아닌데 보여야 함" + 버튼만 막기(요구사항)
 							<span className="muted">-</span>
 						) : r.consultState === 'CONSULT_REQ' ? (
 							<span className="status-pill">요청 대기</span>
@@ -393,7 +392,7 @@ export default function MyRiskStudent() {
 				selectedStudentName={selectedStudentName}
 			/>
 
-			{/* 선택 학생의 전체 위험과목 리스트 */}
+			{/* ✅ 선택 학생의 "학과 전체 위험과목" 리스트 (내 과목만 요청 가능) */}
 			{selectedStudentId ? (
 				<div className="risk-section">
 					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
@@ -402,41 +401,6 @@ export default function MyRiskStudent() {
 
 			<hr />
 
-			{/* 탈락 위험 학생(통합) */}
-			<RiskStudentOverall
-				studentHeaders={studentHeaders}
-				studentData={studentData}
-				studentListLength={studentList.length}
-				onRowClick={handleStudentRowClick}
-				selectedStudentId={selectedStudentId}
-				selectedStudentName={selectedStudentName}
-			/>
-
-			{/* 선택 학생의 전체 위험과목 리스트 */}
-			{selectedStudentId ? (
-				<div className="risk-section">
-					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
-				</div>
-			) : null}
-
-			<hr />
-
-			{/* 탈락 위험 학생(통합) */}
-			<RiskStudentOverall
-				studentHeaders={studentHeaders}
-				studentData={studentData}
-				studentListLength={studentList.length}
-				onRowClick={handleStudentRowClick}
-				selectedStudentId={selectedStudentId}
-				selectedStudentName={selectedStudentName}
-			/>
-			{selectedStudentId ? (
-				<div className="risk-section">
-					<DataTable headers={pendingHeaders} data={deptStudentRiskData} />
-				</div>
-			) : null}
-
-			<hr />
 			{/* 필터 */}
 			<div className="filter-bar">
 				<OptionForm
@@ -471,6 +435,8 @@ export default function MyRiskStudent() {
 					// 모달에서 요청 성공 후, 양쪽 데이터 최신화
 					await loadMyRiskStudents();
 					await loadDeptStudents();
+
+					// 선택 학생 열려있으면 그 학생 위험과목도 같이 갱신
 					if (selectedStudentId) {
 						await loadDeptStudentRisks(selectedStudentId);
 					}
