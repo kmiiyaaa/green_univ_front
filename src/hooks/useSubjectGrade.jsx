@@ -40,7 +40,7 @@ export default function useSubjectGrade(subjectId) {
 		loadData();
 	}, [subjectId]);
 
-	// AI 폴링 (RUNNING일 때만)
+	// AI 폴링 (RUNNING일 때만, FAIL 되면 멈춤)
 	useEffect(() => {
 		if (state.aiStatus !== 'RUNNING') return;
 

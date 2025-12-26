@@ -97,18 +97,37 @@ export default function SubjectStudentList({ subjectId, subName, setListOpen }) 
 				</div>
 			)}
 
+			{/* ✅ AI 분석 실패 (다시 돌릴 수 있게) */}
+			{aiStatus === 'FAIL' && (
+				<div style={{ marginBottom: '16px', padding: '16px', backgroundColor: '#fee', borderRadius: '8px' }}>
+					<h3 style={{ color: '#dc2626' }}>❌ AI 분석 실패</h3>
+					{/* <p style={{ color: '#666', marginBottom: '12px' }}>{aiMessage}</p> */}
+					<button
+						onClick={finalizeGrade}
+						disabled={loading}
+						style={{
+							backgroundColor: '#dc2626',
+							color: 'white',
+							padding: '12px 24px',
+							border: 'none',
+							borderRadius: '6px',
+							cursor: 'pointer',
+						}}
+					>
+						다시 AI 돌리기
+					</button>
+				</div>
+			)}
+
 			{/* 성적 확정 */}
-			{aiStatus !== 'SUCCESS' && (
+			{aiStatus !== 'SUCCESS' && aiStatus !== 'FAIL' && (
 				<div style={{ marginBottom: '12px' }}>
 					<h3>최종 성적 확정</h3>
 					<button onClick={finalizeGrade} disabled={loading || aiStatus === 'RUNNING'}>
 						{loading ? '성적 확정 및 AI 분석 중...' : '확정하고 AI 돌리기'}
 					</button>
-					<span style={{ marginLeft: '10px' }}>
-						{aiStatus === 'RUNNING' && '분석중'}
-						{aiStatus === 'FAIL' && '실패'}
-					</span>
-					{aiMessage && <div style={{ marginTop: '6px' }}>{aiMessage}</div>}
+					{/* <span style={{ marginLeft: '10px' }}>{aiStatus === 'RUNNING' && '분석중'}</span> */}
+					{aiMessage && <div style={{ marginTop: '6px', color: '#666' }}>{aiMessage}</div>}
 				</div>
 			)}
 
