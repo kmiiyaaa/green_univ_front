@@ -91,7 +91,6 @@ function App() {
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
 							<Route path="/direction" element={<Direction />} />
-<<<<<<<<< Temporary merge branch 1
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
