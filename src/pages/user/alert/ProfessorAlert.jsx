@@ -10,7 +10,7 @@ export default function ProfessorAlert({ onGoPending, onGoToday }) {
 			try {
 				const res = await api.get('/reserve/list/requester');
 				const response = await api.get('/counseling/today');
-				const all = res.data.requesteByStudent ?? [];
+				const all = res.data.RequestedByStudent ?? [];
 				console.log(all);
 				const studentRequested = all.filter((r) => r.approvalState === 'REQUESTED');
 				setPendingCount(studentRequested.length);

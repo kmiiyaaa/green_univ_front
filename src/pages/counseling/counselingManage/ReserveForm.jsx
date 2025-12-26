@@ -33,13 +33,6 @@ export default function ReserveForm({ paramId }) {
 		if (paramId) setSelectedSubjectId(paramId);
 	}, [paramId]);
 
-	// 과목 선택 시 초기화
-	const handleSubjectChange = (e) => {
-		setSelectedSubjectId(e.target.value);
-		setSelectedSlot(null); // 슬롯 초기화
-		setReason('');
-	};
-
 	// 🔥 슬롯 선택 콜백 (SelectDateForCounseling에서 호출됨)
 	const handleSlotSelect = (slot) => {
 		setSelectedSlot(slot);

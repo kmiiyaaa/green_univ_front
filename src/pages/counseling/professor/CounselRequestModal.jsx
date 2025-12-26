@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
-import OptionForm from '../../../components/form/OptionForm';
 import '../../../assets/css/ProfessorCounselRequestModal.css';
 import SelectDateForCounseling from '../SelectDateForCounseling';
 
