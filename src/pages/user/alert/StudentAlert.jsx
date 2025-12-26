@@ -56,7 +56,7 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 				)}
 				{requestCount > 0 && (
 					<a
-						href="/counseling/reserve"
+						href="/counseling/manage"
 						onClick={(e) => {
 							e.preventDefault();
 							onGoRequest?.();
@@ -67,7 +67,7 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 				)}
 				{upcomingCount > 0 && (
 					<a
-						href="/counseling/reserve"
+						href="/counseling/manage"
 						onClick={(e) => {
 							e.preventDefault();
 							onGoUpcoming?.();

@@ -133,7 +133,7 @@ export default function MyStatus() {
 						onClick={(ev) => {
 							ev.stopPropagation();
 							if (disabled) return;
-							navigate(`/counseling/reserve?subjectId=${r.subjectId}`);
+							navigate(`/counseling/manage?subjectId=${r.subjectId}`);
 						}}
 					>
 						{label}

@@ -36,6 +36,7 @@ export default function CounselingReserveDetail({ counselingSchedule, subId, sub
 			onReserveSuccess?.(); // 예약 목록 새로고침
 			setSelected(null);
 			setReason('');
+			setSelectedSubjectId(null);
 			refresh();
 		} catch (e) {
 			alert(e?.response?.data?.message ?? '상담 신청 실패');

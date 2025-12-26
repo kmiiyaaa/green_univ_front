@@ -8,7 +8,7 @@ import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 /**
  * 학생이 과목 선택 후 상담 예약하는 폼
  */
-export default function ReserveForm() {
+export default function ReserveForm({ paramId }) {
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const [selectedSlot, setSelectedSlot] = useState(null);
@@ -28,6 +28,10 @@ export default function ReserveForm() {
 	useEffect(() => {
 		fetchSubjectsThisSemester();
 	}, [fetchSubjectsThisSemester]);
+
+	useEffect(() => {
+		if (paramId) setSelectedSubjectId(paramId);
+	}, [paramId]);
 
 	// 과목 선택 시 초기화
 	const handleSubjectChange = (e) => {

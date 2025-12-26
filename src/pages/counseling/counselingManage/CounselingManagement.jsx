@@ -11,6 +11,7 @@ import '../../../assets/css/MyCounselingManage.css';
 
 import { combinedListFilter, extractSubjects, listFilterBySubject } from './util/ListFilter';
 import { CounselingRefreshContext } from './util/CounselingRefreshContext';
+import { useSearchParams } from 'react-router-dom';
 
 // 상담 관리/ 예약 제일 상위 컴포넌트, 상담 데이터 이용 검색, 데이터 내려주기
 export default function CounselingManageMent() {
@@ -24,6 +25,10 @@ export default function CounselingManageMent() {
 	// 과목 필터
 	const [subjectOptions, setSubjectOptions] = useState([]);
 	const [selectedSubject, setSelectedSubject] = useState('');
+
+	// 내 위험 과목에서 넘어온 경우 처리
+	const [searchParams] = useSearchParams();
+	const paramId = searchParams.get('subjectId');
 
 	const loadCounselingList = async () => {
 		try {
@@ -64,7 +69,7 @@ export default function CounselingManageMent() {
 					</div>
 
 					<section className="cm-card">
-						<ReserveForm />
+						<ReserveForm paramId={paramId} />
 					</section>
 				</>
 			)}
