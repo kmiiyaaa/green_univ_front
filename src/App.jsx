@@ -48,17 +48,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
 import CounselingEntry from './pages/CounselingEntry';
 import VideoCounseling from './pages/video/VideoCounseling';
-import MyApprovedCounseling from './pages/counseling/professor/MyApprovedCounseling';
 import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCounselingScheduleForm';
 import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
 import MyStatus from './pages/counseling/student/MyStatus';
 import CounselingRequestList from './pages/counseling/student/CounselingRequestList';
-import CounselingReserve from './pages/counseling/student/CounselingReserve';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
-import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
@@ -187,7 +184,6 @@ function App() {
 								/>
 								<Route path="/counseling" element={<CounselingEntry />} />
 								<Route path="/videotest" element={<VideoCounseling />} />
-								<Route path="/counseling/list" element={<CounselingList />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
