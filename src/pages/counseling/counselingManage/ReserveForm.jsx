@@ -37,7 +37,7 @@ export default function ReserveForm({ paramId }) {
 
 		try {
 			setLoading(true);
-			await api.post('/reserve/student', {
+			await api.post('/reserve', {
 				subjectId: Number(selectedSubjectId),
 				counselingScheduleId: Number(selectedSlot.id),
 				reason: reason || '',
