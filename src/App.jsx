@@ -62,7 +62,6 @@ import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
-import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
 
 function App() {
 	// React Query 라이브러리
