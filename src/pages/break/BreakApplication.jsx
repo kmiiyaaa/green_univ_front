@@ -13,11 +13,13 @@ export default function BreakApplication() {
 	const [deptName, setDeptName] = useState('');
 	const [collName, setCollName] = useState('');
 
-	const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-	const [currentSemester, setCurrentSemester] = useState(1);
+	// 서버에서 내려주는 값 쓰니까 초기값은 0으로 둬도됨
+	const [currentYear, setCurrentYear] = useState(0);
+	const [currentSemester, setCurrentSemester] = useState(0);
 
-	const [toYear, setToYear] = useState(String(new Date().getFullYear()));
-	const [toSemester, setToSemester] = useState('2');
+	//종료(복학) 시점
+	const [toYear, setToYear] = useState('');
+	const [toSemester, setToSemester] = useState('');
 
 	const [type, setType] = useState('일반');
 	const [loading, setLoading] = useState(true);
@@ -34,22 +36,23 @@ export default function BreakApplication() {
 	useEffect(() => {
 		const loadApplicationData = async () => {
 			try {
-				const res = await api.get('/break/application');
+					const res = await api.get('/break/application');
+				console.log('확인', res.data);
 
-				setStudent(res.data.student);
-				setDeptName(res.data.deptName);
-				setCollName(res.data.collName);
+				const data = res.data ?? {};
+				const serverYear = data.currentYear ?? new Date().getFullYear();
+				const serverSemester = data.currentSemester;
 
-				const serverYear = res.data.currentYear;
-				const serverSemester = res.data.currentSemester;
+				setStudent(data.student ?? null);
+				setDeptName(data.deptName ?? '');
+				setCollName(data.collName ?? '');
 
-				const finalYear = serverYear ?? new Date().getFullYear();
-				const finalSemester = serverSemester ?? 1;
+				setCurrentYear(serverYear+1);
+				setCurrentSemester(serverSemester);
 
-				setCurrentYear(finalYear);
-				setCurrentSemester(finalSemester);
-
-				setToYear(String(finalYear));
+				// 종료년도 기본값은 시작년도(서버 기준)로 맞추기
+				setToYear(String(serverYear));
+				setToSemester(String(serverSemester)); 
 			} catch (e) {
 				console.error(e);
 				alert(e.response?.data?.message ?? '휴학 신청 정보를 불러오지 못했습니다.');
@@ -62,7 +65,7 @@ export default function BreakApplication() {
 		loadApplicationData();
 	}, [navigate]);
 
-	// ---- DataTable 상단 요약(NoticeList 스타일) ----
+	// ---- DataTable 상단 요약 ----
 	const infoHeaders = useMemo(() => ['항목', '내용'], []);
 	const infoData = useMemo(() => {
 		if (!student) return [];
@@ -108,8 +111,8 @@ export default function BreakApplication() {
 
 		try {
 			await api.post('/break/application', {
-				// fromYear: serverYear,
-				// fromSemeter: serverSemester,
+				fromYear: currentYear,
+				fromSemester: currentSemester,
 				type,
 				toYear: Number(toYear),
 				toSemester: Number(toSemester),

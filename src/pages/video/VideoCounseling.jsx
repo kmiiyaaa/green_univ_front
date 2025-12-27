@@ -3,7 +3,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../api/httpClient';
 import '../../assets/css/VideoCounseling.css';
-import EndTime from './endTime';
+import EndTime from './EndTime';
 
 export default function VideoCounseling() {
 	const { user, name, userRole } = useContext(UserContext);

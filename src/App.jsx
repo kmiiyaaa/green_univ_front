@@ -87,7 +87,6 @@ function App() {
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
 							<Route path="/direction" element={<Direction />} />
-							<Route path="/direction" element={<Direction />} />
 							{/* 등록금 */}
 							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
 							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
@@ -100,6 +99,7 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+							<Route path="/direction" element={<Direction />} />
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
