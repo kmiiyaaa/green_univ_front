@@ -68,7 +68,7 @@ const NoticeUpdate = () => {
 			console.error('공지 수정 실패:', e);
 			alert(e?.response?.data?.message ?? '공지 수정 실패');
 		}
-	};ㄴ
+	};
 
 	if (userRole !== 'staff') {
 		return (
