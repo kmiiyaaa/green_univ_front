@@ -33,23 +33,9 @@ export default function Chat({ variant = 'mono' }) {
 		return QUICK_ACTIONS.filter((a) => !a.roles || a.roles.includes(role));
 	}, [role]);
 
-	// ✅ 이동 가능한 경로 allowlist (여기가 크래시 원인이었음)
-	// - quickActions의 links를 실제로 순회해서 set에 담는다
-	const allowedPaths = useMemo(() => {
-		const set = new Set();
-
-		for (const a of quickActions) {
-			for (const l of a.links ?? []) {
-				const to = l?.path ?? l?.href ?? l?.url ?? l?.to ?? null;
-				if (typeof to === 'string' && to.startsWith('/')) set.add(to);
-			}
-		}
-
-		// 필요하면 권한별로 추가 허용 경로를 여기서 더 등록 가능
-		// if (role === 'staff') set.add('/notice/new');
-
-		return set;
-	}, [quickActions, role]);
+	// ✅ 이동 가능한 경로 allowlist
+	// - (기존) 프론트에서 allowlist로 막았는데, 중복/복잡해져서 제거
+	// - (현재) 백엔드가 내려준 링크는 이동 시도하고, 최종 권한 체크는 ProtectedRoute가 담당
 
 	const welcome = useMemo(
 		() => ({
@@ -112,7 +98,6 @@ export default function Chat({ variant = 'mono' }) {
 	};
 
 	// 내부 경로(/로 시작)만 취급
-	// allowlist(권한별 허용경로)에 없으면 차단
 	// AI가 준 링크는 confirm(사용자 확인) 후 이동
 	const openLink = (href, source = 'quick') => {
 		if (!href || typeof href !== 'string') return;
@@ -123,18 +108,13 @@ export default function Chat({ variant = 'mono' }) {
 			return;
 		}
 
-		// 권한/허용 경로 체크
-		if (!allowedPaths.has(href)) {
-			pushBot('해당 기능은 현재 권한에서 바로 이동할 수 없어요. (또는 지원되지 않는 경로예요)');
-			return;
-		}
-
 		// AI가 준 링크는 확인 거치기
 		if (source === 'ai') {
 			const ok = window.confirm('해당 페이지로 이동할까요?');
 			if (!ok) return;
 		}
 
+		// ✅ 권한 체크는 라우터(ProtectedRoute)가 담당
 		navigate(href);
 	};
 
@@ -157,7 +137,6 @@ export default function Chat({ variant = 'mono' }) {
 
 			pushBot(answer + refText);
 
-			// AI가 준 links는 “추천 링크”일 뿐, allowlist/confirm을 통과해야 이동 가능
 			if (Array.isArray(data?.links) && data.links.length > 0) {
 				const normalized = normalizeLinks(data.links, 'ai');
 				if (normalized.length > 0) pushLinks(normalized);
