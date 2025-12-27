@@ -99,7 +99,6 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
-							<Route path="/direction" element={<Direction />} />
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
