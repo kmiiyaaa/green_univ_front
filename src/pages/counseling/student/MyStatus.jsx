@@ -115,7 +115,7 @@ export default function MyStatus() {
 			} else if (rs?.approvalState === 'REQUESTED') {
 				label = '요청 대기';
 				disabled = true;
-			} else if (rs?.approvalState === 'CANCELED') {
+			} else if (rs?.approvalState === 'CANCELED' || rs?.approvalState === 'NO_SHOW') {
 				// 취소면 다시 신청 가능
 				label = '재신청 가능';
 				disabled = false;
