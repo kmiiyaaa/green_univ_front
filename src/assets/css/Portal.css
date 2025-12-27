@@ -98,6 +98,74 @@
 	right: 18px;
 }
 
+/* --- [NEW] 찾아오시는길 CTA (배너 아래) --- */
+.portal-direction-cta {
+	margin: -10px 0 18px; /* 배너 아래 살짝 붙는 느낌 */
+}
+
+.portal-direction-card {
+	width: 500px;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--card-border);
+	background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
+	box-shadow: var(--card-shadow);
+	padding: 16px 18px;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+
+	transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.portal-direction-card:hover {
+	box-shadow: var(--card-shadow-hover);
+	transform: translateY(-1px);
+}
+
+.portal-direction-left {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.portal-direction-title {
+	font-size: 1.05rem;
+	font-weight: 900;
+	color: #111827;
+	letter-spacing: -0.01em;
+}
+
+.portal-direction-desc {
+	font-size: 0.9rem;
+	color: #6b7280;
+	font-weight: 700;
+}
+
+.portal-direction-btn {
+	border: 1px solid #021b50;
+	background: #021b50;
+	color: #fff;
+	border-radius: 12px;
+	padding: 11px 14px;
+	font-weight: 900;
+	cursor: pointer;
+	transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.2s ease;
+	box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+	white-space: nowrap;
+}
+
+.portal-direction-btn:hover {
+	filter: brightness(1.03);
+	transform: translateY(-1px);
+}
+
+.portal-direction-btn:active {
+	transform: translateY(0);
+	box-shadow: none;
+}
+
 /* --- [2] 하단 3분할 섹션 --- */
 .bottom-section {
 	display: flex;
@@ -587,12 +655,19 @@
 	background: transparent;
 }
 
-/* ✅ 반응형(간단) */
+/* 반응형(간단) */
 @media (max-width: 1024px) {
 	.bottom-section {
 		flex-direction: column;
 	}
 	.banner-section {
 		height: 300px;
+	}
+	.portal-direction-card {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.portal-direction-btn {
+		width: 100%;
 	}
 }

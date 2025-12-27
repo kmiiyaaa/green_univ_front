@@ -8,10 +8,13 @@ export default function ProfessorAlert({ onGoPending, onGoToday }) {
 	useEffect(() => {
 		const load = async () => {
 			try {
-				const res = await api.get('/reserve/list/professor');
-				const all = res.data ?? [];
-				const studentRequested = all.filter((r) => r.approvalState === 'REQUESTED' && r.requester === 'STUDENT');
+				const res = await api.get('/reserve/list/requester');
+				const response = await api.get('/counseling/today');
+				const all = res.data.requesteByStudent ?? [];
+				console.log(all);
+				const studentRequested = all.filter((r) => r.approvalState === 'REQUESTED');
 				setPendingCount(studentRequested.length);
+				setScheduleCount(response.data);
 			} catch (e) {
 				console.error('교수 알림 로드 실패:', e);
 				setPendingCount(0);

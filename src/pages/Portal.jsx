@@ -260,7 +260,7 @@ export default function Portal() {
 								{/* [Professor 전용] */}
 								{userRole === 'professor' && token && (
 									<ProfessorAlert
-										onGoPending={() => navigate('/professor/counseling/approved')}
+										onGoPending={() => navigate('/counseling/manage')}
 										onGoToday={() => navigate('/videotest')}
 									/>
 								)}
@@ -269,8 +269,8 @@ export default function Portal() {
 								{userRole === 'student' && token && (
 									<StudentAlerts
 										onGoRisk={() => navigate('/status')}
-										onGoRequest={() => navigate('/counseling/reserve')}
-										onGoUpcoming={() => navigate('/counseling/reserve')}
+										onGoRequest={() => navigate('/counseling/manage')}
+										onGoUpcoming={() => navigate('/counseling/manage')}
 									/>
 								)}
 							</div>
@@ -294,6 +294,20 @@ export default function Portal() {
 							</button>
 						</div>
 					)}
+				</div>
+			</div>
+			<div></div>
+			{/* [NEW] 찾아오시는길 CTA (포탈에서 바로 이동) */}
+			<div className="portal-direction-cta">
+				<div className="portal-direction-card">
+					<div className="portal-direction-left">
+						<div className="portal-direction-title">그린대학교 오시는 길</div>
+						<div className="portal-direction-desc">📍서울시 마포구 신촌로 176</div>
+					</div>
+
+					<button type="button" className="portal-direction-btn" onClick={() => navigate('/direction')}>
+						찾아오시는 길 →
+					</button>
 				</div>
 			</div>
 		</div>

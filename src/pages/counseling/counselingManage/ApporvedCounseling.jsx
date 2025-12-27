@@ -49,7 +49,12 @@ export default function ApprovedCounseling({ approvedList }) {
 			</button>
 		),
 		cancel: (r) => (
-			<button type="button" disabled={loadingId === r.id} onClick={() => cancelApproved(r.id)}>
+			<button
+				type="button"
+				className="cm-btn cm-btn--ghost"
+				disabled={loadingId === r.id}
+				onClick={() => cancelApproved(r.id)}
+			>
 				취소
 			</button>
 		),

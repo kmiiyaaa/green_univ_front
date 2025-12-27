@@ -9,19 +9,14 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 	useEffect(() => {
 		const load = async () => {
 			try {
-				const [riskRes, countRes, requestRes] = await Promise.all([
-					api.get('/risk/me'),
-					api.get('/reserve/count/student'),
-					api.get('/reserve/pre/list/student'),
-				]);
+				const [riskRes, countRes] = await Promise.all([api.get('/risk/me'), api.get('/reserve/count/student')]);
 
 				const riskList = riskRes.data?.riskList ?? riskRes.data ?? [];
 				setRiskCount(Array.isArray(riskList) ? riskList.length : 0);
 
+				//서비스가 requested/approved 내려줌
+				setRequestCount(Number(countRes.data?.requested) || 0);
 				setUpcomingCount(Number(countRes.data?.approved) || 0);
-
-				const reqList = requestRes.data?.list ?? requestRes.data ?? [];
-				setRequestCount(Array.isArray(reqList) ? reqList.length : 0);
 			} catch (e) {
 				console.error('학생 알림 로드 실패:', e);
 				setRiskCount(0);
@@ -33,7 +28,6 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 		load();
 	}, []);
 
-	// 셋 다 없으면 숨김
 	if (riskCount + requestCount + upcomingCount <= 0) return null;
 
 	return (
@@ -54,9 +48,10 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 						위험 과목이 <span className="count-bold">{riskCount}</span>개 있습니다.
 					</a>
 				)}
+
 				{requestCount > 0 && (
 					<a
-						href="/counseling/reserve"
+						href="/counseling/manage"
 						onClick={(e) => {
 							e.preventDefault();
 							onGoRequest?.();
@@ -65,9 +60,10 @@ export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
 						교수 상담 요청이 <span className="count-bold">{requestCount}</span>건 도착했습니다.
 					</a>
 				)}
+
 				{upcomingCount > 0 && (
 					<a
-						href="/counseling/reserve"
+						href="/counseling/manage"
 						onClick={(e) => {
 							e.preventDefault();
 							onGoUpcoming?.();

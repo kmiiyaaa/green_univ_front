@@ -1,195 +1,318 @@
+/* =========================================================
+   Header.css (Portal Header ph-)
+   - clean single source of truth
+   - green accent line, centered tabs, pretty mega dropdown
+========================================================= */
+
+:root {
+	/* you already have these in other css - keep consistent */
+	--primary-green: #15803d;
+	--primary-green-dark: #0f6b3a;
+
+	--text-main: #111827;
+	--text-sub: rgba(17, 24, 39, 0.62);
+
+	--border-soft: rgba(15, 23, 42, 0.1);
+	--shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.06);
+
+	--radius-lg: 16px;
+	--radius-md: 12px;
+
+	/* ✅ header accent line: match sidebar active 느낌 */
+	--header-accent: rgba(21, 128, 61, 0.28);
+	/* 원하면 더 진하게: rgba(23, 54, 20, 0.993) */
+}
+
+/* link reset */
+.ph-header a {
+	color: inherit;
+	text-decoration: none;
+}
+
 /* =========================
-   1) TOP USER BAR (진한 줄)
+   HEADER (top)
 ========================= */
-.top-userbar {
-	background: linear-gradient(90deg, #064e3b 0%, #0f6b3a 50%, #064e3b 100%);
-	color: #f8fafc;
-	height: 36px;
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-	font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-	width: 100%; /* 전체 너비 */
+.ph-header {
+	position: sticky;
+	top: 0;
+	z-index: 1200;
+
+	background: rgba(255, 255, 255, 0.86);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	/* ✅ 초록 라인 1줄 */
+	border-bottom: solid 2px;
+	box-shadow: 0 1px 0 var(--header-accent);
 }
 
-.top-userbar-inner {
-	width: 100%;
-	max-width: none;
-	margin: 0;
-	padding: 0 28px;
-	display: flex;
-	justify-content: flex-end;
+.ph-inner {
+	max-width: 1560px;
+	margin: 0 auto;
+	padding: 14px 24px;
+
+	display: grid;
+	grid-template-columns: auto 1fr auto;
 	align-items: center;
+	gap: 18px;
 }
 
-.top-userbar-right {
-	display: inline-flex;
+/* =========================
+   BRAND
+========================= */
+.ph-brand {
+	display: flex;
 	align-items: center;
 	gap: 10px;
-	font-size: 12px;
-	font-weight: 600;
 }
 
-.top-userbar-text {
-	opacity: 0.95;
+.ph-logo {
+	width: 50px;
+	height: 50px;
+	border-radius: 999px;
+	border: 1px solid var(--border-soft);
+	background: #fff;
+	box-shadow: 0 10px 22px rgba(17, 24, 39, 0.08);
+	object-fit: cover;
 }
 
-.top-userbar-divider {
-	opacity: 0.5;
+.ph-brandtext {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.05;
 }
 
-.top-userbar-link {
-	background-color: #07553a;
-	color: #ffffff;
-	border-radius: 5px;
-	border-style: none;
-	padding: 5px 10px;
-	text-decoration: none;
+.ph-en {
+	font-weight: 900;
+	font-size: 20px;
+	letter-spacing: 0.06em;
+	color: var(--text-main);
+}
+
+.ph-ko {
+	margin-top: 2px;
 	font-weight: 700;
-}
-
-.top-userbar-link:hover {
-	background-color: #ffffff;
-	color: #064e3b;
-	cursor: pointer;
+	font-size: 13px;
+	color: var(--text-sub);
+	color: #085826;
 }
 
 /* =========================
-   2) MAIN WHITE HEADER
+   TABS (center)
 ========================= */
-.gu-header {
-	background: #ffffff;
-	border-bottom: 1px solid #e5e7eb;
-	box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-	position: sticky;
-	top: 0; /* 스크롤해도 상단 고정 */
-	z-index: 50;
-	width: 100%; /* 전체 너비 */
-}
-
-.gu-header-inner {
-	width: 100%;
-	max-width: none;
-	margin: 0;
-	padding: 14px 28px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-}
-
-/* LEFT brand */
-.gu-brand {
-	display: inline-flex;
-	align-items: center;
-	gap: 12px;
-	text-decoration: none;
-	flex-shrink: 0;
-}
-
-.gu-brand-logo {
-	width: 46px;
-	height: 46px;
-	object-fit: contain;
-}
-
-.gu-brand-text {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.gu-brand-en {
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.18em;
-	color: #166534;
-	opacity: 0.9;
-}
-
-.gu-brand-ko {
-	font-size: 17px;
-	font-weight: 800;
-	color: #0f172a;
-}
-
-/* CENTER nav */
-.gu-nav {
-	display: flex;
-	align-items: center;
-	width: clamp(400px, 49vw, 600px);
-	margin: 0 auto;
-	justify-content: space-evenly;
-	gap: 0;
-	flex: 1;
-	min-width: 0;
-}
-
-.gu-nav-item {
+.ph-nav {
 	position: relative;
-	padding: 8px 14px;
-	border-radius: 10px;
-	font-size: 17px;
-	font-weight: 700;
-	letter-spacing: -0.05em;
-	color: #111827;
-	text-decoration: none;
-	transition: background-color 0.15s ease, color 0.15s ease, transform 0.06s ease;
+	min-width: 0;
+	display: flex;
+	justify-content: center;
 }
 
-.gu-nav-item:hover {
-	background: rgba(34, 197, 94, 0.08);
-	color: #15803d;
+.ph-tabs {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: clamp(18px, 4vw, 56px);
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: visible;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+.ph-tabs::-webkit-scrollbar {
+	display: none;
+}
+
+.ph-tab {
+	padding: 15px;
+	border-radius: 10px;
+	border: 0;
+	background: transparent;
+	font-weight: 900;
+	font-size: 20px;
+	color: rgba(17, 24, 39, 0.76);
+
+	transition: background 0.14s ease, transform 0.14s ease, color 0.14s ease;
+}
+
+.ph-tab:hover {
+	background: rgba(17, 24, 39, 0.06);
 	transform: translateY(-1px);
 }
 
-.gu-nav-item.active {
-	color: #15803d;
-	background: rgba(34, 197, 94, 0.12);
+/* =========================
+   USER (right)
+========================= */
+.ph-user {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	white-space: nowrap;
 }
 
-.gu-nav-item.active::after {
+.ph-usertext {
+	font-weight: 800;
+	font-size: 16px;
+	color: var(--text-main);
+	padding: 8px 10px;
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.72);
+}
+
+.ph-logout {
+	border: 2px dashed rgba(197, 71, 71, 0.973);
+	color: #000000;
+	font-weight: 800;
+	font-size: 14px;
+	padding: 8px 12px;
+	border-radius: 20px;
+	cursor: pointer;
+	transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.ph-logout:hover {
+	transform: translateY(-1px);
+	background: #e9d4d4;
+	opacity: 0.92;
+}
+
+/* =========================================================
+   MEGA DROPDOWN (pretty version)
+   - not bland
+   - centered even with few items
+   - card links + subtle grid/pattern
+========================================================= */
+
+.ph-mega {
+	width: 100%;
+	position: relative;
+	color: #ffffff;
+	/* ✅ 헤더 아래 살짝 분리 */
+	border-top: 1px solid rgba(17, 24, 39, 0.06);
+
+	/* ✅ 너무 진하지 않게: 밝은 바탕 + 그린 포인트 */
+	background: radial-gradient(900px 260px at 15% 30%, rgba(21, 128, 61, 0.1), transparent 60%),
+		radial-gradient(800px 240px at 85% 40%, rgba(17, 24, 39, 0.06), transparent 60%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94));
+
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+
+	/* ✅ 살짝 그림자 */
+	box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+}
+
+.ph-mega-inner {
+	max-width: 1440px;
+	margin: 0 auto;
+	padding: 16px 24px 18px;
+}
+
+.ph-mega-grid {
+	display: grid;
+
+	/* ✅ 갯수 적어도 중앙 정렬 */
+	grid-template-columns: repeat(auto-fit, minmax(190px, 220px));
+	justify-content: center;
+
+	gap: 12px;
+}
+
+/* ✅ 카드형 링크 */
+.ph-mega-link {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	padding: 12px 14px;
+	border-radius: 14px;
+
+	border: 1px solid rgba(26, 112, 33, 0.1);
+	background: rgba(6, 63, 32, 0.78);
+
+	color: var(--text-main);
+	font-weight: 600;
+	font-size: 15px;
+
+	transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+/* ✅ 왼쪽 포인트 바 */
+.ph-mega-link::before {
 	content: '';
 	position: absolute;
-	left: 12px;
-	right: 12px;
-	bottom: 4px;
-	height: 2px;
+	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 12px;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #16a34a, #22c55e);
+	background: rgba(21, 128, 61, 0);
+	transition: background 0.14s ease;
 }
 
-/* RIGHT mini */
-.gu-user-mini {
-	flex-shrink: 0;
-	font-size: 12px;
-	color: #6b7280;
-	font-weight: 600;
+/* ✅ 오른쪽 화살표(심플) */
+.ph-mega-link::after {
+	content: '›';
+	font-size: 18px;
+	font-weight: 900;
+	opacity: 0.45;
 }
 
-.gu-user-mini-text {
-	padding: 6px 8px;
-	border-radius: 8px;
-	background: rgba(34, 197, 94, 0.06);
-	border: 1px solid rgba(34, 197, 94, 0.18);
+.ph-mega-link:hover {
+	transform: translateY(-2px);
+	background: rgba(255, 255, 255, 0.96);
+	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.1);
+	border-color: rgba(21, 128, 61, 0.22);
+	color: #111827;
 }
 
-/* responsive */
-@media (max-width: 768px) {
-	.top-userbar-inner,
-	.gu-header-inner {
-		padding: 0 14px;
+.ph-mega-link:hover::before {
+	background: var(--primary-green);
+}
+
+/* =========================================================
+   OPTIONAL: old "ph-drop" styles
+   (If you are NOT using ph-drop anymore, you can delete these.)
+========================================================= */
+.ph-drop,
+.ph-drop-head,
+.ph-drop-title,
+.ph-drop-grid,
+.ph-drop-item,
+.ph-ico,
+.ph-label,
+.ph-go,
+.ph-empty {
+	/* intentionally empty: avoid duplicate old styles causing conflicts */
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+	.ph-inner {
+		max-width: 100%;
+		padding: 12px 14px;
 	}
 
-	.gu-brand-en {
+	.ph-brandtext {
 		display: none;
 	}
-}
 
-@media (max-width: 560px) {
-	.gu-nav {
-		overflow-x: auto;
-		white-space: nowrap;
-		justify-content: flex-start;
+	.ph-tab {
+		font-size: 14px;
+		padding: 9px 12px;
+	}
+
+	.ph-mega-inner {
+		padding: 14px 14px 16px;
+	}
+
+	.ph-mega-grid {
+		grid-template-columns: 1fr;
+		justify-content: stretch;
 	}
 }

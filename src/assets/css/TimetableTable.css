@@ -13,7 +13,7 @@
 	align-items: center;
 
 	width: 100%;
-	max-width: 1600px; /*  고정 width 대신 max-width */
+	max-width: 1500px; /*  고정 width 대신 max-width */
 	margin: 0 auto 16px; /* 가운데 정렬 */
 
 	padding: 0 8px; /* (선택) 양 끝 살짝 여백 */

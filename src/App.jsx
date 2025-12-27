@@ -61,6 +61,7 @@ import UserCreate from './pages/user/create/UserCreate';
 import CounselingList from './pages/counseling/CounselingList';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
+import Direction from './pages/map/Direction';
 import SelectDateForCounseling from './pages/counseling/SelectDateForCounseling';
 
 function App() {
@@ -89,6 +90,19 @@ function App() {
 							{/* ================= 공통 (로그인만 필요) ================= */}
 							{/* 메인 대시보드 */}
 							<Route path="/portal" element={<Portal />} />
+							<Route path="/direction" element={<Direction />} />
+							{/* 등록금 */}
+							<Route path="/tuition" element={<TuiList />} /> {/* 등록금 납부 내역 */}
+							<Route path="/tuition/payment" element={<Payment />} /> {/* 등록금 고지서 */}
+							{/* 등록금 고지서 생성 (관리자) */}
+							<Route
+								path="/tuition/bill"
+								element={
+									<ProtectedRoute allowedRoles={['staff']}>
+										<CreatePayment />
+									</ProtectedRoute>
+								}
+							/>
 							{/* 사용자 */}
 							<Route path="/user/info" element={<UserInfo />} /> {/* 내 정보 조회, 수정 */}
 							<Route path="/user/update/password" element={<UpdatePassword />} /> {/* 비밀번호 변경 */}
@@ -139,7 +153,8 @@ function App() {
 								<Route path="/break/list" element={<BreakAppListStudent />} />
 								{/* 학생 상담 */}
 								<Route path="/status" element={<MyStatus />} />
-								<Route path="/counseling/reserve" element={<CounselingReserve />} />
+								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
+								{/* <Route path="/counseling/reserve" element={<CounselingReserve />} /> */}
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
@@ -152,10 +167,11 @@ function App() {
 								<Route path="/professor/evaluation" element={<MyEvaluation />} />
 
 								{/* 교수 상담 */}
-								<Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} />
+								{/* <Route path="/professor/counseling/approved" element={<MyApprovedCounseling />} /> */}
 								<Route path="/professor/counseling/schedule" element={<WeeklyCounselingScheduleForm />} />
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
+							{/* ================= 학생, 교수 전용 (비디오룸, 상담 관리) ================= */}
 							<Route element={<ProtectedRoute allowedRoles={['professor', 'student']} />}>
 								<Route
 									path="/counseling/manage"
@@ -165,13 +181,12 @@ function App() {
 										</CounselingRefreshProvider>
 									}
 								/>
+								<Route path="/counseling" element={<CounselingEntry />} />
+								<Route path="/videotest" element={<VideoCounseling />} />
+								<Route path="/counseling/list" element={<CounselingList />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
-							<Route path="/counseling" element={<CounselingEntry />} />
-							<Route path="/videotest" element={<VideoCounseling />} />
-							<Route path="/counseling/list" element={<CounselingList />} />
-							<Route path="/cc" element={<SelectDateForCounseling />} />
 						</Route>
 						<Route element={<ProtectedRoute allowedRoles={['student']}></ProtectedRoute>}>
 							{' '}
