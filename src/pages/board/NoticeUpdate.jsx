@@ -21,20 +21,20 @@ const NoticeUpdate = () => {
 	const loadNotice = async () => {
 		try {
 			const res = await api.get(`/notice/read/${id}`);
-			const n = res.data.notice;
+			const n = res.data?.notice;
 
 			setInitialValues({
-				category: n.category ?? '[일반]',
-				title: n.title ?? '',
+				category: n?.category ?? '[일반]',
+				title: n?.title ?? '',
 				// read에서 <br> 변환되어 올 수 있어서 줄바꿈 복원
-				content: (n.content ?? '').replaceAll('<br>', '\n'),
+				content: String(n?.content ?? '').replaceAll('<br>', '\n'),
 			});
 
 			// 기존 첨부파일명 세팅
 			setCurrentFileName(n?.file?.originFilename ?? '');
 		} catch (e) {
 			console.error('공지 수정 데이터 로드 실패:', e);
-			alert(e.response.data.message);
+			alert(e?.response?.data?.message ?? '공지 데이터를 불러오지 못했습니다.');
 		}
 	};
 
@@ -44,7 +44,7 @@ const NoticeUpdate = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id, userRole]);
 
-	// 파일첨부 수정버전 (+ 기존 파일 삭제 플래그)
+	// 파일첨부
 	const handleUpdate = async ({ category, title, content, file, removeFile }) => {
 		try {
 			const formData = new FormData();
@@ -53,7 +53,7 @@ const NoticeUpdate = () => {
 			formData.append('content', content);
 
 			// 기존 첨부파일 삭제 요청
-			// boolean은 multipart에서 문자열로 들어가므로 "true"/"false"로 보내도 됨
+			// removeFile === true :  서버에서 삭제
 			if (removeFile === true) formData.append('removeFile', 'true');
 
 			// 새 파일 있으면 같이 전송
@@ -66,11 +66,10 @@ const NoticeUpdate = () => {
 			navigate(`/notice/read/${id}`);
 		} catch (e) {
 			console.error('공지 수정 실패:', e);
-			alert('공지 수정 실패');
+			alert(e?.response?.data?.message ?? '공지 수정 실패');
 		}
-	};
+	};ㄴ
 
-	// 렌더 가드는 훅 아래에서 처리
 	if (userRole !== 'staff') {
 		return (
 			<div className="form-container">
