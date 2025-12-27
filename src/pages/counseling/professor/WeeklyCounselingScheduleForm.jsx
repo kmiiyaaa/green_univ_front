@@ -32,7 +32,6 @@ export default function WeeklyCounselingScheduleForm() {
 			const res = await api.get('/counseling/professor', {
 				params: { weekStartDate: startDate },
 			});
-			console.log(res.data);
 
 			const initSlots = {};
 			const initReserved = {};

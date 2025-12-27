@@ -30,6 +30,7 @@ export default function ProfessorAiGrade() {
 		const load = async () => {
 			try {
 				const res = await api.get('/professor/subject');
+				console.log('과목', res.data);
 				const list = res.data?.subjectList ?? [];
 				setSubjectList(list);
 
@@ -72,10 +73,6 @@ export default function ProfessorAiGrade() {
 		setGradeItem([{ ...student, subjectId: Number(selectedSubjectId) }]);
 		setOpenGrade(true);
 	};
-
-	if (openGrade) {
-		return <GradeInput gradeItem={gradeItem} setOpenGrade={setOpenGrade} stuNum={stuNum} onSuccess={refetch} />;
-	}
 
 	// 테이블 헤더
 	const headers = useMemo(() => {
@@ -122,6 +119,10 @@ export default function ProfessorAiGrade() {
 		}));
 	}, [studentList, subNumOfStudent, relative, aiStatus]);
 
+	if (openGrade) {
+		return <GradeInput gradeItem={gradeItem} setOpenGrade={setOpenGrade} stuNum={stuNum} onSuccess={refetch} />;
+	}
+
 	return (
 		<div className="form-container">
 			<h2 style={{ marginBottom: 12 }}>성적 입력 / AI 분석</h2>
@@ -150,7 +151,7 @@ export default function ProfessorAiGrade() {
 					<h3 style={{ marginTop: 8 }}>[{selectedSubName}] 학생 리스트 조회</h3>
 					<hr />
 
-					{/* AI 분석 완료 요약 */}
+					{/* AI 분석 완료 */}
 					{aiStatus === 'SUCCESS' && (
 						<div style={{ marginBottom: '16px', padding: '16px', backgroundColor: '#f0f9ff', borderRadius: '8px' }}>
 							<h3 style={{ color: '#2563eb' }}>✅ AI 분석 완료</h3>
@@ -171,32 +172,51 @@ export default function ProfessorAiGrade() {
 						</div>
 					)}
 
-					{/* 최종 성적 확정 + AI 실행 */}
-					{aiStatus !== 'SUCCESS' && (
+					{/* ✅ AI 분석 실패 (다시 돌릴 수 있게) */}
+					{aiStatus === 'FAIL' && (
+						<div style={{ marginBottom: '16px', padding: '16px', backgroundColor: '#fee', borderRadius: '8px' }}>
+							<h3 style={{ color: '#dc2626' }}>❌ AI 분석 실패</h3>
+							{/* <p style={{ color: '#666', marginBottom: '12px' }}>{aiMessage}</p> */}
+							<button
+								onClick={finalizeGrade}
+								disabled={loading}
+								style={{
+									backgroundColor: '#dc2626',
+									color: 'white',
+									padding: '12px 24px',
+									border: 'none',
+									borderRadius: '6px',
+									cursor: 'pointer',
+								}}
+							>
+								다시 AI 돌리기
+							</button>
+						</div>
+					)}
+
+					{/* 성적 확정 */}
+					{aiStatus !== 'SUCCESS' && aiStatus !== 'FAIL' && (
 						<div style={{ marginBottom: '12px' }}>
 							<h3>최종 성적 확정</h3>
 							<button onClick={finalizeGrade} disabled={loading || aiStatus === 'RUNNING'}>
 								{loading ? '성적 확정 및 AI 분석 중...' : '확정하고 AI 돌리기'}
 							</button>
-							<span style={{ marginLeft: '10px' }}>
-								{aiStatus === 'RUNNING' && '분석중'}
-								{aiStatus === 'FAIL' && '실패'}
-							</span>
-							{aiMessage && <div style={{ marginTop: '6px' }}>{aiMessage}</div>}
+							{/* <span style={{ marginLeft: '10px' }}>{aiStatus === 'RUNNING' && '분석중'}</span> */}
+							{aiMessage && <div style={{ marginTop: '6px', color: '#666' }}>{aiMessage}</div>}
 						</div>
 					)}
 
 					{/* 학생 리스트 */}
-					{studentList && studentList.length > 0 ? (
+					{studentList.length > 0 ? (
 						<>
 							<h4>
 								수강 인원: {stuNum}명 ({stuNum < 20 ? '절대평가' : '상대평가'})
 							</h4>
-
-							{/* 상대평가일 때 전체 등급 산출 */}
 							{stuNum >= 20 && <button onClick={calculateGrade}>전체 학생 등급 산출</button>}
 							<p>* 직접 수정한 등급도 전체 등급 재산출 시 자동 등급으로 변경됩니다.</p>
-
+							{/* <button onClick={() => setListOpen(false)} className="syllabus-btn">
+								내 강의 목록
+							</button> */}
 							<DataTable headers={headers} data={tableData} />
 						</>
 					) : (
