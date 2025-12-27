@@ -8,6 +8,7 @@ export default function StudentList() {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [lists, setLists] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
+	const [listCount, setListCount] = useState(0);
 
 	// 검색 필터
 	const [formData, setFormData] = useState({
@@ -46,12 +47,13 @@ export default function StudentList() {
 			}
 			const res = await api.get(`/user/studentList/${page}`, { params });
 			const data = res.data; // pagingResponse
+			setListCount(data.listCount);
 			setLists(data.studentList);
 			setCurrentPage(data.currentPage);
 			setTotalPages(data.totalPages);
 		} catch (e) {
 			console.error(e);
-			// alert('학생 목록을 불러오지 못했습니다.');
+			alert('학생 목록을 불러오지 못했습니다.');
 		}
 	};
 
@@ -66,8 +68,6 @@ export default function StudentList() {
 		setCurrentPage(0); // 검색 시 첫 페이지로 이동
 		searchStudent(0); // 즉시 검색
 	};
-
-	// console.log(lists);
 
 	const tableData = useMemo(() => {
 		return lists.map((s) => ({
@@ -129,6 +129,11 @@ export default function StudentList() {
 				<div className="list-divider" />
 
 				<div className="table-section">
+					<div className="table-topline">
+						<div className="table-hint">
+							총 {listCount}명 / 총 페이지: {totalPages}
+						</div>
+					</div>
 					<DataTable headers={headers} data={tableData} />
 
 					<div className="pagination-wrap">

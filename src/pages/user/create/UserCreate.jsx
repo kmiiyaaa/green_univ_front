@@ -86,7 +86,7 @@ export default function UserCreate() {
 			resetCurrent();
 		} catch (err) {
 			console.error(err);
-			alert(`${meta[type].label} 등록 중 오류가 발생했습니다.`);
+			alert(err.response?.data?.message || `${meta[type].label} 등록 중 오류가 발생했습니다.`);
 		}
 	};
 
@@ -170,22 +170,20 @@ export default function UserCreate() {
 				</div>
 
 				<form className="user-create-form" onSubmit={handleSubmit}>
-					<table className="user-form-table">
-						<tbody>
-							{/* 섹션 타이틀 */}
-							<tr className="form-section">
-								<td colSpan={2}>기본 정보</td>
-							</tr>
+					<div className="user-form-table">
+						{/* 섹션 타이틀 */}
+						<div className="form-section">
+							<h3>기본 정보</h3>
+						</div>
 
-							<CommonUserFields formData={formData} onChange={handleChange} />
+						<CommonUserFields formData={formData} onChange={handleChange} />
 
-							<tr className="form-section">
-								<td colSpan={2}>{meta[type].label} 정보</td>
-							</tr>
+						<div className="form-section">
+							<h3>{meta[type].label} 정보</h3>
+						</div>
 
-							{renderTypeFields()}
-						</tbody>
-					</table>
+						{renderTypeFields()}
+					</div>
 
 					<div className="user-form-actions">
 						<div className="user-form-btns">
