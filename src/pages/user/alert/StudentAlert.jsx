@@ -2,21 +2,20 @@ import React, { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 
 export default function StudentAlerts({ onGoRisk, onGoRequest, onGoUpcoming }) {
-	const [riskCount, setRiskCount] = useState(0);
-	const [requestCount, setRequestCount] = useState(0);
-	const [upcomingCount, setUpcomingCount] = useState(0);
+	const [riskCount, setRiskCount] = useState(0); // 나의 위험 과목
+	const [requestCount, setRequestCount] = useState(0); // 요청 온 상담 개수
+	const [upcomingCount, setUpcomingCount] = useState(0); // 확정된 상담
 
 	useEffect(() => {
 		const load = async () => {
 			try {
 				const [riskRes, countRes] = await Promise.all([api.get('/risk/me'), api.get('/reserve/count/student')]);
-
 				const riskList = riskRes.data?.riskList ?? riskRes.data ?? [];
 				setRiskCount(Array.isArray(riskList) ? riskList.length : 0);
 
-				//서비스가 requested/approved 내려줌
-				setRequestCount(Number(countRes.data?.requested) || 0);
-				setUpcomingCount(Number(countRes.data?.approved) || 0);
+				const { requested = 0, approved = 0 } = countRes.data || {};
+				setRequestCount(Number(requested));
+				setUpcomingCount(Number(approved));
 			} catch (e) {
 				console.error('학생 알림 로드 실패:', e);
 				setRiskCount(0);
