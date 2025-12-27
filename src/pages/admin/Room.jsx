@@ -69,6 +69,7 @@ export default function Room() {
 		},
 		onError: (err) => {
 			console.error('등록 실패:', err);
+			alert(err?.response?.data?.message);
 		},
 	});
 

@@ -115,9 +115,6 @@ export default function Subject() {
 	// URL 파라미터 변경 감지 (초기 로드 + 페이지 변경 시)
 	useEffect(() => {
 		const page = parseInt(searchParams.get('page') || '0', 10);
-
-		console.log('🔗 URL에서 읽은 관리자 강의 페이지:', { page });
-
 		loadSubjectList(page);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);

@@ -17,9 +17,6 @@ export default function BreakAppListStaff() {
 		try {
 			const res = await api.get('/break/list/staff');
 			const raw = res.data.breakAppList || [];
-
-			console.log(res.data);
-
 			const formatted = raw.map((b) => ({
 				id: b.id,
 				신청일자: b.appDate ?? '',

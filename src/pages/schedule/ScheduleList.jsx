@@ -28,14 +28,21 @@ const ScheduleList = () => {
 		try {
 			// 공용 조회 엔드포인트 하나만 사용
 			const res = await api.get('/schedule');
+			console.log(res.data);
 			const raw = res.data.schedules || [];
 
-			// 프론트에서 임시로 정렬
-			raw.sort((a, b) => b.id - a.id);
+			// 1. 날짜 순 정렬 (내림차순: 최신 -> 옛날)
+			// 문자열 날짜("2025-01-01")는 localeCompare로 비교하는 게 가장 안전하고 정확함
+			raw.sort((a, b) => {
+				const dateA = a.startDay || '';
+				const dateB = b.startDay || '';
+				return dateB.localeCompare(dateA);
+			});
 
-			const formatted = raw.map((s) => ({
-				id: s.id,
-				ID: s.id,
+			// 2. 데이터 가공 + 순번(ID) 새로 매기기
+			const formatted = raw.map((s, index) => ({
+				id: s.id, // 실제 DB ID (상세페이지 이동용, 화면엔 안 보임)
+				ID: raw.length - index, // 화면 표시용 순번
 				기간: formatRange(s),
 				내용: s.information,
 				원본데이터: s,

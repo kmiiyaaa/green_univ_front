@@ -11,7 +11,7 @@ const TotalGrade = () => {
 	useEffect(() => {
 		// 이번 학기 수강과목 강의평가 안 되어있으면 리턴
 		api.get('/evaluation/hasEval').then((res) => {
-			console.log(res.data.hasEval);
+			// console.log(res.data.hasEval);
 			if (!res?.data?.hasEval) {
 				alert('먼저 강의 평가를 완료해주세요');
 				navigate(-1, { replace: true });
@@ -23,7 +23,7 @@ const TotalGrade = () => {
 		const fetchTotal = async () => {
 			try {
 				const res = await api.get('/grade/total');
-				console.log(res.data);
+				// console.log(res.data);
 				const data = res.data;
 				setMyGradeList(data.gradeList ?? []);
 			} catch (e) {

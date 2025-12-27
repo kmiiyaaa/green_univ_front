@@ -62,7 +62,7 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 		const type = searchParams.get('type') || '';
 		const deptName = searchParams.get('deptName') || '';
 		const name = searchParams.get('name') || '';
-		console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
+		//console.log('🔗 URL에서 읽은 값:', { page, type, deptName, name });
 
 		// URL에서 검색 조건 복원
 		setSearchForm({ type, deptName, name });

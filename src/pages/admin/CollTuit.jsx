@@ -55,13 +55,11 @@ const CollTuit = () => {
 		try {
 			if (!selectedCollegeId) {
 				// 등록
-				const res = await api.post('/admin/tuition', formData);
-				console.log('단대별 등록금 등록 성공:', res.data);
+				await api.post('/admin/tuition', formData);
 				alert('단대별 등록금 등록이 완료되었습니다.');
 			} else {
 				// 수정
-				const res = await api.patch(`/admin/tuition/${selectedCollegeId}`, formData);
-				console.log('단대별 등록금 수정 성공:', res.data);
+				await api.patch(`/admin/tuition/${selectedCollegeId}`, formData);
 				alert('단대별 등록금 수정이 완료되었습니다.');
 			}
 
