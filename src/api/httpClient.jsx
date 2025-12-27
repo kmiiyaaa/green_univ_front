@@ -5,7 +5,7 @@ const api = axios.create({
 	withCredentials: true,
 });
 
-// 전역 플래그 (HMR/중복 인터셉터에도 1번만 뜨게)
+// 전역 플래그 (HMR/중복 인터셉터에도 1번만 뜨게) - 알림창 중복 방지용 플래그
 globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__ ??= false;
 
 api.interceptors.request.use(
@@ -21,13 +21,14 @@ api.interceptors.response.use(
 	(res) => res,
 	(error) => {
 		const status = error?.response?.status;
-		const msg = error?.response?.data?.message;
 
-		if (status === 401 && msg === '로그인 토큰만료' && !globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__) {
+		if (status === 401 && !globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__) {
 			globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__ = true;
 
-			alert('로그인 토큰만료');
-			window.location.href = '/login';
+			// alert('로그인 토큰만료'); // 이미 백엔드에서 alert 창 보내줌
+
+			localStorage.removeItem('token');
+			window.location.href = '/';
 		}
 
 		return Promise.reject(error);
