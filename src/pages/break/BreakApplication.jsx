@@ -41,18 +41,18 @@ export default function BreakApplication() {
 
 				const data = res.data ?? {};
 				const serverYear = data.currentYear ?? new Date().getFullYear();
-				const serverSemester = data.currentSemester;
+			const serverSemester = data.currentSemester ?? 1;	
 
 				setStudent(data.student ?? null);
 				setDeptName(data.deptName ?? '');
 				setCollName(data.collName ?? '');
 
-				setCurrentYear(serverYear+1);
+				setCurrentYear(serverYear);
 				setCurrentSemester(serverSemester);
 
 				// 종료년도 기본값은 시작년도(서버 기준)로 맞추기
-				setToYear(String(serverYear));
-				setToSemester(String(serverSemester)); 
+				setToYear(String(serverYear + 1));
+				setToSemester(String(serverSemester));
 			} catch (e) {
 				console.error(e);
 				alert(e.response?.data?.message ?? '휴학 신청 정보를 불러오지 못했습니다.');
