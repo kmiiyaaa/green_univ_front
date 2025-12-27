@@ -34,8 +34,6 @@ export default function TuiList() {
 		loadTuition();
 	}, [user, userRole, navigate]);
 
-	console.log(tuiList);
-
 	// DataTable용 변환
 	const tableData = useMemo(() => {
 		return tuiList.map((t) => ({

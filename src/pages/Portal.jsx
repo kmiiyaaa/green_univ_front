@@ -36,6 +36,7 @@ export default function Portal() {
 
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [miniUserInfo, setMiniUserInfo] = useState({});
+	const [studentStatus, setStudentStatus] = useState(null); // 학생의 재학 상태 때문에
 
 	// 공지/학사일정
 	const [latestNotices, setLatestNotices] = useState([]);
@@ -85,7 +86,13 @@ export default function Portal() {
 				if (url) {
 					const res = await api.get(url);
 					// userRole 키값으로 데이터 추출 (예: res.data.student)
+					// console.log('마이페이지1: ', res.data);
+					// console.log('마이페이지2: ', res.data[userRole]);
+					// console.log('마이페이지3: ', res.data.stuStat);
 					setMiniUserInfo(res.data[userRole] || {});
+					if (userRole === 'student') {
+						setStudentStatus(res.data.stuStat[0]);
+					}
 				}
 			} catch (e) {
 				console.error('홈페이지 정보 로드 실패', e);
@@ -247,7 +254,7 @@ export default function Portal() {
 											</div>
 											<div className="info-row">
 												<span className="info-label">학적</span>
-												<span className="info-value">{miniUserInfo.status || '재학'}</span>
+												<span className="info-value">{studentStatus?.status || '재학'}</span>
 											</div>
 										</>
 									)}

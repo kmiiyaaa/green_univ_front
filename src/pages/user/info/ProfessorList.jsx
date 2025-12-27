@@ -9,6 +9,7 @@ export default function ProfessorList() {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [lists, setLists] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
+	const [listCount, setListCount] = useState(0);
 
 	// 검색 필터
 	const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ export default function ProfessorList() {
 			}
 
 			const res = await api.get(`/user/professorList/${page}`, { params });
-			// console.log(res.data);
+			setListCount(res.data.totalElements);
 			setLists(res.data.professorList);
 			setCurrentPage(res.data.page);
 			setTotalPages(res.data.totalPages);
@@ -95,7 +96,9 @@ export default function ProfessorList() {
 
 				<div className="table-section">
 					<div className="table-topline">
-						<div className="table-hint">총 페이지: {totalPages}</div>
+						<div className="table-hint">
+							총 {listCount}명 / 총 페이지: {totalPages}
+						</div>
 					</div>
 
 					<DataTable headers={headers} data={tableData} />

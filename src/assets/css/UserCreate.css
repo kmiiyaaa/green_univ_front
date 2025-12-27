@@ -61,8 +61,8 @@
 }
 
 .user-create-card {
-	width: 100%;
-	max-width: 1200px;
+	/* width: 100%; */
+	/* max-width: 1200px; */
 	background: #ffffff;
 	border: 1px solid #e5e7eb;
 	border-radius: 22px;
@@ -76,7 +76,7 @@
 	align-items: flex-end;
 	justify-content: space-between;
 	gap: 16px;
-	margin-bottom: 16px;
+	margin-bottom: 24px;
 }
 
 .user-create-titlebox h1 {
@@ -115,6 +115,8 @@
 
 .user-type-tab:hover {
 	background: #ffffff;
+	/* color: #111827;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
 }
 
 .user-type-tab.is-active {
@@ -130,17 +132,17 @@
 }
 
 /* 섹션 타이틀(기본 정보 / 학생 정보 등) */
-.form-section td {
-	padding: 10px 12px;
+.form-section {
+	padding: 0px 16px;
 	background: #f9fafb;
 	border: 1px solid #e5e7eb;
 	border-radius: 14px;
-	font-weight: 900;
 	color: #111827;
+	margin: 0 0 20px 0;
 }
 
 /* InputForm이 th/td 구조일 확률이 높아서 일반적으로 잡아줌 */
-.user-form-table th {
+/* .user-form-table th {
 	width: 120px;
 	padding: 8px 10px;
 	text-align: left;
@@ -152,13 +154,13 @@
 
 .user-form-table td {
 	padding: 8px 10px;
-}
+} */
 
 /* ✅ input/select/textarea 폭 꽉 채우기 */
 .user-form-table input,
 .user-form-table select,
 .user-form-table textarea {
-	width: 100%;
+	width: 98%;
 	height: 40px;
 	border-radius: 12px;
 	border: 1px solid #e5e7eb;

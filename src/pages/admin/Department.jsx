@@ -21,9 +21,9 @@ const Department = () => {
 	const loadDepartment = async () => {
 		try {
 			const res = await api.get('/admin/department');
-			console.log(res.data);
+			// console.log(res.data);
 			const rawData = res.data.departmentList;
-			console.log(rawData);
+			// console.log(rawData);
 
 			const formattedData = rawData.map((dept) => ({
 				id: dept.id,
@@ -34,7 +34,7 @@ const Department = () => {
 			}));
 
 			setDept(formattedData);
-			console.log('학과 데이터', formattedData);
+			// console.log('학과 데이터', formattedData);
 		} catch (e) {
 			console.error('학과 목록 로드 실패:', e);
 		}
@@ -67,11 +67,11 @@ const Department = () => {
 		try {
 			if (!selectedDeptId) {
 				//등록
-				const res = await api.post('/admin/department', formData);
+				await api.post('/admin/department', formData);
 				alert('학과 등록 완료');
 			} else {
 				//수정
-				const res = await api.patch(`/admin/department/${selectedDeptId}`, formData);
+				await api.patch(`/admin/department/${selectedDeptId}`, formData);
 				alert('학과 수정 완료');
 			}
 
@@ -148,9 +148,6 @@ const Department = () => {
 				<DataTable
 					headers={headers}
 					data={dept}
-					onRowClick={(row) => {
-						console.log('클릭한 학과:', row.학과명);
-					}}
 					renderActions={(row) => (
 						<div>
 							<button

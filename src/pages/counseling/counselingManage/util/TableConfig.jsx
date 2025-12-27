@@ -6,9 +6,9 @@ export const TABLE_CONFIG = {
 
 	// 학생 -> 교수 상담요청 조회 - request
 	PROFESSOR_REQUESTED: {
-		headers: ['교수', '과목', '상담 사유', '상담일', '상담 시간', '상세', '처리'],
+		headers: ['학생', '과목', '상담 사유', '상담일', '상담 시간', '상세', '처리'],
 		data: (r, handlers) => ({
-			교수: r.subject.professor?.name ?? '',
+			학생: r.student?.name ?? '',
 			과목: r.subject?.name ?? '',
 			'상담 사유': r?.reason,
 			상담일: r.counselingSchedule.counselingDate ?? '',
@@ -34,11 +34,13 @@ export const TABLE_CONFIG = {
 
 	// 확정된 상담 요청
 	PROFESSOR_APPROVED: {
-		headers: ['학생', '과목', '방 번호', '상담 사유', '상세', '취소'],
+		headers: ['학생', '과목', '방 번호', '상담 사유', '상담일', '상담 시간', '상세', '취소'],
 		data: (r, handlers) => ({
 			학생: r.student?.name ?? '',
 			과목: r.subject?.name ?? '',
 			'상담 사유': r.reason ?? '',
+			상담일: r.counselingSchedule.counselingDate ?? '',
+			'상담 시간': `${r.counselingSchedule?.startTime ?? ''}:00 ~ ${r.counselingSchedule?.startTime ?? ''}:50`,
 			'방 번호': r.roomCode,
 			상세: handlers.detail(r),
 			취소: handlers.cancel(r),

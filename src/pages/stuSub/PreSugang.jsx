@@ -100,7 +100,6 @@ export default function PreSugang() {
 		'정원',
 		// '예비신청'
 	];
-	console.log('예비period', period);
 
 	// 에러 화면 (기간 아닐 때)
 	if (error) {

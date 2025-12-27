@@ -21,10 +21,10 @@ export default function Sugang() {
 	const loadMyList = async () => {
 		try {
 			const res = await api.get('/sugang/stusublist');
-			console.log('[수강신청] 강의 목록 조회', res.data);
+			//console.log('[수강신청] 강의 목록 조회', res.data);
 
 			const currentPeriod = res.data.period;
-			console.log('수강currentPeriod', currentPeriod);
+			//console.log('수강currentPeriod', currentPeriod);
 			setPeriod(currentPeriod);
 			// 수강 신청 기간(1)이 아니면 접근 차단
 			if (currentPeriod !== 1) {

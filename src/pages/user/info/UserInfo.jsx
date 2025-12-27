@@ -32,7 +32,6 @@ export default function UserInfo() {
 
 	useEffect(() => {
 		console.log('토큰' + token);
-		console.log(userRole);
 
 		if (!token) {
 			alert('권한이 없는 페이지입니다. 로그인 해 주세요');
