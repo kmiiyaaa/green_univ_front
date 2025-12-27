@@ -139,7 +139,7 @@ export default function BreakApplication() {
 
 						<DataTable headers={infoHeaders} data={infoData} />
 
-						{/* 문서형 입력 핵심만 하단에 */}
+						{/* TODO: 오늘 기준(2025년 2학기)으로 2025년 2학기까지 휴학 신청이 가능한 걸 바꿔야 함 */}
 						<table border="1">
 							<tbody>
 								<tr>

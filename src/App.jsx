@@ -58,7 +58,6 @@ import UserCreate from './pages/user/create/UserCreate';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';
 import { CounselingRefreshProvider } from './pages/counseling/counselingManage/util/CounselingRefreshProvider';
 import Direction from './pages/map/Direction';
-import SubjectStudentList from './pages/professor/SubjectStudentList';
 import ProfessorAiGrade from './pages/professor/ProfessorAiGrade';
 
 function App() {
@@ -147,12 +146,10 @@ function App() {
 								<Route path="/sugang/timetable" element={<Timetable />} />
 								{/* 휴학 */}
 								<Route path="/break/application" element={<BreakApplication />} />
-								<Route path="/break/detail/:id" element={<BreakAppDetail />} />
 								<Route path="/break/list" element={<BreakAppListStudent />} />
 								{/* 학생 상담 */}
 								<Route path="/status" element={<MyStatus />} />
 								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
-								{/* <Route path="/counseling/reserve" element={<CounselingReserve />} /> */}
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />
@@ -170,7 +167,6 @@ function App() {
 								<Route path="/professor/counseling/risk" element={<MyRiskStudent />} />
 							</Route>
 							{/* ================= 학생, 교수 전용 (비디오룸, 상담 관리) ================= */}
-							<Route path="/grade/policy" element={<GradePolicy />} />
 							<Route element={<ProtectedRoute allowedRoles={['professor', 'student']} />}>
 								<Route
 									path="/counseling/manage"
@@ -181,6 +177,11 @@ function App() {
 									}
 								/>
 								<Route path="/videotest" element={<VideoCounseling />} />
+								<Route path="/grade/policy" element={<GradePolicy />} />
+							</Route>
+							{/* ================= 학생, 직원 전용 (휴학 관리) ================= */}
+							<Route element={<ProtectedRoute allowedRoles={['staff', 'student']} />}>
+								<Route path="/break/detail/:id" element={<BreakAppDetail />} />
 							</Route>
 							{/* ================= 공통 기타 ================= */}
 							<Route path="/subject/list" element={<AllsubList />} />
