@@ -233,16 +233,17 @@ export default function MyRiskStudent() {
 				const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
 				const isRejected = r.consultState === 'CONSULT_REJECTED';
 				const isCanceled = r.consultState === 'CONSULT_CANCELED';
+				const isNoShowed = r.consultState === 'CONSULT_NO_SHOW'
 
 				// 내 과목인지 확인
 				const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
 				const canRequestBase =
-					showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled);
+					showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled || isNoShowed);
 
 				const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
-				const requestBtnLabel = isRejected || isCanceled ? '재요청' : '상담 요청';
+				const requestBtnLabel = isRejected || isCanceled || isNoShowed ? '재요청' : '상담 요청';
 
 				return {
 					// rowClick에서 쓸 수 있게 숨김키 유지(헤더에는 안나옴)
@@ -282,7 +283,7 @@ export default function MyRiskStudent() {
 							<span className="status-pill">요청 대기</span>
 						) : r.consultState === 'CONSULT_APPROVED' ? (
 							<span className="status-pill ok">상담 확정</span>
-						) : r.consultState === 'CONSULT_REJECTED' ? (
+						) : r.consultState === 'CONSULT_REJECTED' || r.consultState === 'CONSULT_NO_SHOW' ? (
 							<span className="status-pill warn">재요청 가능</span>
 						) : r.consultState === 'CONSULT_CANCELED' ? (
 							<span className="status-pill warn">취소됨(재요청 가능)</span>
