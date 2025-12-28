@@ -69,15 +69,17 @@ export default function UserInfo() {
 	return (
 		<div className="mypage-shell">
 			{!isEdit && (
-				<div className="mypage-card">
-					<h2 className="mypage-title">내 정보 조회</h2>
+				<div className="mypage-titlebar">
+  					<h1 className="mypage-titlebar__title">내 정보 조회</h1>
 					{userRole === 'student' && <StudentInfoTable userInfo={userInfo} stustatList={stustatList} />}
 					{userRole === 'professor' && <ProfessorInfoTable userInfo={userInfo} />}
 					{userRole === 'staff' && <StaffInfoTable userInfo={userInfo} />}
 
-					<button className="button mypage-edit-btn" onClick={() => setIsEdit(true)}>
+					 <div className="mypage-footerbar">
+					  <button className="mypage-btn mypage-btn--primary" onClick={() => setIsEdit(true)}>
 						정보 수정하기
 					</button>
+					</div>
 				</div>
 			)}
 			{isEdit && <UpdateUserInfo userInfo={userInfo} setIsEdit={setIsEdit} />}
