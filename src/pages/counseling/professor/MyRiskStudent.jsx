@@ -233,14 +233,18 @@ export default function MyRiskStudent() {
 				const isAlreadyApproved = r.consultState === 'CONSULT_APPROVED';
 				const isRejected = r.consultState === 'CONSULT_REJECTED';
 				const isCanceled = r.consultState === 'CONSULT_CANCELED';
-				const isNoShowed = r.consultState === 'CONSULT_NO_SHOW'
+				const isNoShowed = r.consultState === 'CONSULT_NO_SHOW';
+				const isFinished = r.consultState === 'CONSULT_FINISHED';
 
 				// 내 과목인지 확인
 				const isMySubject = mySubjectIdSet.has(String(r.subjectId));
 
 				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
 				const canRequestBase =
-					showConsultButton && !isAlreadyPending && !isAlreadyApproved && (!r.consultState || isRejected || isCanceled || isNoShowed);
+					showConsultButton &&
+					!isAlreadyPending &&
+					!isAlreadyApproved &&
+					(!r.consultState || isRejected || isCanceled || isNoShowed);
 
 				const canRequest = onlyMySubjectCanRequest ? canRequestBase && isMySubject : canRequestBase;
 				const requestBtnLabel = isRejected || isCanceled || isNoShowed ? '재요청' : '상담 요청';
@@ -287,6 +291,8 @@ export default function MyRiskStudent() {
 							<span className="status-pill warn">재요청 가능</span>
 						) : r.consultState === 'CONSULT_CANCELED' ? (
 							<span className="status-pill warn">취소됨(재요청 가능)</span>
+						) : r.consultState === 'CONSULT_FINISHED' ? (
+							<span className="status-pill warn">상담 완료</span>
 						) : (
 							<span className="muted">상태 확인</span>
 						),
@@ -305,7 +311,7 @@ export default function MyRiskStudent() {
 	const deptStudentRiskData = useMemo(() => formatTableData(deptRiskList, true, true), [deptRiskList, formatTableData]);
 
 	// 학생 통합(탈락 위험) 테이블
-	const studentHeaders = ['학생정보', '통합위험', '위험과목수', '담당교수', '업데이트'];
+	const studentHeaders = ['학생정보', '통합위험', '위험과목수', '업데이트'];
 	const studentData = useMemo(() => {
 		return (studentList ?? []).map((s) => ({
 			// 클릭에서 꺼내 쓸 수 있게 id를 "숨김키 + 일반키" 둘 다 유지
@@ -326,14 +332,14 @@ export default function MyRiskStudent() {
 					<span className="chip">WARNING {s.warningCount ?? 0}</span>
 				</div>
 			),
-			담당교수: s.assignedProfessorName ? (
-				<div className="assign-cell">
-					<span className="cell-strong">{s.assignedProfessorName}</span>
-					{s.assignedAt ? <span className="muted"> · {fmtDateTime(s.assignedAt)}</span> : null}
-				</div>
-			) : (
-				<span className="muted">미배정</span>
-			),
+			// 담당교수: s.assignedProfessorName ? (
+			// 	<div className="assign-cell">
+			// 		<span className="cell-strong">{s.assignedProfessorName}</span>
+			// 		{s.assignedAt ? <span className="muted"> · {fmtDateTime(s.assignedAt)}</span> : null}
+			// 	</div>
+			// ) : (
+			// 	<span className="muted">미배정</span>
+			// ),
 			업데이트: <span className="muted">{fmtDateTime(s.updatedAt)}</span>,
 		}));
 	}, [studentList, overallLabel]);

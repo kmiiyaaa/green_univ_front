@@ -69,7 +69,7 @@ export default function PreSugang() {
 
 	// 예비 신청/취소 핸들러
 	const handlePreAction = async (row, reloadList, currentPage, searchForm) => {
-		console.log('row', row);
+		// console.log('row', row);
 		const isEnrolled = row.isEnrolled;
 		try {
 			if (isEnrolled) {
