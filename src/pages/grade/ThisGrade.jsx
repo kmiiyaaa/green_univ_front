@@ -19,7 +19,7 @@ const ThisGrade = () => {
 		fetchThisSemester();
 	}, []);
 
-	// 강의 평가 팝업 열기
+	// 강의 평가 팝업 열기 
 	const openEvaluation = useCallback((subjectId, subjectName) => {
 		const url = `/evaluation?subjectId=${subjectId}&subjectName=${encodeURIComponent(subjectName)}`;
 		window.open(url, '_blank', 'width=900,height=800,scrollbars=yes');
