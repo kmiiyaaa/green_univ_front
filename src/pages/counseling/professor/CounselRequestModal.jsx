@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
-import SelectDateForCounseling from '../../counseling/counselingManage/SelectDateForCounseling';
+import SelectDateForCounseling from "../counselingManage/util/SelectDateForCounseling";
 import '../../../assets/css/ProfessorCounselRequestModal.css';
 
 /**
