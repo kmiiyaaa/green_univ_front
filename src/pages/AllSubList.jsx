@@ -7,6 +7,7 @@ import DataTable from '../components/table/DataTable';
 import InputForm from '../components/form/InputForm';
 import OptionForm from '../components/form/OptionForm';
 import PaginationForm from '../components/form/PaginationForm';
+import { SUBJECT_TYPE1 } from '../utils/subjectTypeOptions';
 
 // 전체 강의 조회
 export default function AllSubList() {
@@ -123,13 +124,6 @@ export default function AllSubList() {
 		'강의계획서',
 	];
 
-	// 검색 폼 카테고리 ..?
-	const SUBJECT_CATEGORY_OPTIONS = [
-		{ value: '', label: '전체' },
-		{ value: '전공', label: '전공' },
-		{ value: '교양', label: '교양' },
-	];
-
 	// 강의계획서 팝업 열기
 	const handleSubDetail = (subjectId) => {
 		const url = `/professor/syllabus/${subjectId}`;
@@ -154,7 +148,7 @@ export default function AllSubList() {
 					name="type"
 					value={searchForm.type}
 					onChange={handleChange}
-					options={SUBJECT_CATEGORY_OPTIONS}
+					options={SUBJECT_TYPE1}
 				/>
 
 				<InputForm

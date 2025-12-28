@@ -8,6 +8,8 @@ import { toHHMM } from '../../utils/DateTimeUtil';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 import '../../assets/css/AdminFormLayout.css';
+import RadioForm from '../../components/form/RadioForm';
+import { SUBJECT_TYPE2 } from '../../utils/subjectTypeOptions';
 
 export default function Subject() {
 	// ================== 강의 등록/수정 폼 ==================
@@ -291,17 +293,14 @@ export default function Subject() {
 					placeholder="예: 컴퓨터공학과"
 				/>
 
-				{/* 라디오/Select는 InputForm으로 만들기 애매해서 직접 작성 */}
 				<div className="input-group">
-					<label>이수 구분</label>
-					<label>
-						<input type="radio" name="type" value="전공" checked={formData.type === '전공'} onChange={handleChange} />
-						&nbsp;전공
-					</label>
-					<label>
-						<input type="radio" name="type" value="교양" checked={formData.type === '교양'} onChange={handleChange} />
-						&nbsp;교양
-					</label>
+					<RadioForm
+						label="이수 구분"
+						name="type"
+						value={formData.type}
+						onChange={handleChange}
+						options={SUBJECT_TYPE2}
+					/>
 				</div>
 
 				<InputForm

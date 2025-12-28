@@ -5,6 +5,7 @@ import DataTable from '../../components/table/DataTable';
 import InputForm from '../../components/form/InputForm';
 import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
+import { SUBJECT_TYPE1 } from '../../utils/subjectTypeOptions';
 
 // 공통 컴포넌트 : preSugang + Sugang에서 사용됨
 export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAction, formatRowData }) {
@@ -112,13 +113,6 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 		actionHeaderLabel,
 	];
 
-	// 검색 폼 카테고리
-	const SUBJECT_CATEGORY_OPTIONS = [
-		{ value: '', label: '전체' },
-		{ value: '전공', label: '전공' },
-		{ value: '교양', label: '교양' },
-	];
-
 	return (
 		<>
 			{error && <div className="error-message">{error}</div>}
@@ -130,7 +124,7 @@ export default function SugangApplication({ apiEndpoint, actionHeaderLabel, onAc
 					name="type"
 					value={searchForm.type}
 					onChange={handleChange}
-					options={SUBJECT_CATEGORY_OPTIONS}
+					options={SUBJECT_TYPE1}
 				/>
 
 				<InputForm

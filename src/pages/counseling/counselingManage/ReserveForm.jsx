@@ -2,8 +2,9 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/ReserveForm.css';
 import SubjectSelect from './util/SubjectSelect';
-import SelectDateForCounseling from '../SelectDateForCounseling';
+import SelectDateForCounseling from '../counselingManage/util/SelectDateForCounseling';
 import { CounselingRefreshContext } from './util/CounselingRefreshContext';
+import TextField from '../../../components/form/TextField';
 
 /**
  * 학생이 과목 선택 후 상담 예약하는 폼
@@ -84,13 +85,13 @@ export default function ReserveForm({ paramId }) {
 					<SelectDateForCounseling userRole="student" subjectId={selectedSubjectId} onSelectSlot={handleSlotSelect} />
 
 					<div className="rf-reason-section">
-						<label className="rf-label">상담 사유</label>
-						<textarea
-							className="rf-textarea"
+						<TextField
+							label="상담 사유"
+							name="reason"
+							rows={4}
+							placeholder="예) 성적 관련 상담이 필요합니다."
 							value={reason}
 							onChange={(e) => setReason(e.target.value)}
-							placeholder="예) 성적 관련 상담이 필요합니다."
-							rows={4}
 						/>
 					</div>
 
