@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 
 export default function ProtectedRoute({ children, allowedRoles }) {
 	const { user, token, userRole, loading } = useContext(UserContext);

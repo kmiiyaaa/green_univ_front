@@ -51,7 +51,7 @@ import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCou
 import MyRiskStudent from './pages/risk/MyRiskStudent';
 import StudentMyRiskStatus from './pages/risk/StudentMyRiskStatus';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/route/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
 import UserCreate from './pages/user/create/UserCreate';
 import CounselingManageMent from './pages/counseling/counselingManage/CounselingManagement';

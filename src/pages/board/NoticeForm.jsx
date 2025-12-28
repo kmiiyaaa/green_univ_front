@@ -89,8 +89,8 @@ const NoticeForm = ({
 			</div>
 
 			<div className="content--container">
-				<label>내용</label>
 				<TextField
+					label="내용"
 					name="content"
 					cols="100"
 					rows="20"
