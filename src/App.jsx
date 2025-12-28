@@ -48,9 +48,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FindAccountPop from './pages/user/find/FindAccountPop';
 import VideoCounseling from './pages/video/VideoCounseling';
 import WeeklyCounselingScheduleForm from './pages/counseling/professor/WeeklyCounselingScheduleForm';
-import MyRiskStudent from './pages/counseling/professor/MyRiskStudent';
-import MyStatus from './pages/counseling/student/MyStatus';
-import CounselingRequestList from './pages/counseling/student/CounselingRequestList';
+import MyRiskStudent from './pages/risk/MyRiskStudent';
+import StudentMyRiskStatus from './pages/risk/StudentMyRiskStatus';
 import CounselingInfoPop from './pages/counseling/professor/CounselingInfoPop';
 import ProtectedRoute from './components/ProtectedRoute';
 import GradePolicy from './pages/grade/GradePolicy';
@@ -147,8 +146,7 @@ function App() {
 								<Route path="/break/application" element={<BreakApplication />} />
 								<Route path="/break/list" element={<BreakAppListStudent />} />
 								{/* 학생 상담 */}
-								<Route path="/status" element={<MyStatus />} />
-								<Route path="/counseling/schedule" element={<CounselingRequestList />} />
+								<Route path="/status" element={<StudentMyRiskStatus />} />
 								{/* 학생 성적 */}
 								<Route path="/grade/current" element={<ThisGrade />} />
 								<Route path="/grade/semester" element={<Semester />} />

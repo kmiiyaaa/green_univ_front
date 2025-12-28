@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import api from '../../../api/httpClient';
-import OptionForm from '../../../components/form/OptionForm';
-import ProfessorCounselRequestModal from './CounselRequestModal';
-import '../../../assets/css/MyRiskStudent.css';
-import DataTable from '../../../components/table/DataTable';
+import api from '../../api/httpClient';
+import OptionForm from '../../components/form/OptionForm';
+import ProfessorCounselRequestModal from '../counseling/professor/CounselRequestModal';
+import '../../assets/css/MyRiskStudent.css';
+import DataTable from '../../components/table/DataTable';
 
 // 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';

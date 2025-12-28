@@ -1,4 +1,4 @@
-import DataTable from '../../../components/table/DataTable';
+import DataTable from '../../components/table/DataTable';
 
 export default function RiskPending({ pendingHeaders, pendingData, filteredPendingLength, selectedStudentId }) {
 	return (

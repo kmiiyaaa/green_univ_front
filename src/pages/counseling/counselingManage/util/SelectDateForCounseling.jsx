@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import '../../assets/css/SelectDateForCounseling.css';
-import api from '../../api/httpClient';
-import { getThisAndNextWeekStartDates, isPastSlot } from '../../utils/counselingUtil';
-import { DAY_KR, endMinus10, toHHMM } from '../../utils/DateTimeUtil';
-import OptionForm from '../../components/form/OptionForm';
+import '../../../../assets/css/SelectDateForCounseling.css';
+import api from '../../../../api/httpClient';
+import { getThisAndNextWeekStartDates, isPastSlot } from '../../../../utils/counselingUtil';
+import { DAY_KR, endMinus10, toHHMM } from '../../../../utils/DateTimeUtil';
+import OptionForm from '../../../../components/form/OptionForm';
 
 /**
  * 교수/학생이 상담 가능한 날짜/시간 선택하는 컴포넌트

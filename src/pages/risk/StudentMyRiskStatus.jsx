@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import api from '../../../api/httpClient';
+import api from '../../api/httpClient';
 import { useNavigate } from 'react-router-dom';
-import OptionForm from '../../../components/form/OptionForm';
-import DataTable from '../../../components/table/DataTable';
+import OptionForm from '../../components/form/OptionForm';
+import DataTable from '../../components/table/DataTable';
 
-export default function MyStatus() {
+export default function StudentMyRiskStatus() {
 	const [riskList, setRiskList] = useState([]);
 	const [selectedSubjectId, setSelectedSubjectId] = useState('');
 	const navigate = useNavigate();

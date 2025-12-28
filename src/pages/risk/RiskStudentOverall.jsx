@@ -1,4 +1,4 @@
-import DataTable from '../../../components/table/DataTable';
+import DataTable from '../../components/table/DataTable';
 
 export default function RiskStudentOverall({
 	studentHeaders,
@@ -23,8 +23,8 @@ export default function RiskStudentOverall({
 			{selectedStudentId && (
 				<div className="selected-student-bar">
 					<div className="selected-student-text">
-						선택됨: <span className="cell-strong">{selectedStudentName || '-'}</span> ({selectedStudentId}) · 아래 과목 위험 목록이
-						필터링됩니다. (다시 클릭하면 해제)
+						선택됨: <span className="cell-strong">{selectedStudentName || '-'}</span> ({selectedStudentId}) · 아래 과목
+						위험 목록이 필터링됩니다. (다시 클릭하면 해제)
 					</div>
 				</div>
 			)}

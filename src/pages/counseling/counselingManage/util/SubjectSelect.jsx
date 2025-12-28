@@ -1,5 +1,5 @@
 // 과목 선택 공통 컴포넌트
-import OptionForm from '../../components/form/OptionForm';
+import OptionForm from '../../../../components/form/OptionForm';
 
 // subjects: [{ id, name }]
 export default function SubjectSelect({ label = '과목', subjects = [], value, onChange, includeAll = true }) {
