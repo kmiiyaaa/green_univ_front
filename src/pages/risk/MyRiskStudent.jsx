@@ -239,6 +239,8 @@ export default function MyRiskStudent() {
 
 				// 내 과목인지 확인
 				const isMySubject = mySubjectIdSet.has(String(r.subjectId));
+				console.log('raw updatedAt:', r.updatedAt);
+				console.log('fmt updatedAt:', fmtDateTime(r.updatedAt));
 
 				// 재요청은 consultState가 CONSULT_REJECTED / CONSULT_CANCELED면 가능하게
 				const canRequestBase =

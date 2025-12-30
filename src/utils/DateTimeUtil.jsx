@@ -207,13 +207,15 @@ export const endMinus10 = (endHour) => {
 	return toHHMM(d);
 };
 
-// ✅ "YYYY-MM-DD HH:mm" 형태로 KST 기준 포맷 (상담/공지 등 공통 사용)
+// ✅ "표시용" 날짜시간: 무조건 KST로 찍기 ("YYYY-MM-DD HH:mm")
 export function formatDateTimeKST(input) {
 	if (!input) return '';
+
 	const d = safeDate(input);
 	if (Number.isNaN(d.getTime())) return String(input);
 
-	const parts = new Intl.DateTimeFormat('ko-KR', {
+	// timeZone 강제 + formatToParts로 조립 (로케일 포맷 영향 제거)
+	const parts = new Intl.DateTimeFormat('en-CA', {
 		timeZone: 'Asia/Seoul',
 		year: 'numeric',
 		month: '2-digit',
@@ -224,5 +226,11 @@ export function formatDateTimeKST(input) {
 	}).formatToParts(d);
 
 	const get = (type) => parts.find((p) => p.type === type)?.value ?? '';
-	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
+	const yyyy = get('year');
+	const mm = get('month');
+	const dd = get('day');
+	const hh = get('hour');
+	const mi = get('minute');
+
+	return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
 }
