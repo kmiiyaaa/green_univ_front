@@ -7,6 +7,7 @@ import PaginationForm from '../../components/form/PaginationForm';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/NoticeList.css';
 import OptionForm from '../../components/form/OptionForm';
+import { formatDateTimeKST } from '../../utils/DateTimeUtil';
 
 const NoticeList = () => {
 	const navigate = useNavigate();
@@ -61,7 +62,7 @@ const NoticeList = () => {
 				번호: n.id,
 				말머리: n.category,
 				제목: n.title,
-				작성일: formatDateTime(n.createdTime),
+				작성일: formatDateTimeKST(n.createdTime),
 				조회수: n.views ?? 0,
 				원본데이터: n,
 			}));

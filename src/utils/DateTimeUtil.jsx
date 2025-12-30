@@ -129,3 +129,45 @@ export const endMinus10 = (endHour) => {
 	d.setMinutes(d.getMinutes() - 10); // 14:50
 	return toHHMM(d);
 };
+
+// 임시 : 시간 확인용
+
+//KST 날짜시간 포맷 함수 (YYYY-MM-DD HH:mm)
+export function formatDateTimeKST(input) {
+	if (!input) return '';
+
+	const d = input instanceof Date ? input : new Date(typeof input === 'string' ? input.replace(' ', 'T') : input);
+	if (Number.isNaN(d.getTime())) return String(input);
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const get = (type) => parts.find((p) => p.type === type)?.value ?? '';
+	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
+}
+
+//KST 시간만 (HH:mm)
+export function toHHMMKST(input) {
+	if (input == null) return '';
+
+	const d = input instanceof Date ? input : new Date(typeof input === 'string' ? input.replace(' ', 'T') : input);
+	if (Number.isNaN(d.getTime())) return '';
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const hh = parts.find((p) => p.type === 'hour')?.value ?? '';
+	const mm = parts.find((p) => p.type === 'minute')?.value ?? '';
+	return `${hh}:${mm}`;
+}
