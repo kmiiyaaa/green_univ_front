@@ -11,13 +11,22 @@ export default function NoticeWrite() {
 
 	// 등록 로직을 Mutation으로 정의
 	const createNoticeMutation = useMutation({
-		mutationFn: (formData) => api.post('/notice/write', formData),
+		// ✅ FormData 업로드에서도 Authorization이 "무조건" 붙도록 한 번 더 보강
+		// - 일부 환경(특히 배포/프록시/멀티파트)에서 interceptor가 누락되거나 headers가 덮이는 케이스 방어
+		// - Content-Type은 지정하지 말고(axios가 boundary 포함 자동 설정), Authorization만 확실히 세팅
+		mutationFn: (formData) => {
+			const token = localStorage.getItem('token'); // httpClient interceptor와 동일 소스 사용
+			return api.post('/notice/write', formData, {
+				headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+			});
+		},
 		onSuccess: () => {
 			alert('공지 등록 완료!');
 			navigate('/notice');
 		},
 		onError: (error) => {
-			console.error('등록 실패:', error);
+			// ✅ 서버가 내려준 에러 메시지가 있으면 같이 찍어서 원인 파악이 쉬움
+			console.error('등록 실패:', error?.response?.status, error?.response?.data ?? error);
 			alert('공지 등록 실패');
 		},
 	});
@@ -39,6 +48,7 @@ export default function NoticeWrite() {
 		formData.append('title', title);
 		formData.append('content', content);
 		if (file) formData.append('file', file);
+
 		createNoticeMutation.mutate(formData);
 	};
 
