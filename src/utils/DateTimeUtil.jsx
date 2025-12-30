@@ -1,19 +1,32 @@
-// ✅ 날짜/시간 파싱 보정 (KST 강제)
+// ✅ 날짜/시간 파싱 보정 (timezone 없는 문자열은 UTC(Z)로 해석)
 function normalizeDateInput(input) {
 	if (typeof input !== 'string') return input;
 
-	// "YYYY-MM-DD HH:mm:ss" or "YYYY-MM-DD HH:mm" -> KST로 강제
-	if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(input)) {
-		const iso = input.replace(' ', 'T');
-		return iso.length === 16 ? `${iso}:00+09:00` : `${iso}+09:00`;
+	// 1) "HH:mm" 같은 순수 시간은 여기서 처리하지 않음 (toHHMM에서 선처리)
+
+	// 2) 이미 timezone이 있는 ISO는 그대로 사용하되,
+	//    마이크로초/나노초(.026089 같은 6자리)를 JS Date가 안정적으로 먹게 3자리로 줄임
+	if (/[zZ]|[+-]\d{2}:\d{2}$/.test(input)) {
+		return input.replace(/\.(\d{3})\d+/, '.$1'); // .026089 -> .026
 	}
 
-	// "YYYY-MM-DDTHH:mm:ss" or "YYYY-MM-DDTHH:mm" (timezone 없음) -> KST로 강제
-	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(input) && !/[zZ]|[+-]\d{2}:\d{2}$/.test(input)) {
-		return input.length === 16 ? `${input}:00+09:00` : `${input}+09:00`;
+	// 3) "YYYY-MM-DD HH:mm[:ss][.ffffff]" 또는 "YYYY-MM-DDTHH:mm[:ss][.ffffff]"
+	//    -> timezone이 없으면 "UTC"로 간주해서 Z 붙임
+	const m = input.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})(?::(\d{2}))?(?:\.(\d+))?$/);
+
+	if (m) {
+		const yyyyMMdd = m[1];
+		const hhmm = m[2];
+		const ss = m[3] ?? '00';
+
+		// 마이크로초/나노초 -> 밀리초 3자리로 정규화
+		const ms = (m[4] ?? '0').slice(0, 3).padEnd(3, '0'); // 026089 -> 026
+
+		// ✅ timezone 없는 값은 UTC로 간주
+		return `${yyyyMMdd}T${hhmm}:${ss}.${ms}Z`;
 	}
 
-	// RFC 1123 ("Tue, 30 Dec 2025 06:54:08 GMT") 같은 건 그대로
+	// 4) 그 외(RFC1123 등)는 그대로
 	return input;
 }
 
@@ -26,13 +39,12 @@ function safeDate(input) {
 export function toHHMM(input) {
 	if (input == null) return '';
 
-	// "HH:mm"는 그대로 반환 (Date 파싱하면 깨질 수 있음)
+	// "HH:mm"는 그대로 반환
 	if (typeof input === 'string' && /^\d{1,2}:\d{2}$/.test(input)) {
 		const [h, m] = input.split(':');
 		return `${String(h).padStart(2, '0')}:${m}`;
 	}
 
-	// Date / ISO / "YYYY-MM-DD HH:mm:ss" 모두 여기서 처리
 	const d = safeDate(input);
 	if (Number.isNaN(d.getTime())) return '';
 
@@ -40,7 +52,6 @@ export function toHHMM(input) {
 }
 
 export function getMonday(date = new Date()) {
-	// 월요일 계산
 	const d = safeDate(date);
 	const day = d.getDay();
 	const diff = day === 0 ? -6 : 1 - day;
@@ -59,7 +70,7 @@ export function formatDate(input) {
 	return `${yyyy}-${mm}-${dd}`;
 }
 
-// ✅ formatDateLocal은 formatDate와 동일 (중복 제거)
+// ✅ formatDateLocal은 formatDate와 동일
 export const formatDateLocal = formatDate;
 
 // 월~금 날짜 배열
@@ -81,12 +92,11 @@ export function generateWeekdays(startDateStr) {
 
 	let current = new Date(start);
 	const endDate = new Date(start);
-	endDate.setDate(start.getDate() + 13); // 2주 범위(월~일 * 2)
+	endDate.setDate(start.getDate() + 13);
 
 	while (current <= endDate) {
 		const day = current.getDay();
 
-		// 평일만 추가 (1~5 = 월~금)
 		if (day >= 1 && day <= 5) {
 			const yyyy = current.getFullYear();
 			const mm = String(current.getMonth() + 1).padStart(2, '0');
@@ -127,11 +137,12 @@ export function formatDayOfWeek(dateStr, dayOfWeek) {
 export const endMinus10 = (endHour) => {
 	if (endHour == null) return '';
 	const d = new Date();
-	d.setHours(endHour, 0, 0, 0); // 15:00
-	d.setMinutes(d.getMinutes() - 10); // 14:50
+	d.setHours(endHour, 0, 0, 0);
+	d.setMinutes(d.getMinutes() - 10);
 	return toHHMM(d);
 };
 
+// ✅ YYYY-MM-DD HH:mm (KST 기준으로 표시)
 export function formatDateTimeKST(input) {
 	if (!input) return '';
 	const d = safeDate(input);
