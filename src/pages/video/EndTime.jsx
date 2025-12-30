@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useContext } from 'react';
 import api from '../../api/httpClient';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { toMillis } from '../../utils/DateTimeUtil'; // ✅ 추가
 
 export default function EndTime({ roomCode }) {
 	const [remainText, setRemainText] = useState('');
@@ -17,8 +18,16 @@ export default function EndTime({ roomCode }) {
 		const startTimer = (endAt) => {
 			if (timerRef.current) clearInterval(timerRef.current);
 
+			// ✅ endAt이 number/문자열 모두 올 수 있어 ms로 정규화
+			const endMs = toMillis(endAt);
+			if (!endMs) {
+				console.error('endAt 파싱 실패:', endAt);
+				setRemainText('');
+				return;
+			}
+
 			const tick = () => {
-				const diffMs = endAt - Date.now();
+				const diffMs = endMs - Date.now();
 				const remainSec = Math.floor(diffMs / 1000);
 
 				// 종료

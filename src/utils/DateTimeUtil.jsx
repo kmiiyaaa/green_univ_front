@@ -1,158 +1,126 @@
-// ===============================
-// ✅ 공통 파서: 서버 값(Date/문자열/숫자)을 "일관된 Date"로 변환
-// 규칙 A) 시간까지 있는데 timezone 없으면 -> UTC로 간주(Z)
-// 규칙 B) 날짜만(YYYY-MM-DD) -> KST 날짜로 간주(+09:00)
-// ===============================
-export function parseServerDate(input) {
-	if (input == null) return null;
+// ✅ 날짜/시간 파싱 보정 (KST 강제)
+function normalizeDateInput(input) {
+	if (typeof input !== 'string') return input;
+
+	// "YYYY-MM-DD HH:mm:ss(.SSSSSS)" or "YYYY-MM-DD HH:mm" -> KST로 강제
+	if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?$/.test(input)) {
+		const iso = input.replace(' ', 'T');
+		// timezone이 없으면 +09:00을 붙여서 KST로 고정
+		return /[zZ]|[+-]\d{2}:\d{2}$/.test(iso) ? iso : `${iso}+09:00`;
+	}
+
+	// "YYYY-MM-DDTHH:mm:ss(.SSSSSS)" or "YYYY-MM-DDTHH:mm" (timezone 없음) -> KST로 강제
+	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?$/.test(input) && !/[zZ]|[+-]\d{2}:\d{2}$/.test(input)) {
+		return `${input}+09:00`;
+	}
+
+	// RFC 1123 ("Tue, 30 Dec 2025 06:54:08 GMT") 같은 건 그대로 둬도 됨
+	return input;
+}
+
+// ✅ Date 생성 안전 헬퍼
+function safeDate(input) {
+	if (input instanceof Date) return input;
+	return new Date(normalizeDateInput(input));
+}
+
+// ✅ 숫자/문자/Date에서 "시(hour)"만 뽑아내는 헬퍼 (endMinus10 안전화)
+function parseHour(v) {
+	if (v == null) return null;
 
 	// Date 객체
-	if (input instanceof Date) {
-		return Number.isNaN(input.getTime()) ? null : input;
+	if (v instanceof Date) {
+		if (Number.isNaN(v.getTime())) return null;
+		return v.getHours();
 	}
 
-	let s = String(input).trim();
-	if (!s) return null;
+	// 숫자 (15)
+	if (typeof v === 'number') return v;
 
-	// "YYYY-MM-DD" (날짜만) -> KST 기준 날짜로 고정 (날짜 밀림 방지)
-	if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-		const d = new Date(`${s}T00:00:00+09:00`);
-		return Number.isNaN(d.getTime()) ? null : d;
+	// 문자열 ("15", "15:00", "15:00:00")
+	if (typeof v === 'string') {
+		const m = v.match(/^(\d{1,2})(?::\d{2})?(?::\d{2})?$/);
+		if (m) return Number(m[1]);
 	}
 
-	// 공백 형태 -> T로 (파싱 안정화)
-	s = s.replace(' ', 'T');
+	return null;
+}
 
-	// 마이크로초/나노초 -> 밀리초 3자리로 줄이기
-	s = s.replace(/\.(\d{3})\d+/, '.$1');
+// ✅ millis 변환(서버 endAt 등 숫자/문자 모두 대응)
+export function toMillis(input) {
+	if (input == null) return null;
 
-	// timezone 포함(Z 또는 +09:00 등) -> 그대로
-	if (/[zZ]|[+-]\d{2}:\d{2}$/.test(s)) {
-		const d = new Date(s);
-		return Number.isNaN(d.getTime()) ? null : d;
+	// 이미 number면 그대로
+	if (typeof input === 'number') {
+		// seconds 단위로 내려올 수도 있으니(10자리) 방어
+		return input < 1e12 ? input * 1000 : input;
 	}
 
-	// 시간까지 있는데 timezone이 없다 -> ✅ UTC로 간주해서 Z 추가
-	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?$/.test(s)) {
-		const d = new Date(`${s}Z`);
-		return Number.isNaN(d.getTime()) ? null : d;
-	}
-
-	// 그 외는 JS 파서에 맡김
-	const d = new Date(s);
-	return Number.isNaN(d.getTime()) ? null : d;
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return null;
+	return d.getTime();
 }
 
-// ===============================
-// ✅ KST 포맷터
-// ===============================
-export function formatDateTimeKST(input) {
-	const d = parseServerDate(input);
-	if (!d) return String(input ?? '');
-
-	const parts = new Intl.DateTimeFormat('ko-KR', {
-		timeZone: 'Asia/Seoul',
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false,
-	}).formatToParts(d);
-
-	const get = (t) => parts.find((p) => p.type === t)?.value ?? '';
-	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
-}
-
-export function formatDateKST(input) {
-	const d = parseServerDate(input);
-	if (!d) return String(input ?? '');
-
-	const parts = new Intl.DateTimeFormat('ko-KR', {
-		timeZone: 'Asia/Seoul',
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-	}).formatToParts(d);
-
-	const get = (t) => parts.find((p) => p.type === t)?.value ?? '';
-	return `${get('year')}-${get('month')}-${get('day')}`;
-}
-
-export function formatTimeKST(input) {
-	const d = parseServerDate(input);
-	if (!d) return String(input ?? '');
-
-	const parts = new Intl.DateTimeFormat('ko-KR', {
-		timeZone: 'Asia/Seoul',
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false,
-	}).formatToParts(d);
-
-	const hh = parts.find((p) => p.type === 'hour')?.value ?? '';
-	const mm = parts.find((p) => p.type === 'minute')?.value ?? '';
-	return `${hh}:${mm}`;
-}
-
-// ===============================
-// ✅ 시간 "HH:mm" 출력 (상담 startTime/endTime 대응 강화)
-// - number(15) -> 15:00
-// - "HH:mm" -> 그대로
-// - "HH:mm:ss" -> HH:mm
-// - 날짜시간 문자열(UTC tz 없음 포함) -> KST로 HH:mm
-// ===============================
 export function toHHMM(input) {
 	if (input == null) return '';
 
-	// 숫자(시 단위)
+	// Date 객체
+	if (input instanceof Date) {
+		if (Number.isNaN(input.getTime())) return '';
+		const hh = String(input.getHours()).padStart(2, '0');
+		const mm = String(input.getMinutes()).padStart(2, '0');
+		return `${hh}:${mm}`;
+	}
+
+	// 문자열 (ISO, HH:mm 등)
+	if (typeof input === 'string') {
+		// 이미 HH:mm 형식이면 그대로
+		if (/^\d{1,2}:\d{2}$/.test(input)) {
+			const [h, m] = input.split(':');
+			return `${String(h).padStart(2, '0')}:${m}`;
+		}
+
+		const d = safeDate(input);
+		if (!Number.isNaN(d.getTime())) {
+			const hh = String(d.getHours()).padStart(2, '0');
+			const mm = String(d.getMinutes()).padStart(2, '0');
+			return `${hh}:${mm}`;
+		}
+
+		return '';
+	}
+
+	// 숫자 (시 단위: 15 → 15:00)
 	if (typeof input === 'number') {
 		const h = String(input).padStart(2, '0');
 		return `${h}:00`;
 	}
 
-	// 문자열 시간만
-	if (typeof input === 'string') {
-		const s = input.trim();
-
-		// HH:mm
-		if (/^\d{1,2}:\d{2}$/.test(s)) {
-			const [h, m] = s.split(':');
-			return `${String(h).padStart(2, '0')}:${m}`;
-		}
-
-		// HH:mm:ss
-		if (/^\d{1,2}:\d{2}:\d{2}$/.test(s)) {
-			const [h, m] = s.split(':');
-			return `${String(h).padStart(2, '0')}:${m}`;
-		}
-	}
-
-	// 그 외(Date/날짜시간문자열)은 KST 기준으로 시간 추출
-	return formatTimeKST(input);
+	return '';
 }
 
-// ===============================
-// ✅ 기존 함수들 (날짜 처리 통일)
-// ===============================
 export function getMonday(date = new Date()) {
-	const base = parseServerDate(date) ?? new Date(date);
-	const d = new Date(base);
+	// 월요일 계산
+	const d = safeDate(date);
 	const day = d.getDay();
 	const diff = day === 0 ? -6 : 1 - day;
 	d.setDate(d.getDate() + diff);
 	return d;
 }
 
-// YYYY-MM-DD (KST 기준으로 안전하게)
+// ✅ YYYY-MM-DD (로컬 기준으로!)
+// 기존 toISOString()은 UTC 기준이라 한국시간 새벽에 날짜가 하루 밀릴 수 있음
 export function formatDate(input) {
-	return formatDateKST(input);
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return String(input ?? '');
+	const yyyy = d.getFullYear();
+	const mm = String(d.getMonth() + 1).padStart(2, '0');
+	const dd = String(d.getDate()).padStart(2, '0');
+	return `${yyyy}-${mm}-${dd}`;
 }
 
-// 로컬 기준 YYYY-MM-DD(기존 이름 유지) -> 이제 KST 기준으로 통일
-export function formatDateLocal(input) {
-	return formatDateKST(input);
-}
+// 로컬 기준 YYYY-MM-DD (KST에서도 안전)
+export const formatDateLocal = formatDate;
 
 // 월~금 날짜 배열
 export function getWeekDates(monday) {
@@ -168,21 +136,37 @@ export function getWeekDates(monday) {
 // 이번 주 + 다음 주 평일만 (최대 10개, 주말 제외)
 export function generateWeekdays(startDateStr) {
 	const weekdays = [];
-	const start = parseServerDate(startDateStr) ?? new Date(startDateStr);
+
+	// ✅ "YYYY-MM-DD"는 new Date로 파싱하면 UTC로 잡혀서 하루 밀릴 수 있음
+	// 그래서 로컬 날짜 생성으로 고정
+	let start;
+	if (typeof startDateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(startDateStr)) {
+		const [y, m, d] = startDateStr.split('-').map(Number);
+		start = new Date(y, m - 1, d, 0, 0, 0, 0);
+	} else {
+		start = safeDate(startDateStr);
+	}
+
+	if (Number.isNaN(start.getTime())) return weekdays;
+
 	let current = new Date(start);
 	const endDate = new Date(start);
-	endDate.setDate(start.getDate() + 13);
+	endDate.setDate(start.getDate() + 13); // 2주 범위(월~일 * 2)
 
 	while (current <= endDate) {
 		const day = current.getDay();
+
+		// 평일만 추가 (1~5 = 월~금)
 		if (day >= 1 && day <= 5) {
 			const yyyy = current.getFullYear();
 			const mm = String(current.getMonth() + 1).padStart(2, '0');
 			const dd = String(current.getDate()).padStart(2, '0');
 			weekdays.push(`${yyyy}-${mm}-${dd}`);
 		}
+
 		current.setDate(current.getDate() + 1);
 	}
+
 	return weekdays;
 }
 
@@ -196,19 +180,49 @@ export const DAY_KR = {
 	SATURDAY: '토',
 };
 
+/**
+ * @param dateStr 2025-12-17
+ * @param dayOfWeek WEDNESDAY (optional)
+ */
 export function formatDayOfWeek(dateStr, dayOfWeek) {
 	if (dayOfWeek && DAY_KR[dayOfWeek]) {
 		return `${dateStr} (${DAY_KR[dayOfWeek]})`;
 	}
+
 	const days = ['일', '월', '화', '수', '목', '금', '토'];
-	const d = parseServerDate(dateStr) ?? new Date(dateStr);
-	return `${dateStr} (${days[d.getDay()]})`;
+	const day = days[safeDate(dateStr).getDay()];
+	return `${dateStr} (${day})`;
 }
 
 export const endMinus10 = (endHour) => {
 	if (endHour == null) return '';
+
+	// ✅ endHour가 "18:00:00" 같은 문자열로 와도 안전하게 처리
+	const h = parseHour(endHour);
+	if (h == null) return '';
+
 	const d = new Date();
-	d.setHours(endHour, 0, 0, 0);
-	d.setMinutes(d.getMinutes() - 10);
+	d.setHours(h, 0, 0, 0); // 15:00
+	d.setMinutes(d.getMinutes() - 10); // 14:50
 	return toHHMM(d);
 };
+
+// ✅ "YYYY-MM-DD HH:mm" 형태로 KST 기준 포맷 (상담/공지 등 공통 사용)
+export function formatDateTimeKST(input) {
+	if (!input) return '';
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return String(input);
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const get = (type) => parts.find((p) => p.type === type)?.value ?? '';
+	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
+}
