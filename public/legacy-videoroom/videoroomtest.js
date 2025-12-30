@@ -422,8 +422,8 @@ function registerUsername() {
 		}
 		// 룸코드 검증
 		var token = localStorage.getItem('token');
-		
-		fetch('http://localhost:8888/api/reserve/verify?code=' + encodeURIComponent(roomname), {
+
+		fetch('/api/reserve/verify?code=' + encodeURIComponent(roomname), {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
