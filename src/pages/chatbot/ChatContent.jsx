@@ -37,11 +37,19 @@ export const QUICK_ACTIONS = [
 		label: '휴학/복학',
 		desc: '휴학 신청/내역 확인',
 		reply: '휴학 신청 및 내역은 아래 버튼으로 이동해요.',
-		roles: ['student', 'staff'],
+		roles: ['student'],
 		links: [
 			{ label: '휴학 신청', href: '/break/application' },
 			{ label: '휴학 신청 내역', href: '/break/list' },
 		],
+	},
+	{
+		key: 'break',
+		label: '휴학/복학',
+		desc: '휴학 신청 내역 확인',
+		reply: '휴학 내역은 아래 버튼으로 이동해요.',
+		roles: ['staff'],
+		links: [{ label: '휴학 신청 내역', href: '/break/list/staff' }],
 	},
 	{
 		key: 'notice',
