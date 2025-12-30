@@ -5,49 +5,31 @@
 // ===============================
 export function parseServerDate(input) {
 	if (input == null) return null;
-
-	// Date 객체
-	if (input instanceof Date) {
-		return Number.isNaN(input.getTime()) ? null : input;
-	}
+	if (input instanceof Date) return Number.isNaN(input.getTime()) ? null : input;
 
 	let s = String(input).trim();
 	if (!s) return null;
 
-	// "YYYY-MM-DD" (날짜만) -> KST 기준 날짜로 고정 (날짜 밀림 방지)
-	if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2})?(\.\d+)?$/.test(s)) {
-		// 1. 공백을 T로 치환 (ISO 형식 준수)
-		let formatted = s.replace(' ', 'T');
-
-		// 2. 초가 없으면 :00 추가 (선택사항이나 안정적임)
-		if (formatted.split(':').length === 2) {
-			formatted += ':00';
-		}
-
-		// 3. 한국 시간(+09:00) 명시
-		const d = new Date(`${formatted}+09:00`);
+	// 1. 날짜만 있는 경우 (YYYY-MM-DD)
+	if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+		const d = new Date(`${s}T00:00:00+09:00`);
 		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
-	// 공백 형태 -> T로 (파싱 안정화)
-	s = s.replace(' ', 'T');
-
-	// 마이크로초/나노초 -> 밀리초 3자리로 줄이기
-	s = s.replace(/\.(\d{3})\d+/, '.$1');
-
-	// timezone 포함(Z 또는 +09:00 등) -> 그대로
+	// 2. 타임존 정보가 이미 포함된 경우 (Z 또는 +09:00)
 	if (/[zZ]|[+-]\d{2}:\d{2}$/.test(s)) {
 		const d = new Date(s);
 		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
-	// 시간까지 있는데 timezone이 없다 -> ✅ UTC로 간주해서 Z 추가
-	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?$/.test(s)) {
-		const d = new Date(`${s}Z`);
+	// 3. 핵심 수정: 백엔드 포맷(공백 사용, 초 생략 가능) 대응
+	// yyyy-MM-dd HH:mm 또는 yyyy-MM-dd HH:mm:ss 대응
+	if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2})?/.test(s)) {
+		const formatted = s.replace(' ', 'T'); // 공백을 T로 교체
+		const d = new Date(`${formatted}+09:00`); // 한국 시간임을 명시
 		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
-	// 그 외는 JS 파서에 맡김
 	const d = new Date(s);
 	return Number.isNaN(d.getTime()) ? null : d;
 }
