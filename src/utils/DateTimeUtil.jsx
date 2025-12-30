@@ -15,8 +15,9 @@ export function parseServerDate(input) {
 	if (!s) return null;
 
 	// "YYYY-MM-DD" (날짜만) -> KST 기준 날짜로 고정 (날짜 밀림 방지)
-	if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-		const d = new Date(`${s}T00:00:00+09:00`);
+	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?$/.test(s)) {
+		// 'Z' 대신 '+09:00'을 붙여서 한국 시간임을 명시합니다.
+		const d = new Date(`${s}+09:00`);
 		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
