@@ -15,9 +15,17 @@ export function parseServerDate(input) {
 	if (!s) return null;
 
 	// "YYYY-MM-DD" (날짜만) -> KST 기준 날짜로 고정 (날짜 밀림 방지)
-	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?$/.test(s)) {
-		// 'Z' 대신 '+09:00'을 붙여서 한국 시간임을 명시합니다.
-		const d = new Date(`${s}+09:00`);
+	if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2})?(\.\d+)?$/.test(s)) {
+		// 1. 공백을 T로 치환 (ISO 형식 준수)
+		let formatted = s.replace(' ', 'T');
+
+		// 2. 초가 없으면 :00 추가 (선택사항이나 안정적임)
+		if (formatted.split(':').length === 2) {
+			formatted += ':00';
+		}
+
+		// 3. 한국 시간(+09:00) 명시
+		const d = new Date(`${formatted}+09:00`);
 		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
