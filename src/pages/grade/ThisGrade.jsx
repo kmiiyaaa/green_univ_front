@@ -56,7 +56,7 @@ const ThisGrade = () => {
 			{
 				연도: myGrade.subYear ? `${myGrade.subYear}년` : '',
 				학기: myGrade.semester ? `${myGrade.semester}학기` : '',
-				신청학점: myGrade.sumGrades ?? '',
+				신청학점: myGrade.totalCredits ?? '',
 				취득학점: myGrade.myGrades ?? '',
 				평점평균: myGrade.average ?? myGrade.avg ?? '-',
 			},
