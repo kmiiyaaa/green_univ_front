@@ -1,53 +1,157 @@
-export function toHHMM(input) {
-	if (input == null) return '';
+// ===============================
+// ✅ 공통 파서: 서버 값(Date/문자열/숫자)을 "일관된 Date"로 변환
+// 규칙 A) 시간까지 있는데 timezone 없으면 -> UTC로 간주(Z)
+// 규칙 B) 날짜만(YYYY-MM-DD) -> KST 날짜로 간주(+09:00)
+// ===============================
+export function parseServerDate(input) {
+	if (input == null) return null;
 
 	// Date 객체
 	if (input instanceof Date) {
-		if (Number.isNaN(input.getTime())) return '';
-		const hh = String(input.getHours()).padStart(2, '0');
-		const mm = String(input.getMinutes()).padStart(2, '0');
-		return `${hh}:${mm}`;
+		return Number.isNaN(input.getTime()) ? null : input;
 	}
 
-	// 문자열 (ISO, HH:mm 등)
-	if (typeof input === 'string') {
-		const d = new Date(input);
-		if (!Number.isNaN(d.getTime())) {
-			const hh = String(d.getHours()).padStart(2, '0');
-			const mm = String(d.getMinutes()).padStart(2, '0');
-			return `${hh}:${mm}`;
-		}
+	let s = String(input).trim();
+	if (!s) return null;
 
-		// 이미 HH:mm 형식이면 그대로
-		if (/^\d{1,2}:\d{2}$/.test(input)) {
-			const [h, m] = input.split(':');
-			return `${String(h).padStart(2, '0')}:${m}`;
-		}
-
-		return '';
+	// "YYYY-MM-DD" (날짜만) -> KST 기준 날짜로 고정 (날짜 밀림 방지)
+	if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+		const d = new Date(`${s}T00:00:00+09:00`);
+		return Number.isNaN(d.getTime()) ? null : d;
 	}
 
-	// 숫자 (시 단위: 15 → 15:00)
+	// 공백 형태 -> T로 (파싱 안정화)
+	s = s.replace(' ', 'T');
+
+	// 마이크로초/나노초 -> 밀리초 3자리로 줄이기
+	s = s.replace(/\.(\d{3})\d+/, '.$1');
+
+	// timezone 포함(Z 또는 +09:00 등) -> 그대로
+	if (/[zZ]|[+-]\d{2}:\d{2}$/.test(s)) {
+		const d = new Date(s);
+		return Number.isNaN(d.getTime()) ? null : d;
+	}
+
+	// 시간까지 있는데 timezone이 없다 -> ✅ UTC로 간주해서 Z 추가
+	if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?$/.test(s)) {
+		const d = new Date(`${s}Z`);
+		return Number.isNaN(d.getTime()) ? null : d;
+	}
+
+	// 그 외는 JS 파서에 맡김
+	const d = new Date(s);
+	return Number.isNaN(d.getTime()) ? null : d;
+}
+
+// ===============================
+// ✅ KST 포맷터
+// ===============================
+export function formatDateTimeKST(input) {
+	const d = parseServerDate(input);
+	if (!d) return String(input ?? '');
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const get = (t) => parts.find((p) => p.type === t)?.value ?? '';
+	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
+}
+
+export function formatDateKST(input) {
+	const d = parseServerDate(input);
+	if (!d) return String(input ?? '');
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	}).formatToParts(d);
+
+	const get = (t) => parts.find((p) => p.type === t)?.value ?? '';
+	return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+export function formatTimeKST(input) {
+	const d = parseServerDate(input);
+	if (!d) return String(input ?? '');
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const hh = parts.find((p) => p.type === 'hour')?.value ?? '';
+	const mm = parts.find((p) => p.type === 'minute')?.value ?? '';
+	return `${hh}:${mm}`;
+}
+
+// ===============================
+// ✅ 시간 "HH:mm" 출력 (상담 startTime/endTime 대응 강화)
+// - number(15) -> 15:00
+// - "HH:mm" -> 그대로
+// - "HH:mm:ss" -> HH:mm
+// - 날짜시간 문자열(UTC tz 없음 포함) -> KST로 HH:mm
+// ===============================
+export function toHHMM(input) {
+	if (input == null) return '';
+
+	// 숫자(시 단위)
 	if (typeof input === 'number') {
 		const h = String(input).padStart(2, '0');
 		return `${h}:00`;
 	}
 
-	return '';
+	// 문자열 시간만
+	if (typeof input === 'string') {
+		const s = input.trim();
+
+		// HH:mm
+		if (/^\d{1,2}:\d{2}$/.test(s)) {
+			const [h, m] = s.split(':');
+			return `${String(h).padStart(2, '0')}:${m}`;
+		}
+
+		// HH:mm:ss
+		if (/^\d{1,2}:\d{2}:\d{2}$/.test(s)) {
+			const [h, m] = s.split(':');
+			return `${String(h).padStart(2, '0')}:${m}`;
+		}
+	}
+
+	// 그 외(Date/날짜시간문자열)은 KST 기준으로 시간 추출
+	return formatTimeKST(input);
 }
 
+// ===============================
+// ✅ 기존 함수들 (날짜 처리 통일)
+// ===============================
 export function getMonday(date = new Date()) {
-	// 월요일 계산
-	const d = new Date(date);
+	const base = parseServerDate(date) ?? new Date(date);
+	const d = new Date(base);
 	const day = d.getDay();
 	const diff = day === 0 ? -6 : 1 - day;
 	d.setDate(d.getDate() + diff);
 	return d;
 }
 
-// YYYY-MM-DD
-export function formatDate(date) {
-	return date.toISOString().slice(0, 10);
+// YYYY-MM-DD (KST 기준으로 안전하게)
+export function formatDate(input) {
+	return formatDateKST(input);
+}
+
+// 로컬 기준 YYYY-MM-DD(기존 이름 유지) -> 이제 KST 기준으로 통일
+export function formatDateLocal(input) {
+	return formatDateKST(input);
 }
 
 // 월~금 날짜 배열
@@ -64,38 +168,22 @@ export function getWeekDates(monday) {
 // 이번 주 + 다음 주 평일만 (최대 10개, 주말 제외)
 export function generateWeekdays(startDateStr) {
 	const weekdays = [];
-	const start = new Date(startDateStr);
+	const start = parseServerDate(startDateStr) ?? new Date(startDateStr);
 	let current = new Date(start);
 	const endDate = new Date(start);
-	endDate.setDate(start.getDate() + 13); // 2주 범위(월~일 * 2)
+	endDate.setDate(start.getDate() + 13);
 
 	while (current <= endDate) {
 		const day = current.getDay();
-
-		// 평일만 추가 (1~5 = 월~금)
 		if (day >= 1 && day <= 5) {
 			const yyyy = current.getFullYear();
 			const mm = String(current.getMonth() + 1).padStart(2, '0');
 			const dd = String(current.getDate()).padStart(2, '0');
 			weekdays.push(`${yyyy}-${mm}-${dd}`);
 		}
-
 		current.setDate(current.getDate() + 1);
 	}
-
 	return weekdays;
-}
-
-// 로컬 기준 YYYY-MM-DD (KST에서도 안전)
-// 위에꺼 UTC 기준이라, 한국시간 새벽에 날짜가 하루 밀려 보일 가능성
-export function formatDateLocal(input) {
-	const d = input instanceof Date ? input : new Date(input);
-	if (Number.isNaN(d.getTime())) return String(input ?? '');
-
-	const yyyy = d.getFullYear();
-	const mm = String(d.getMonth() + 1).padStart(2, '0');
-	const dd = String(d.getDate()).padStart(2, '0');
-	return `${yyyy}-${mm}-${dd}`;
 }
 
 export const DAY_KR = {
@@ -108,24 +196,19 @@ export const DAY_KR = {
 	SATURDAY: '토',
 };
 
-/**
- * @param dateStr 2025-12-17
- * @param dayOfWeek WEDNESDAY (optional)
- */
 export function formatDayOfWeek(dateStr, dayOfWeek) {
 	if (dayOfWeek && DAY_KR[dayOfWeek]) {
 		return `${dateStr} (${DAY_KR[dayOfWeek]})`;
 	}
-
 	const days = ['일', '월', '화', '수', '목', '금', '토'];
-	const day = days[new Date(dateStr).getDay()];
-	return `${dateStr} (${day})`;
+	const d = parseServerDate(dateStr) ?? new Date(dateStr);
+	return `${dateStr} (${days[d.getDay()]})`;
 }
 
 export const endMinus10 = (endHour) => {
 	if (endHour == null) return '';
 	const d = new Date();
-	d.setHours(endHour, 0, 0, 0); // 15:00
-	d.setMinutes(d.getMinutes() - 10); // 14:50
+	d.setHours(endHour, 0, 0, 0);
+	d.setMinutes(d.getMinutes() - 10);
 	return toHHMM(d);
 };

@@ -7,6 +7,7 @@ import PaginationForm from '../../components/form/PaginationForm';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/NoticeList.css';
 import OptionForm from '../../components/form/OptionForm';
+import { formatDateTimeKST } from '../../utils/DateTimeUtil';
 
 const NoticeList = () => {
 	const navigate = useNavigate();
@@ -29,17 +30,17 @@ const NoticeList = () => {
 
 	const headers = ['번호', '말머리', '제목', '작성일', '조회수'];
 
-	const formatDateTime = (ts) => {
-		if (!ts) return '';
-		const d = new Date(ts);
-		if (Number.isNaN(d.getTime())) return String(ts);
-		const yyyy = d.getFullYear();
-		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		const dd = String(d.getDate()).padStart(2, '0');
-		const hh = String(d.getHours()).padStart(2, '0');
-		const mi = String(d.getMinutes()).padStart(2, '0');
-		return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-	};
+	// const formatDateTime = (ts) => {
+	// 	if (!ts) return '';
+	// 	const d = new Date(ts);
+	// 	if (Number.isNaN(d.getTime())) return String(ts);
+	// 	const yyyy = d.getFullYear();
+	// 	const mm = String(d.getMonth() + 1).padStart(2, '0');
+	// 	const dd = String(d.getDate()).padStart(2, '0');
+	// 	const hh = String(d.getHours()).padStart(2, '0');
+	// 	const mi = String(d.getMinutes()).padStart(2, '0');
+	// 	return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+	// };
 
 	// 실제 로드 함수
 	const loadList = async (page = 0, filters = null) => {
@@ -62,7 +63,7 @@ const NoticeList = () => {
 				번호: n.id,
 				말머리: n.category,
 				제목: n.title,
-				작성일: formatDateTime(n.createdTime),
+				작성일: formatDateTimeKST(n.createdTime),
 				조회수: n.views ?? 0,
 				원본데이터: n,
 			}));
