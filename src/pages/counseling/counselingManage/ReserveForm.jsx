@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
 import '../../../assets/css/ReserveForm.css';
 import SubjectSelect from './util/SubjectSelect';
-import SelectDateForCounseling from '../SelectDateForCounseling';
+import SelectDateForCounseling from '../counselingManage/util/SelectDateForCounseling';
 import { CounselingRefreshContext } from './util/CounselingRefreshContext';
 
 /**
