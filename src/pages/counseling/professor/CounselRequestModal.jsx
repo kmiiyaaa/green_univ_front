@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
-import SelectDateForCounseling from 'counselingManage/utilManage/util/SelectDateForCounseling';
+import SelectDateForCounseling from '../counselingManage/util/SelectDateForCounseling';
 import '../../../assets/css/ProfessorCounselRequestModal.css';
 import TextField from '../../../components/form/TextField';
 
