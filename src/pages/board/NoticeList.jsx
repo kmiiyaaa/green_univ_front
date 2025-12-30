@@ -7,7 +7,7 @@ import PaginationForm from '../../components/form/PaginationForm';
 import { UserContext } from '../../context/UserContext';
 import '../../assets/css/NoticeList.css';
 import OptionForm from '../../components/form/OptionForm';
-import { formatDate, formatDateTimeKST } from '../../utils/DateTimeUtil';
+import { formatDateTimeKST } from '../../utils/DateTimeUtil';
 
 const NoticeList = () => {
 	const navigate = useNavigate();

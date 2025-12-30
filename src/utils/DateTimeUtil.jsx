@@ -131,3 +131,22 @@ export const endMinus10 = (endHour) => {
 	d.setMinutes(d.getMinutes() - 10); // 14:50
 	return toHHMM(d);
 };
+
+export function formatDateTimeKST(input) {
+	if (!input) return '';
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return String(input);
+
+	const parts = new Intl.DateTimeFormat('ko-KR', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).formatToParts(d);
+
+	const get = (type) => parts.find((p) => p.type === type)?.value ?? '';
+	return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}`;
+}
