@@ -12,7 +12,21 @@ globalThis.__TOKEN_EXPIRED_ALERT_SHOWN__ ??= false;
 api.interceptors.request.use(
 	(config) => {
 		const token = localStorage.getItem('token');
-		if (token) config.headers.Authorization = `Bearer ${token}`;
+
+		// FormData 요청에서도 Authorization이 빠지지 않도록 AxiosHeaders 대응
+		if (token) {
+			if (config.headers && typeof config.headers.set === 'function') {
+				// AxiosHeaders 인스턴스인 경우(axios v1+)
+				config.headers.set('Authorization', `Bearer ${token}`);
+			} else {
+				// 일반 객체인 경우
+				config.headers = {
+					...(config.headers || {}),
+					Authorization: `Bearer ${token}`,
+				};
+			}
+		}
+
 		return config;
 	},
 	(error) => Promise.reject(error)
