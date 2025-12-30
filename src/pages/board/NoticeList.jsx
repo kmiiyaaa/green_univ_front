@@ -56,6 +56,7 @@ const NoticeList = () => {
 			const res = await api.get(url);
 
 			const raw = res.data.noticeList || [];
+			console.log('server createdTime raw:', res.data.noticeList?.[0]?.createdTime);
 			const formatted = raw.map((n) => ({
 				id: n.id,
 				번호: n.id,
