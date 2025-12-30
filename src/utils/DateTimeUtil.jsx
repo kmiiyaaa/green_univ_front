@@ -5,7 +5,6 @@ function normalizeDateInput(input) {
 	// "YYYY-MM-DD HH:mm:ss" or "YYYY-MM-DD HH:mm" -> KST로 강제
 	if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(input)) {
 		const iso = input.replace(' ', 'T');
-		// 초가 없으면 :00 붙이고 +09:00 붙임
 		return iso.length === 16 ? `${iso}:00+09:00` : `${iso}+09:00`;
 	}
 
@@ -14,7 +13,7 @@ function normalizeDateInput(input) {
 		return input.length === 16 ? `${input}:00+09:00` : `${input}+09:00`;
 	}
 
-	// RFC 1123 ("Tue, 30 Dec 2025 06:54:08 GMT") 같은 건 그대로 둬도 됨
+	// RFC 1123 ("Tue, 30 Dec 2025 06:54:08 GMT") 같은 건 그대로
 	return input;
 }
 
@@ -27,60 +26,41 @@ function safeDate(input) {
 export function toHHMM(input) {
 	if (input == null) return '';
 
-	// Date 객체
-	if (input instanceof Date) {
-		if (Number.isNaN(input.getTime())) return '';
-		const hh = String(input.getHours()).padStart(2, '0');
-		const mm = String(input.getMinutes()).padStart(2, '0');
-		return `${hh}:${mm}`;
+	// "HH:mm"는 그대로 반환 (Date 파싱하면 깨질 수 있음)
+	if (typeof input === 'string' && /^\d{1,2}:\d{2}$/.test(input)) {
+		const [h, m] = input.split(':');
+		return `${String(h).padStart(2, '0')}:${m}`;
 	}
 
-	// 문자열 (ISO, "YYYY-MM-DD HH:mm:ss", HH:mm 등)
-	if (typeof input === 'string') {
-		// 이미 HH:mm 형식이면 그대로 (이 케이스는 Date 파싱보다 먼저 처리하는 게 안전)
-		if (/^\d{1,2}:\d{2}$/.test(input)) {
-			const [h, m] = input.split(':');
-			return `${String(h).padStart(2, '0')}:${m}`;
-		}
+	// Date / ISO / "YYYY-MM-DD HH:mm:ss" 모두 여기서 처리
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return '';
 
-		const d = safeDate(input);
-		if (!Number.isNaN(d.getTime())) {
-			const hh = String(d.getHours()).padStart(2, '0');
-			const mm = String(d.getMinutes()).padStart(2, '0');
-			return `${hh}:${mm}`;
-		}
-
-		return '';
-	}
-
-	// 숫자 (시 단위: 15 → 15:00)
-	if (typeof input === 'number') {
-		const h = String(input).padStart(2, '0');
-		return `${h}:00`;
-	}
-
-	return '';
+	return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 export function getMonday(date = new Date()) {
 	// 월요일 계산
-	const d = new Date(date);
+	const d = safeDate(date);
 	const day = d.getDay();
 	const diff = day === 0 ? -6 : 1 - day;
 	d.setDate(d.getDate() + diff);
 	return d;
 }
 
-// ✅ YYYY-MM-DD (로컬 기준으로!)
-// 기존 toISOString()은 UTC 기준이라 한국시간 새벽에 날짜가 하루 밀릴 수 있음
-export function formatDate(date) {
-	const d = date instanceof Date ? date : safeDate(date);
-	if (Number.isNaN(d.getTime())) return '';
+// ✅ YYYY-MM-DD (로컬 기준)
+export function formatDate(input) {
+	const d = safeDate(input);
+	if (Number.isNaN(d.getTime())) return String(input ?? '');
+
 	const yyyy = d.getFullYear();
 	const mm = String(d.getMonth() + 1).padStart(2, '0');
 	const dd = String(d.getDate()).padStart(2, '0');
 	return `${yyyy}-${mm}-${dd}`;
 }
+
+// ✅ formatDateLocal은 formatDate와 동일 (중복 제거)
+export const formatDateLocal = formatDate;
 
 // 월~금 날짜 배열
 export function getWeekDates(monday) {
@@ -97,6 +77,8 @@ export function getWeekDates(monday) {
 export function generateWeekdays(startDateStr) {
 	const weekdays = [];
 	const start = safeDate(startDateStr);
+	if (Number.isNaN(start.getTime())) return weekdays;
+
 	let current = new Date(start);
 	const endDate = new Date(start);
 	endDate.setDate(start.getDate() + 13); // 2주 범위(월~일 * 2)
@@ -116,17 +98,6 @@ export function generateWeekdays(startDateStr) {
 	}
 
 	return weekdays;
-}
-
-// 로컬 기준 YYYY-MM-DD (KST에서도 안전)
-export function formatDateLocal(input) {
-	const d = input instanceof Date ? input : safeDate(input);
-	if (Number.isNaN(d.getTime())) return String(input ?? '');
-
-	const yyyy = d.getFullYear();
-	const mm = String(d.getMonth() + 1).padStart(2, '0');
-	const dd = String(d.getDate()).padStart(2, '0');
-	return `${yyyy}-${mm}-${dd}`;
 }
 
 export const DAY_KR = {
