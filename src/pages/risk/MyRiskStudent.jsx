@@ -8,6 +8,7 @@ import DataTable from '../../components/table/DataTable';
 // 컴포넌트 분리
 import RiskStudentOverall from './RiskStudentOverall';
 import RiskPending from './RiskPending';
+import { formatDateTimeKST } from '../../utils/DateTimeUtil';
 
 export default function MyRiskStudent() {
 	// 데이터용
@@ -85,11 +86,11 @@ export default function MyRiskStudent() {
 		);
 	};
 
-	// 날짜 포맷(백엔드 LocalDateTime 문자열이면 보기 좋게)
+	// 날짜 포맷(백엔드 LocalDateTime 문자열이면 보기 좋게) - 이전
+	// 날짜 포맷: 서버가 tz 없이 내려줘도 KST로 맞춰서 출력 - 수정
 	const fmtDateTime = (v) => {
 		if (!v) return '-';
-		// "2025-12-23T15:00:00" -> "2025-12-23 15:00"
-		return String(v).replace('T', ' ').slice(0, 16);
+		return formatDateTimeKST(v); // "YYYY-MM-DD HH:mm"
 	};
 
 	// -----------------------------
@@ -300,7 +301,7 @@ export default function MyRiskStudent() {
 				};
 			});
 		},
-		[fmtDateTime, levelLabel, mySubjectIdSet]
+		[levelLabel, mySubjectIdSet]
 	);
 
 	// 내 담당 과목 위험학생 테이블 데이터
