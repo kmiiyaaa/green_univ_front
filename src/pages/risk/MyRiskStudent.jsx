@@ -53,7 +53,7 @@ export default function MyRiskStudent() {
 
 	const levelLabel = useCallback((lvl) => LEVEL_LABEL[lvl] ?? (lvl || '-'), [LEVEL_LABEL]);
 
-	const overallLabel = useCallback((lvl) => OVERALL_LABEL[lvl] ?? '정상', [OVERALL_LABEL]);
+	const overallLabel = useCallback((lvl) => OVERALL_LABEL[lvl] ?? '관찰', [OVERALL_LABEL]);
 
 	const badgeClassByLevel = (lvl) => {
 		if (lvl === 'DANGER') return 'badge-danger';
