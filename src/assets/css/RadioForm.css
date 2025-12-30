@@ -15,9 +15,9 @@
 	display: flex;
 	gap: 20px; /* 여성/남성 사이 간격 */
 	align-items: center;
-	background: #fff; /* 흰색 배경 (input 박스처럼) */
+	/* background: #fff; */
 	padding: 12px 16px; /* input 내부 여백과 동일 */
-	border-radius: 4px;
+	border-radius: 14px;
 }
 
 .radio-item {

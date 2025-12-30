@@ -9,6 +9,7 @@ import OptionForm from '../../components/form/OptionForm';
 import PaginationForm from '../../components/form/PaginationForm';
 import { toHHMM } from '../../utils/DateTimeUtil';
 import '../../assets/css/SyllabusButton.css';
+import { SUBJECT_TYPE1 } from '../../utils/subjectTypeOptions';
 
 export default function SubList() {
 	const { user, token, userRole } = useContext(UserContext);
@@ -133,13 +134,6 @@ export default function SubList() {
 		'강의계획서',
 	];
 
-	// 검색 폼 카테고리
-	const SUBJECT_CATEGORY_OPTIONS = [
-		{ value: '', label: '전체' },
-		{ value: '전공', label: '전공' },
-		{ value: '교양', label: '교양' },
-	];
-
 	// enter 검색
 	const onKeyDown = (e) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -158,7 +152,7 @@ export default function SubList() {
 					name="type"
 					value={searchForm.type}
 					onChange={handleChange}
-					options={SUBJECT_CATEGORY_OPTIONS}
+					options={SUBJECT_TYPE1}
 				/>
 
 				<InputForm

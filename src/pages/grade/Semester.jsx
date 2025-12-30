@@ -3,15 +3,9 @@ import OptionForm from '../../components/form/OptionForm';
 import DataTable from '../../components/table/DataTable';
 import api from '../../api/httpClient';
 import { useNavigate } from 'react-router-dom';
+import { SUBJECT_TYPE_OPTIONS } from '../../utils/subjectTypeOptions';
 
 // 학기별 성적 조회
-
-const SUBJECT_TYPE_OPTIONS = [
-	{ value: '전체', label: '전체' },
-	{ value: '전공', label: '전공' },
-	{ value: '교양', label: '교양' },
-];
-
 const Semester = () => {
 	const [yearList, setYearList] = useState([]); // 학생이 수강한 년도
 	const [semesterList, setSemesterList] = useState([]); // 학생이 수강한 학기

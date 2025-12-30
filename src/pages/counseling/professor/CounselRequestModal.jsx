@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../../api/httpClient';
-import SelectDateForCounseling from "../counselingManage/util/SelectDateForCounseling";
+import SelectDateForCounseling from 'counselingManage/utilManage/util/SelectDateForCounseling';
 import '../../../assets/css/ProfessorCounselRequestModal.css';
+import TextField from '../../../components/form/TextField';
 
 /**
  * 교수가 학생에게 상담 요청 보내는 모달
@@ -78,13 +79,13 @@ export default function ProfessorCounselRequestModal({ open, target, onClose, on
 					</div>
 
 					<div className="pcm-row pcm-col">
-						<label className="pcm-label">요청 메시지(선택)</label>
-						<textarea
-							className="pcm-textarea"
+						<TextField
+							label="요청 메시지(선택)"
+							name="requestMessage"
 							rows={4}
+							placeholder="예) 성적 관련 상담이 필요합니다."
 							value={reason}
 							onChange={(e) => setReason(e.target.value)}
-							placeholder="예) 성적 관련 상담이 필요합니다."
 						/>
 					</div>
 
