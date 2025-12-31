@@ -37,6 +37,64 @@ export default function Chat({ variant = 'mono' }) {
 	// - (기존) 프론트에서 allowlist로 막았는데, 중복/복잡해져서 제거
 	// - (현재) 백엔드가 내려준 링크는 이동 시도하고, 최종 권한 체크는 ProtectedRoute가 담당
 
+	/**
+	 * ✅ [토큰/문구] -> (표시 라벨 + 이동 경로) 중앙 매핑
+	 * - 백엔드에서 [USER_INFO] 같은 토큰을 내려도 프론트에서 "My > ..." 로 치환 + 링크 버튼 자동 생성
+	 * - 여기만 늘려가면 됨 (백엔드/핸들러에 links 추가할 필요 없음)
+	 *
+	 * ⚠️ href는 너 프로젝트 실제 라우트에 맞게 한 번만 맞춰주면 끝!
+	 */
+	const AUTO_LINK_MAP = useMemo(
+		() => ({
+			// 토큰 기반
+			'[USER_INFO]': { label: 'My > 내정보 조회', href: '/my/info' },
+			'[USER_PW]': { label: 'My > 비밀번호 변경', href: '/my/password' },
+
+			// 문구 기반(백엔드가 토큰 없이 문구를 바로 내려주는 경우 대비)
+			'My > 내정보 조회': { label: 'My > 내정보 조회', href: '/my/info' },
+			'My > 비밀번호 변경': { label: 'My > 비밀번호 변경', href: '/my/password' },
+		}),
+		[]
+	);
+
+	// ✅ 텍스트 안의 토큰을 "My > ..." 로 치환해서 화면에 토큰이 안 보이게
+	const replaceTokensToLabels = (text) => {
+		if (!text) return text;
+
+		let out = String(text);
+		Object.entries(AUTO_LINK_MAP).forEach(([k, v]) => {
+			// 토큰([USER_INFO])은 라벨로 치환, 문구는 그대로라 영향 없음
+			if (k.startsWith('[') && k.endsWith(']')) {
+				out = out.split(k).join(v.label);
+			}
+		});
+		return out;
+	};
+
+	// ✅ 텍스트에서 자동 링크 후보 추출 (중복 제거)
+	const extractAutoLinks = (text) => {
+		const t = String(text ?? '');
+		const found = [];
+
+		// 1) 키(토큰/문구)가 포함되면 링크 후보 추가
+		Object.entries(AUTO_LINK_MAP).forEach(([k, v]) => {
+			if (t.includes(k)) {
+				found.push({ label: v.label, href: v.href });
+			}
+		});
+
+		// 2) 중복 제거 (href 기준)
+		const uniq = [];
+		const seen = new Set();
+		for (const l of found) {
+			if (!l?.href) continue;
+			if (seen.has(l.href)) continue;
+			seen.add(l.href);
+			uniq.push(l);
+		}
+		return uniq;
+	};
+
 	const welcome = useMemo(
 		() => ({
 			id: uid(),
@@ -114,7 +172,7 @@ export default function Chat({ variant = 'mono' }) {
 			if (!ok) return;
 		}
 
-		// ✅ 권한 체크는 라우터(ProtectedRoute)가 담당
+		// 권한 체크는 라우터(ProtectedRoute)가 담당
 		navigate(href);
 	};
 
@@ -135,11 +193,21 @@ export default function Chat({ variant = 'mono' }) {
 			const refs = Array.isArray(data?.references) ? data.references : [];
 			const refText = refs.length ? `\n\n📌 참고 경로\n- ${refs.join('\n- ')}` : '';
 
-			pushBot(answer + refText);
+			// 화면 텍스트에서 토큰을 "My > ..." 로 치환
+			const displayText = replaceTokensToLabels(answer + refText);
+			pushBot(displayText);
 
+			// 백엔드 links가 있으면 그대로 버튼 렌더
 			if (Array.isArray(data?.links) && data.links.length > 0) {
 				const normalized = normalizeLinks(data.links, 'ai');
 				if (normalized.length > 0) pushLinks(normalized);
+			} else {
+				// 백엔드 links가 없더라도, 텍스트에 토큰/문구가 포함되면 자동 버튼 생성
+				const auto = extractAutoLinks(answer + refText);
+				if (auto.length > 0) {
+					const normalized = normalizeLinks(auto, 'ai');
+					if (normalized.length > 0) pushLinks(normalized);
+				}
 			}
 		} catch (e) {
 			console.error(e);
